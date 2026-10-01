@@ -43,6 +43,16 @@
 
 ## Work log
 
+### 2026-10-01 — Public repository, READMEs for the first release
+- Done: README (en/tr/ru) rewritten for users: badges, download (GitHub Releases, Obtainium,
+  F-Droid in progress), desktop version up front, screenshots from fastlane, features, how it
+  works, permissions and the app's own network requests, building, credits. Website: download
+  cards (Obtainium instead of IzzyOnDroid, F-Droid "in progress"), release note instead of
+  "early stage", new features listed.
+- Release: `v0.1.0` created by the owner on GitHub (tags cannot be pushed from the agent's
+  environment); the first run failed with empty signing secrets, fixed by the owner and re-run.
+- Next: certificate hash into `docs/fdroid/…yml`, fdroiddata merge request.
+
 ### 2026-10-01 — Release preparation for v0.1.0
 - Done: store descriptions (en/tr/ru) list DoH, QUIC block, live traffic and ping, widgets and
   shortcuts; changelog 1.txt in all three languages (≤ 500 bytes); store screenshots re-rendered
