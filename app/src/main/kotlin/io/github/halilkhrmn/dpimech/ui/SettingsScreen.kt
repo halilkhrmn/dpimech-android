@@ -58,11 +58,31 @@ fun SettingsScreen(
     onLogs: () -> Unit,
     onReport: () -> Unit,
     bottomPadding: PaddingValues,
+    onExport: (android.net.Uri) -> Boolean = { false },
+    onImport: (android.net.Uri) -> Result<Int> = { Result.failure(UnsupportedOperationException()) },
 ) {
     val context = LocalContext.current
     var pickLanguage by remember { mutableStateOf(false) }
     var pickDns by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
+    val backupScope = androidx.compose.runtime.rememberCoroutineScope()
+    val resources = androidx.compose.ui.platform.LocalResources.current
+    val exported = stringResource(R.string.backup_done)
+    val exportFailed = stringResource(R.string.backup_failed)
+    val importFailed = stringResource(R.string.restore_failed)
+    val exportLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri -> uri?.let { backupScope.launch { snackbar.showSnackbar(if (onExport(it)) exported else exportFailed) } } }
+    val importLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let {
+            val r = onImport(it)
+            backupScope.launch {
+                snackbar.showSnackbar(r.fold({ n -> resources.getQuantityString(R.plurals.restore_done, n, n) }, { e -> importFailed + "\n" + (e.message ?: "") }))
+            }
+        }
+    }
     var refreshing by remember { mutableStateOf(false) }
     // Re-read when coming back from Android's battery screen.
     var ignoringBattery by remember { mutableStateOf(isIgnoringBattery(context)) }
@@ -184,6 +204,17 @@ fun SettingsScreen(
                 headlineContent = { Text(stringResource(R.string.settings_wizard)) },
                 supportingContent = { Text(stringResource(R.string.settings_wizard_hint)) },
                 modifier = Modifier.clickable(onClick = onWizard),
+            )
+            Section(stringResource(R.string.settings_section_backup))
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.backup)) },
+                supportingContent = { Text(stringResource(R.string.backup_hint)) },
+                modifier = Modifier.clickable { exportLauncher.launch("dpimech-profiles.json") },
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.restore)) },
+                supportingContent = { Text(stringResource(R.string.restore_hint)) },
+                modifier = Modifier.clickable { importLauncher.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) },
             )
             Section(stringResource(R.string.settings_section_system))
             ListItem(

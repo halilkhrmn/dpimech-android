@@ -197,7 +197,8 @@ class MainActivity : AppCompatActivity() {
         val lab by app.lab.flow.collectAsStateWithLifecycle()
         val settings by app.settings.settings.collectAsStateWithLifecycle()
         val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
-                val stats by EngineStats.flow.collectAsStateWithLifecycle()
+        val stats by EngineStats.flow.collectAsStateWithLifecycle()
+        val quick by app.lab.quick.collectAsStateWithLifecycle()
         val lastUpdated by app.strategies.lastUpdated.collectAsStateWithLifecycle()
         when (tab) {
             Tab.HOME -> HomeScreen(
@@ -231,6 +232,12 @@ class MainActivity : AppCompatActivity() {
                 onUse = { result, packs, start -> useLabResult(result, packs, start, network?.networkKey ?: lab.isp?.networkKey, onEdit) },
                 onBack = null,
                 bottomPadding = padding,
+                quick = quick,
+                onQuickCheck = { input ->
+                    val p = saved.selected
+                    val strategy = p?.strategyFor(network?.networkKey) ?: strategies.firstOrNull()?.entry
+                    if (strategy != null) app.lab.quickCheck(input, strategy)
+                },
             )
             Tab.SETTINGS -> SettingsScreen(
                 settings = settings,
@@ -249,6 +256,8 @@ class MainActivity : AppCompatActivity() {
                     if (engineSettingChanged && engine is EngineState.Running) saved.selected?.let(::turnOn)
                 },
                 onWizard = onWizard,
+                onExport = { uri -> exportProfiles(uri) },
+                onImport = { uri -> importProfiles(uri) },
                 onRefreshStrategies = { app.strategies.refresh() },
                 lastUpdated = lastUpdated,
                 onLogs = onLogs,
@@ -333,6 +342,22 @@ class MainActivity : AppCompatActivity() {
         app.profiles.select(p.id)
         openAfterStart = intent.getStringExtra(EXTRA_OPEN_APP)
         turnOn(p)
+    }
+
+    /** Writes all profiles to the file the user picked. */
+    private fun exportProfiles(uri: android.net.Uri): Boolean = runCatching {
+        val text = io.github.halilkhrmn.dpimech.core.ProfileBackup.of(app.profiles.saved.value).encode()
+        contentResolver.openOutputStream(uri, "wt")!!.use { it.write(text.toByteArray()) }
+        EngineLog.add("profiles backed up (${app.profiles.saved.value.profiles.size})")
+    }.isSuccess
+
+    /** Reads a backup and adds its profiles; the number added, or why it failed. */
+    private fun importProfiles(uri: android.net.Uri): Result<Int> = runCatching {
+        val text = contentResolver.openInputStream(uri)!!.use { it.readBytes().decodeToString() }
+        val backup = io.github.halilkhrmn.dpimech.core.ProfileBackup.decode(text).getOrThrow()
+        backup.profiles.forEach(app.profiles::save)
+        EngineLog.add("profiles restored (${backup.profiles.size})")
+        backup.profiles.size
     }
 
     private fun versionName() = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull().orEmpty()

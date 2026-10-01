@@ -72,6 +72,8 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   IpPacket, TunnelDns  UDP packet parse/build; TunnelFilter verdicts, DnsMessage, DohClient
   TrafficStats      traffic samples for the home chart and the notification
   Ping              average connect+TLS time of the profile's sites through ciadpi
+  QuickCheck        one site, directly and through a short-lived ciadpi (Test tab)
+  ProfileBackup     profiles to/from a file (Settings → Backup)
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
           (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
