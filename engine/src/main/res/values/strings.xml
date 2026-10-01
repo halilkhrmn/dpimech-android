@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_channel">Bypass status</string>
+    <string name="engine_running_title">%1$s: bypass on</string>
+    <string name="engine_running_text">Only the chosen apps are affected. Nothing goes to another server.</string>
+    <string name="engine_stop">Turn off</string>
+    <string name="engine_error_no_permission">Android did not allow DPIMech to start (VPN permission missing or always-on VPN set for another app).</string>
+    <string name="engine_error_died">ByeDPI stopped unexpectedly (code %1$d).</string>
+</resources>

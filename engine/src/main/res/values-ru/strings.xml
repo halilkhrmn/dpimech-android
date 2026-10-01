@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_channel">Состояние обхода</string>
+    <string name="engine_running_title">%1$s: обход включён</string>
+    <string name="engine_running_text">Действует только на выбранные приложения. Ничего не идёт на чужие серверы.</string>
+    <string name="engine_stop">Выключить</string>
+    <string name="engine_error_no_permission">Android не разрешил запуск DPIMech (нет разрешения VPN или постоянная VPN задана для другого приложения).</string>
+    <string name="engine_error_died">ByeDPI неожиданно остановился (код %1$d).</string>
+</resources>
