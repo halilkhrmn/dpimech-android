@@ -13,12 +13,33 @@
   - [x] Quick Settings tile
   - [x] Landing page (GitHub Pages), desktop logo as launcher icon
   - [ ] First test on a real phone (CI APK)
-  - [ ] Release signing
+  - [x] Release signing: workflow and docs ready; owner adds the keystore secrets
 - [ ] **Phase 2 — Smarts:** Strategy Lab, ISP detection, per-network memory, DNS, watchdog, QUIC switch, wizard
+  - [x] Strategy Lab (core runner + screen), tested against real ciadpi and a fake-DPI server
+  - [x] ISP detection (ipwho.is), ISP presets marked and tested first
+  - [x] Watchdog: restart on exit at once, after two failed SOCKS5 probes when hung
+  - [x] Per-network memory (per provider AS number), strategy swapped on network change
+  - [x] DNS check (system DNS and UDP 53 vs DNS over HTTPS) with Private DNS advice
+  - [ ] Own DoH/DoT resolver inside the tunnel (DECISIONS #13)
+  - [ ] QUIC switch (needs a ciadpi change, DECISIONS #15)
+  - [x] Easy mode: "Just make it work" → Lab → use the best and turn on
 - [ ] **Phase 3 — Extras:** widget, shortcuts, QR profile sharing
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
 
 ## Work log
+
+### 2026-10-01 — Phase 2: Strategy Lab, watchdog, DNS check, per-network memory, release workflow
+- Done: `LabRunner` (baseline, 4 engines at a time, confirmation rounds), `Socks5`, `SiteCheck`,
+  `Watchdog`, `IspLookup`, `DnsCheck`, per-provider strategy memory in `Profile`; Lab screen with
+  ISP presets, DNS warnings and "use the best and turn on"; watchdog and network-change handling
+  in the VPN service; foreground-service type fallback; signed release workflow with ABI splits.
+- Verified how: 43 core tests (1 skipped locally: TUN end-to-end). New `LabIntegrationTest` runs the
+  real ciadpi against a local HTTPS server whose fake DPI resets connections when the first TLS
+  record names the blocked host: baseline and a no-op strategy fail, `-r 1+s` passes and is
+  confirmed (5/5 repeated runs). DNS wire format tested against a fake DNS server and a real DoH
+  answer. Signed release build of all five APKs verified with apksigner (throwaway key).
+- Open/next: phone test; owner creates the release keystore and secrets (docs/RELEASING.md);
+  DoH inside the tunnel and the QUIC switch need engine work (DECISIONS #13, #15).
 
 ### 2026-10-01 — Landing page and icon
 - Done: `site/` in the desktop page's style (same logo, favicon, flags) with a Desktop / Android

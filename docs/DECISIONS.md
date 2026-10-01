@@ -72,3 +72,15 @@ server (port 53 cannot be bound, the system resolver only talks to addresses on 
 SOCKS5 front in the app or a ciadpi patch; both were left for later. For now the Strategy Lab checks
 the phone's DNS and UDP 53 to the tunnel's server against DNS over HTTPS (1.1.1.1, as on desktop)
 and, on a mismatch, advises Android's Private DNS, which encrypts DNS for the VPN network as well.
+
+## 14. Per-network memory is per provider (AS number), not per Wi-Fi name (2026-10-01)
+Reading the Wi-Fi name (SSID) needs the location permission on Android 10+ and location turned on.
+What decides which strategy works is the provider's DPI, so the memory is keyed by the provider's AS
+number from the same ipwho.is lookup the Lab uses. Two Wi-Fi networks of the same provider share a
+strategy, which is what the user wants anyway.
+
+## 15. QUIC switch postponed: needs a ciadpi change (2026-10-01)
+Dropping UDP/443 for bypassed apps cannot be expressed with ciadpi 0.17 groups: when every group is
+limited, ciadpi appends a catch-all group, so a datagram always finds one; `--no-udp` drops all UDP
+(DNS, Discord voice). A small patch in ciadpi (or upstream option) is needed; apps fall back to TCP
+on their own when QUIC is blocked, so this is not urgent.

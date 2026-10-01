@@ -39,7 +39,7 @@ Needs JDK 17+ (21 used), Android SDK with platform `android-37.0` and NDK `29.0.
 | + end-to-end TUN test (root, IPv6) | `sudo -E env PATH=$PATH CIADPI=… HEV=… ./gradlew :core:test --tests '*TunnelEndToEndTest'` |
 | Debug APK | `./gradlew :app:assembleDebug` |
 | Lint | `./gradlew :app:lintDebug` |
-| Release APK (unsigned for now) | `./gradlew :app:assembleRelease` |
+| Release APKs (signed with `DPIMECH_*` env, else unsigned) | `./gradlew :app:assembleRelease` — see `docs/RELEASING.md` |
 
 Tests that need `$CIADPI`/`$HEV`/root are skipped when those are missing; CI runs all of them
 (`.github/workflows/ci.yml`) and fails if the end-to-end test was skipped.
@@ -52,10 +52,14 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   ArgPolicy         ciadpi option allowlist (port of desktop argpolicy.rs, ByeDPI table)
   ByeDpiCommand     strategy → ciadpi argv: placeholders, managed options, domain filter
   DomainPack, Isp   packs (+ Android package names) and ISP table from desktop catalog.rs
-  Lab               Strategy Lab result scoring (same order as desktop)
+  Lab, LabRunner    Strategy Lab: scoring (same order as desktop) and the runner
+  Socks5, SiteCheck SOCKS5 client for ciadpi; "does the site open" HTTPS check
+  Watchdog          when to restart ciadpi (exit / failed health probes / give up)
+  IspLookup, DnsCheck  provider detection (per-network memory key), DNS blocking check
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
-engine/   Android library: BypassVpnService, Ciadpi (process), TProxy (hev JNI), EngineState
-app/      Compose UI (home, profile editor, app picker), Quick Settings tile, repositories
+engine/   Android library: BypassVpnService (+ watchdog, network changes), Ciadpi (process),
+          TProxy (hev JNI), EngineState, NetworkIdentity, AndroidEngineLauncher (Lab)
+app/      Compose UI (home + Easy mode, profile editor, app picker, Strategy Lab), QS tile, repositories
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
