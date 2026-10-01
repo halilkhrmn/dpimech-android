@@ -39,7 +39,8 @@
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
-  - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
+  - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified
+  - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
 
@@ -48,7 +49,11 @@
   and `fdroid build` stopped with "Unused scandelete path": the scanner only *warns* about
   hev's `wintun.dll`, and a warning does not use `scandelete`, which is then an error. Fixed with
   `rm:` (the directory is deleted before the scan) and the formatting the CI asked for.
-- Next: owner replaces the file in the fork; pipeline again.
+- Second pipeline (after the owner replaced the file): every job green. F-Droid built the app
+  from the v0.1.0 tag and "compared built binary to supplied reference binary successfully", so
+  F-Droid will ship the APK signed with our key.
+- Next: wait for the F-Droid reviewers; after the merge, add F-Droid back to the website and the
+  READMEs.
 
 ### 2026-10-01 — Release APK tested on a phone
 - Verified: the signed, minified v0.1.0 release APK (`dpimech-0.1.0-universal.apk`) works on the
