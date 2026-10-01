@@ -19,12 +19,12 @@ rule against AI-assisted code (checked 2026-10-01), unlike IzzyOnDroid (see `IZZ
 
 ## Steps
 
-1. **Release key** (once): create it and the four GitHub secrets as in `RELEASING.md`.
-2. **First release**: `git tag v0.1.0 && git push origin v0.1.0`. Wait for the release workflow;
-   the release must contain `dpimech-0.1.0-universal.apk`.
-3. **Signing certificate hash** for the metadata:
-   `apksigner verify --print-certs dpimech-0.1.0-universal.apk | grep SHA-256` → put the 64 hex
-   characters (no colons) in `AllowedAPKSigningKeys`.
+1. ~~**Release key**~~ — done (2026-10-01).
+2. ~~**First release**~~ — `v0.1.0` published with `dpimech-0.1.0-universal.apk` (2026-10-01).
+3. ~~**Signing certificate hash**~~ — `dd5e5e13f10e026a494c95c7e23a0b8fca475af71c710d690069a32495ed26ca`
+   (`CN=Halil Kahraman, O=DPIMech`) is in `AllowedAPKSigningKeys`. A clean rebuild of the tag
+   matches the signed release APK (`apksigcopier compare`), so the reproducible-build check
+   should pass on F-Droid's side too.
 4. **GitLab account** at gitlab.com, then fork <https://gitlab.com/fdroid/fdroiddata>.
 5. In the fork, new branch `io.github.halilkhrmn.dpimech`; copy the YAML to
    `metadata/io.github.halilkhrmn.dpimech.yml`; commit "New app: DPIMech"; push.
@@ -49,3 +49,22 @@ rule against AI-assisted code (checked 2026-10-01), unlike IzzyOnDroid (see `IZZ
 
 The GitHub release APK works on every phone; Obtainium can follow GitHub releases directly
 (`https://github.com/halilkhrmn/dpimech-android`).
+
+## Merge request text (copy into the "App inclusion" template)
+
+> **DPIMech** — open sites and apps that the internet provider blocks with DPI, on the phone, without
+> root and without a remote server.
+>
+> - Source: https://github.com/halilkhrmn/dpimech-android (GPL-3.0-or-later), I am the author.
+> - Android companion of the desktop app https://github.com/halilkhrmn/dpimech.
+> - Runs ByeDPI (https://github.com/hufrea/byedpi) and hev-socks5-tunnel
+>   (https://github.com/heiher/hev-socks5-tunnel), both pinned git submodules built from source with
+>   ndk-build. No prebuilt binaries; hev's unused Windows `wintun.dll` is removed with `scandelete`.
+> - `VpnService` is only used locally to hand the chosen apps' traffic to ByeDPI on 127.0.0.1;
+>   nothing goes to a remote server. `QUERY_ALL_PACKAGES` is needed for the per-app picker.
+> - NonFreeNet: the app asks ipwho.is for the provider's name (per-network strategy memory).
+> - Reproducible build: the GitHub release APK is signed by me; a clean build of the tag matches it
+>   (`apksigcopier compare`), hence `Binaries` + `AllowedAPKSigningKeys`.
+> - Fastlane metadata in en-US, tr, ru.
+> - The code was written with an AI assistant and reviewed and tested by me on a real phone.
+

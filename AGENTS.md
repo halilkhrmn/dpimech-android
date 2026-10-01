@@ -31,6 +31,8 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
 - Strategy data comes from the desktop repo's `strategies/default.json`; do not fork the format.
   If Android needs a change, change it there.
 - User-visible strings go through Android resources (`values/`, `values-tr/`, `values-ru/`).
+- `README.md` is the main README and stays in English; `README.tr.md` and `README.ru.md` are
+  translations of it. Change all three together.
 
 ## Commands
 

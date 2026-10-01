@@ -36,12 +36,34 @@
   - [x] Long-press shortcuts: Turn off (while on), profiles, Strategy test, Logs
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
-  - [ ] First signed release (owner: key and secrets)
+  - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
 
 ## Work log
+
+### 2026-10-01 — v0.1.0 released, F-Droid metadata complete
+- Done: release workflow (attempt 2) published v0.1.0 with signed APKs; certificate SHA-256
+  `dd5e5e13…26ca` (`CN=Halil Kahraman, O=DPIMech`) put into `AllowedAPKSigningKeys`;
+  merge request text in docs/FDROID.md.
+- Verified: `sha256sum -c` on the release; apksigner shows one signer (v2); a clean local build of
+  the tag matches the signed APK (`apksigcopier compare`); `fdroid rewritemeta` leaves the file
+  unchanged and `fdroid lint` (with fdroiddata's categories and anti-features) reports nothing.
+- F-Droid and IzzyOnDroid are not mentioned on the website or in the READMEs until the app is
+  actually published there (owner's wish); add them back then.
+- Next (owner): GitLab fork of fdroiddata and the merge request (docs/FDROID.md, steps 4–6); try
+  the release APK on the phone.
+
+### 2026-10-01 — Public repository, READMEs for the first release
+- Done: README (en/tr/ru) rewritten for users: badges, download (GitHub Releases, Obtainium,
+  F-Droid in progress), desktop version up front, screenshots from fastlane, features, how it
+  works, permissions and the app's own network requests, building, credits. Website: download
+  cards (Obtainium instead of IzzyOnDroid, F-Droid "in progress"), release note instead of
+  "early stage", new features listed.
+- Release: `v0.1.0` created by the owner on GitHub (tags cannot be pushed from the agent's
+  environment); the first run failed with empty signing secrets, fixed by the owner and re-run.
+- Next: certificate hash into `docs/fdroid/…yml`, fdroiddata merge request.
 
 ### 2026-10-01 — Release preparation for v0.1.0
 - Done: store descriptions (en/tr/ru) list DoH, QUIC block, live traffic and ping, widgets and
