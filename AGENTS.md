@@ -61,11 +61,13 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   Socks5, SiteCheck SOCKS5 client for ciadpi; "does the site open" HTTPS check
   Watchdog          when to restart ciadpi (exit / failed health probes / give up)
   IspLookup, DnsCheck  provider detection (per-network memory key), DNS blocking check
+  NetworkInfo       transport, mobile operator (MCC+MNC) and provider → per-network key
   CountryPreset     sites commonly blocked per country (whole-phone profile)
   AppSettings       language, DNS server, automatic strategy, wizard flag
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes), Ciadpi (process),
-          TProxy (hev JNI), EngineState, NetworkIdentity, AndroidEngineLauncher (Lab)
+          TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
+          AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
           profile editor, app picker; QS tile; repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
