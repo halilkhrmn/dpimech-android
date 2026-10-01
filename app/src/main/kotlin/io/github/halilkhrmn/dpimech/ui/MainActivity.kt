@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                 var logs by rememberSaveable { mutableStateOf(false) }
                 var report by remember { mutableStateOf<ProblemReport?>(null) }
                 val logLines by EngineLog.flow.collectAsStateWithLifecycle()
+                val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
                 val openReport = { report = buildReport() }
 
                 BackHandler(enabled = editing != null || logs || tab != Tab.HOME) {
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 when {
                     wizard -> WizardScreen(
                         lab = lab,
-                        country = lab.isp?.country,
+                        country = network?.country ?: lab.isp?.country ?: simCountry(),
                         onDetectIsp = app.lab::detectIsp,
                         onTest = { packs, community ->
                             app.lab.start(
@@ -113,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                             app.settings.update { it.copy(wizardDone = true) }
                             wizard = false
                             tab = Tab.HOME
-                            val p = profileFromWizard(choice, lab.isp?.country, lab.isp?.networkKey)
+                            val p = profileFromWizard(choice, network?.country ?: lab.isp?.country, network?.networkKey ?: lab.isp?.networkKey)
                             app.profiles.save(p)
                             app.profiles.select(p.id)
                             when {
@@ -175,6 +176,8 @@ class MainActivity : AppCompatActivity() {
         val strategies by app.strategies.options.collectAsStateWithLifecycle()
         val lab by app.lab.flow.collectAsStateWithLifecycle()
         val settings by app.settings.settings.collectAsStateWithLifecycle()
+        val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
+        val lastUpdated by app.strategies.lastUpdated.collectAsStateWithLifecycle()
         when (tab) {
             Tab.HOME -> HomeScreen(
                 saved = saved,
@@ -189,6 +192,8 @@ class MainActivity : AppCompatActivity() {
                 onNew = { onEdit("") },
                 onWizard = onWizard,
                 bottomPadding = padding,
+                network = network,
+                autoStrategy = settings.autoStrategy,
             )
             Tab.TEST -> LabScreen(
                 state = lab,
@@ -198,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                 onDetectIsp = app.lab::detectIsp,
                 onStart = app.lab::start,
                 onCancel = app.lab::cancel,
-                onUse = { result, packs, start -> useLabResult(result, packs, start, lab.isp?.networkKey, onEdit) },
+                onUse = { result, packs, start -> useLabResult(result, packs, start, network?.networkKey ?: lab.isp?.networkKey, onEdit) },
                 onBack = null,
                 bottomPadding = padding,
             )
@@ -220,6 +225,7 @@ class MainActivity : AppCompatActivity() {
                 },
                 onWizard = onWizard,
                 onRefreshStrategies = { app.strategies.refresh() },
+                lastUpdated = lastUpdated,
                 onLogs = onLogs,
                 onReport = onReport,
                 bottomPadding = padding,
@@ -280,6 +286,11 @@ class MainActivity : AppCompatActivity() {
         return if (choice.best != null) base.withStrategy(entry, networkKey) else base
     }
 
+    /** The SIM's country when nothing better is known (no permission needed). */
+    private fun simCountry(): String? = runCatching {
+        getSystemService(android.telephony.TelephonyManager::class.java)?.simCountryIso?.uppercase()?.ifEmpty { null }
+    }.getOrNull()
+
     private fun versionName() = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull().orEmpty()
 
     private fun buildReport(): ProblemReport {
@@ -296,7 +307,7 @@ class MainActivity : AppCompatActivity() {
             settings = app.settings.settings.value,
             profiles = app.profiles.saved.value,
             engineState = state,
-            isp = NetworkIdentity.flow.value ?: app.lab.flow.value.isp,
+            isp = NetworkIdentity.flow.value?.isp ?: app.lab.flow.value.isp,
             log = EngineLog.snapshot().takeLast(300),
         )
     }

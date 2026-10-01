@@ -26,6 +26,13 @@ class StrategyRepository(dir: File) {
     private val communityCache = File(dir, "community.txt")
     private val state = MutableStateFlow(load())
     val options: StateFlow<List<StrategyOption>> = state.asStateFlow()
+    private val updated = MutableStateFlow(lastDownload())
+
+    /** When the lists were last downloaded (epoch ms), or null if only the built-in copy is used. */
+    val lastUpdated: StateFlow<Long?> = updated.asStateFlow()
+
+    private fun lastDownload(): Long? =
+        listOf(standardCache, communityCache).filter { it.exists() }.maxOfOrNull { it.lastModified() }
 
     private fun load(): List<StrategyOption> {
         val standard = standardCache.takeIf { it.exists() }
@@ -52,6 +59,7 @@ class StrategyRepository(dir: File) {
             communityCache.writeText(text)
         }.onFailure { errors += "${OnlineSource.COMMUNITY.label}: ${it.message}" }
         state.value = load()
+        updated.value = lastDownload()
         errors
     }
 

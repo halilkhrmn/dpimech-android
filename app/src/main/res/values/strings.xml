@@ -141,4 +141,16 @@
     <string name="report_copy">Copy the report</string>
     <string name="source_standard">DPIMech standard set</string>
     <string name="source_community">Community list</string>
+    <string name="net_wifi">Wi-Fi</string>
+    <string name="net_mobile">Mobile data</string>
+    <string name="net_other">Network</string>
+    <string name="net_none">No connection</string>
+    <string name="net_looking_up">finding the provider…</string>
+    <string name="net_remembered">Strategy for this network: %1$s</string>
+    <string name="net_auto">No strategy saved for this network yet; the automatic strategy will find one.</string>
+    <string name="net_default">This network uses the profile strategy: %1$s</string>
+    <string name="settings_last_update">Last updated: %1$s</string>
+    <string name="settings_never_updated">Not updated yet; the built-in list is used.</string>
+    <string name="settings_battery_ok">Allowed: Android will not stop DPIMech.</string>
+    <string name="settings_battery_limited">Limited: tap to allow running in the background.</string>
 </resources>

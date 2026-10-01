@@ -85,7 +85,12 @@ class StoreScreenshotTest(private val locale: String) {
     }
 
     @Test fun home() = shot(1) {
-        WithBar(0) { p -> HomeScreen(profiles(), EngineState.Running("1", "", "TLS record split"), {}, {}, {}, {}, {}, p) }
+        WithBar(0) { p ->
+            HomeScreen(
+                profiles(), EngineState.Running("1", "", "TLS record split"), {}, {}, {}, {}, {}, p,
+                network = io.github.halilkhrmn.dpimech.core.NetworkInfo(io.github.halilkhrmn.dpimech.core.Transport.WIFI, isp = IspInfo("Turk Telekom", 9121, "TR", Isp.match(9121, ""))),
+            )
+        }
     }
 
     @Test fun wizard() = shot(2) {
@@ -107,7 +112,7 @@ class StoreScreenshotTest(private val locale: String) {
     }
 
     @Test fun settings() = shot(4) {
-        WithBar(2) { p -> SettingsScreen(AppSettings(language = locale), {}, {}, {}, { emptyList() }, {}, {}, p) }
+        WithBar(2) { p -> SettingsScreen(AppSettings(language = locale), {}, {}, {}, { emptyList() }, 1_790_000_000_000, {}, {}, p) }
     }
 
     @Test fun about() = shot(5) { WithBar(3) { p -> AboutScreen("0.1.0", {}, {}, p) } }
