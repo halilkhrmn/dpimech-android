@@ -118,6 +118,11 @@
   }
   .badge i { font-style: normal; display: inline-block; padding: 3px 5px; background: #000; color: #fff; }
   .badge u { text-decoration: none; display: inline-block; padding: 3px 5px; background: #ff0; }
+  /* Screenshots: a row of little "windows", scrolls sideways on narrow screens. */
+  .shots { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; }
+  .shots figure { flex: 0 0 130px; margin: 0; border: 2px outset #eee; background: #d4d0c8; }
+  .shots figcaption { background: linear-gradient(90deg, #0a246a, #3a6ea5); color: #fff; font: bold 11px Tahoma, Verdana, sans-serif; padding: 2px 5px; }
+  .shots img { display: block; width: 126px; height: auto; border: 2px inset #808080; background: #fff; }
   @media (max-width: 520px) {
     body { padding: 0; }
     #page { border: 0; }
@@ -145,6 +150,7 @@
 
 <div id="nav">
   <a href="#download">Download</a>
+  <a href="#screenshots">Screenshots</a>
   <a href="#what">What is it?</a>
   <a href="#safe">Is it safe?</a>
   <a href="#credits">Credits</a>
@@ -181,6 +187,15 @@
   take <i>dpimech-&lt;version&gt;-universal.apk</i>, it works on every phone. Want it on your computer instead?
   <a href="https://halilkhrmn.github.io/dpimech/">DPIMech for desktop</a>.
 </p>
+
+<h2 id="screenshots">Screenshots</h2>
+<div class="shots">
+  <figure><figcaption>Home</figcaption><a href="screenshots/1.png"><img src="screenshots/1.png" width="126" height="252" loading="lazy" alt="Home: the green power button, live traffic and ping"></a></figure>
+  <figure><figcaption>Setup wizard</figcaption><a href="screenshots/2.png"><img src="screenshots/2.png" width="126" height="252" loading="lazy" alt="Setup wizard: pick the sites"></a></figure>
+  <figure><figcaption>Strategy Lab</figcaption><a href="screenshots/3.png"><img src="screenshots/3.png" width="126" height="252" loading="lazy" alt="Strategy Lab results"></a></figure>
+  <figure><figcaption>Settings</figcaption><a href="screenshots/4.png"><img src="screenshots/4.png" width="126" height="252" loading="lazy" alt="Settings"></a></figure>
+  <figure><figcaption>About</figcaption><a href="screenshots/5.png"><img src="screenshots/5.png" width="126" height="252" loading="lazy" alt="About"></a></figure>
+</div>
 
 <h2 id="what">What is it?</h2>
 <p>
