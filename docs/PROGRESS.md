@@ -2,7 +2,7 @@
 
 ## Phases
 
-- [ ] **Phase 1 — Core:** native build, VpnService, profiles, per-app bypass, hostlist, strategy list, QS tile
+- [x] **Phase 1 — Core:** native build, VpnService, profiles, per-app bypass, hostlist, strategy list, QS tile
   - [x] Gradle skeleton (core / engine / app), version catalog, wrapper, CI workflow
   - [x] `core`: strategy file, argument policy, ciadpi command, packs, ISP table, Lab scoring, profiles
   - [x] Native: byedpi v0.17.3 + hev-socks5-tunnel 2.18.0 submodules, ndk-build for 4 ABIs
@@ -12,7 +12,7 @@
   - [x] Remote strategy list (default.json) + community list, cached
   - [x] Quick Settings tile
   - [x] Landing page (GitHub Pages), desktop logo as launcher icon
-  - [ ] First test on a real phone (CI APK)
+  - [x] First test on a real phone (CI APK): works, Discord opens (2026-10-01)
   - [x] Release signing: workflow and docs ready; owner adds the keystore secrets
 - [ ] **Phase 2 — Smarts:** Strategy Lab, ISP detection, per-network memory, DNS, watchdog, QUIC switch, wizard
   - [x] Strategy Lab (core runner + screen), tested against real ciadpi and a fake-DPI server
@@ -33,6 +33,13 @@
   - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
 
 ## Work log
+
+### 2026-10-01 — Phone test passed
+- Done: owner tested the build from `main` (after #6) on a phone.
+- Verified how: on the phone — Discord opens with the bypass on; the IPv6 "Network is unreachable"
+  bursts are gone; Wi-Fi ↔ mobile data switch, battery dialog and list update work.
+- Open/next: release key and first signed release (`docs/RELEASING.md`), then the F-Droid merge
+  request (`docs/FDROID.md`); Phase 2 leftovers: DoH inside the tunnel, QUIC switch.
 
 ### 2026-10-01 — Phone feedback: network line, provider on mobile data, battery, list update
 - Done: app-wide network watcher (Wi-Fi / mobile data, operator by MCC+MNC, provider by ipwho.is),
