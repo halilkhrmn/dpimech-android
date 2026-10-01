@@ -2,6 +2,7 @@ package io.github.halilkhrmn.dpimech.engine
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.telephony.TelephonyManager
@@ -48,7 +49,8 @@ object NetworkIdentity {
                 // Capabilities change often (signal, validation); act once per network.
                 if (network == current && state.value?.transport == transport) return
                 current = network
-                val base = if (transport == Transport.CELLULAR) mobile(app) else NetworkInfo(transport)
+                val base = (if (transport == Transport.CELLULAR) mobile(app) else NetworkInfo(transport))
+                    .copy(hasIpv6 = ipv6(cm, network))
                 state.value = base
                 EngineLog.add("network: ${describe(base)}")
                 thread(name = "isp-lookup", isDaemon = true) {
@@ -57,6 +59,17 @@ object NetworkIdentity {
                     val info = base.copy(isp = isp)
                     state.value = info
                     EngineLog.add("network: ${describe(info)} (${isp.networkKey}, ${isp.country})")
+                }
+            }
+
+            // IPv6 addresses often arrive a moment after the network itself.
+            override fun onLinkPropertiesChanged(network: Network, lp: LinkProperties) {
+                if (network != current) return
+                val v6 = NetworkInfo.hasGlobalIpv6(lp.linkAddresses.map { it.address })
+                val now = state.value ?: return
+                if (now.hasIpv6 != v6) {
+                    state.value = now.copy(hasIpv6 = v6)
+                    EngineLog.add("network: IPv6 ${if (v6) "available" else "not available"}")
                 }
             }
 
@@ -92,6 +105,9 @@ object NetworkIdentity {
         }
     }.onFailure { EngineLog.add("provider lookup failed: $it") }.getOrNull()
 
+    private fun ipv6(cm: ConnectivityManager, network: Network): Boolean? =
+        cm.getLinkProperties(network)?.let { lp -> NetworkInfo.hasGlobalIpv6(lp.linkAddresses.map { it.address }) }
+
     /** Operator code and name from Android; both are readable without a permission. */
     private fun mobile(context: Context): NetworkInfo {
         val tm = context.getSystemService(TelephonyManager::class.java)
@@ -109,6 +125,11 @@ object NetworkIdentity {
             Transport.ETHERNET -> "Ethernet"
             Transport.OTHER -> "other"
         }
-        return listOfNotNull(kind, n.providerName, n.mccMnc).joinToString(", ")
+        val v6 = when (n.hasIpv6) {
+            true -> "IPv6"
+            false -> "no IPv6"
+            null -> null
+        }
+        return listOfNotNull(kind, n.providerName, n.mccMnc, v6).joinToString(", ")
     }
 }

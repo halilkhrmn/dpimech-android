@@ -13,6 +13,8 @@ data class NetworkInfo(
     val mccMnc: String? = null,
     val operatorName: String? = null,
     val isp: IspInfo? = null,
+    /** Whether the network has a global IPv6 address; null while unknown. */
+    val hasIpv6: Boolean? = null,
 ) {
     /** The known provider: from the lookup, else from the mobile operator code or name. */
     val known: Isp? get() = isp?.known ?: if (transport == Transport.CELLULAR) Isp.matchMobile(mccMnc, operatorName) else null
@@ -33,6 +35,15 @@ data class NetworkInfo(
         get() = known?.name ?: isp?.provider?.ifEmpty { null } ?: operatorName?.ifEmpty { null }
 
     companion object {
+        /**
+         * A global IPv6 address (not loopback, link-local or unique-local fc00::/7). Without one,
+         * IPv6 connections fail ("Network is unreachable"), so the VPN should not take them.
+         */
+        fun hasGlobalIpv6(addresses: List<java.net.InetAddress>): Boolean = addresses.any { a ->
+            a is java.net.Inet6Address && !a.isLoopbackAddress && !a.isLinkLocalAddress && !a.isSiteLocalAddress &&
+                !a.isAnyLocalAddress && (a.address[0].toInt() and 0xfe) != 0xfc
+        }
+
         /** Mobile country codes of the countries with presets (and a few neighbours). */
         val MCC_COUNTRY = mapOf("286" to "TR", "250" to "RU", "255" to "UA", "257" to "BY", "401" to "KZ", "432" to "IR")
     }

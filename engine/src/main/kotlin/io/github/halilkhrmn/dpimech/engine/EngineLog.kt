@@ -1,6 +1,7 @@
 package io.github.halilkhrmn.dpimech.engine
 
 import android.util.Log
+import io.github.halilkhrmn.dpimech.core.LogCollapser
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,6 +19,7 @@ object EngineLog {
     private val time = SimpleDateFormat("HH:mm:ss", Locale.ROOT)
     private val lines = ArrayDeque<String>()
     private val state = MutableStateFlow<List<String>>(emptyList())
+    private val collapser = LogCollapser()
 
     /** The newest lines, oldest first; updates live. */
     val flow: StateFlow<List<String>> = state.asStateFlow()
@@ -25,8 +27,13 @@ object EngineLog {
     @Synchronized
     fun add(line: String) {
         Log.i(TAG, line)
-        if (lines.size == MAX_LINES) lines.removeFirst()
-        lines.addLast("${time.format(Date())} $line")
+        val (shown, replaces) = collapser.add(line)
+        if (replaces && lines.isNotEmpty()) {
+            lines.removeLast()
+        } else if (lines.size == MAX_LINES) {
+            lines.removeFirst()
+        }
+        lines.addLast("${time.format(Date())} $shown")
         state.value = lines.toList()
     }
 
@@ -36,6 +43,7 @@ object EngineLog {
     @Synchronized
     fun clear() {
         lines.clear()
+        collapser.reset()
         state.value = emptyList()
     }
 }
