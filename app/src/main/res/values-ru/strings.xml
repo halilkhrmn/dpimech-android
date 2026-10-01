@@ -38,4 +38,22 @@
     <string name="done">Готово</string>
     <string name="back">Назад</string>
     <string name="notice_not_vpn">DPIMech — не VPN-сервис. Функция VPN в Android используется только чтобы перехватить трафик выбранных приложений на телефоне; соединения идут напрямую к сайту, ничего не проходит через чужие серверы. Сайты, заблокированные по IP-адресу, останутся заблокированными. Android допускает только одну VPN одновременно.</string>
+    <string name="lab_title">Лаборатория стратегий</string>
+    <string name="lab_isp">Ваш провайдер: %1$s</string>
+    <string name="lab_isp_unknown">Определяем провайдера…</string>
+    <string name="lab_community">Проверить и список сообщества</string>
+    <string name="lab_count">Будет проверено стратегий: %1$d</string>
+    <string name="lab_progress">Готово %1$d из %2$d</string>
+    <string name="lab_start">Начать проверку</string>
+    <string name="lab_baseline">Без обхода прошло запросов: %1$d из %2$d.</string>
+    <string name="lab_baseline_all_open">Все сайты и так открываются; возможно, в этой сети обходить нечего.</string>
+    <string name="lab_failed">Не открылись: %1$s</string>
+    <string name="lab_none_worked">Ни одна стратегия не открыла сайты. Попробуйте список сообщества или другую сеть.</string>
+    <string name="lab_best_confirmed">Лучшая: %1$s (открыла все сайты во всех раундах)</string>
+    <string name="lab_best_unconfirmed">Пока лучшая: %1$s (не во всех раундах надёжна)</string>
+    <string name="lab_confirmed">Подтверждено</string>
+    <string name="lab_recommended">Рекомендуется для вашего провайдера</string>
+    <string name="lab_error">не запустилась</string>
+    <string name="lab_use_for">Использовать для «%1$s»</string>
+    <string name="lab_use_new">Использовать в новом профиле</string>
 </resources>

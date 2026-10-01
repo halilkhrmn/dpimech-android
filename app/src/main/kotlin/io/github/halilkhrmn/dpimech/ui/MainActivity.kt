@@ -17,9 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.halilkhrmn.dpimech.DpimechApp
+import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.Profile
+import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineState
+import java.util.UUID
 
 class MainActivity : ComponentActivity() {
     private var pending: Profile? = null
@@ -41,12 +44,50 @@ class MainActivity : ComponentActivity() {
                 val saved by app.profiles.saved.collectAsStateWithLifecycle()
                 val engine by EngineState.flow.collectAsStateWithLifecycle()
                 val strategies by app.strategies.options.collectAsStateWithLifecycle()
+                val lab by app.lab.flow.collectAsStateWithLifecycle()
                 // null: home screen; "": a new profile; otherwise the id being edited.
                 var editing by rememberSaveable { mutableStateOf<String?>(null) }
+                var inLab by rememberSaveable { mutableStateOf(false) }
 
-                BackHandler(enabled = editing != null) { editing = null }
+                BackHandler(enabled = editing != null || inLab) {
+                    if (editing != null) editing = null else inLab = false
+                }
                 val edit = editing
-                if (edit == null) {
+                if (inLab && edit == null) {
+                    LabScreen(
+                        state = lab,
+                        options = strategies,
+                        initialPacks = saved.selected?.packs.orEmpty(),
+                        targetProfile = saved.selected?.name,
+                        onDetectIsp = app.lab::detectIsp,
+                        onStart = app.lab::start,
+                        onCancel = app.lab::cancel,
+                        onUse = { result, packs ->
+                            val s = result.strategy!!
+                            val entry = StrategyEntry(s.name, s.args)
+                            val current = saved.selected
+                            if (current != null) {
+                                app.profiles.save(current.copy(strategy = entry))
+                                inLab = false
+                            } else {
+                                // No profile yet: make one from the tested sites and open it.
+                                val installed = InstalledApps.packageNames(packageManager)
+                                val chosen = DomainPack.ALL.filter { it.id in packs }
+                                val p = Profile(
+                                    id = UUID.randomUUID().toString(),
+                                    name = chosen.joinToString(" + ") { it.name },
+                                    packs = chosen.map { it.id },
+                                    strategy = entry,
+                                    apps = chosen.flatMap { it.packages }.filter { it in installed },
+                                )
+                                app.profiles.save(p)
+                                inLab = false
+                                editing = p.id
+                            }
+                        },
+                        onBack = { inLab = false },
+                    )
+                } else if (edit == null) {
                     HomeScreen(
                         saved = saved,
                         engine = engine,
@@ -55,6 +96,7 @@ class MainActivity : ComponentActivity() {
                         onEdit = { editing = it },
                         onNew = { editing = "" },
                         onRefreshStrategies = { app.strategies.refresh() },
+                        onLab = { inLab = true },
                     )
                 } else {
                     ProfileEditor(

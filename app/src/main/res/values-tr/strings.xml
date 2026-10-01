@@ -38,4 +38,22 @@
     <string name="done">Tamam</string>
     <string name="back">Geri</string>
     <string name="notice_not_vpn">DPIMech bir VPN hizmeti değildir. Android\'in VPN özelliği yalnızca seçili uygulamaların trafiğini telefonda yakalamak için kullanılır; bağlantılar yine doğrudan siteye gider, hiçbir şey başkasının sunucusundan geçmez. IP adresiyle engellenen siteler engelli kalır. Android aynı anda yalnızca bir VPN\'e izin verir.</string>
+    <string name="lab_title">Strateji Laboratuvarı</string>
+    <string name="lab_isp">Sağlayıcın: %1$s</string>
+    <string name="lab_isp_unknown">Sağlayıcın bulunuyor…</string>
+    <string name="lab_community">Topluluk listesini de dene</string>
+    <string name="lab_count">%1$d strateji denenecek</string>
+    <string name="lab_progress">%1$d / %2$d tamamlandı</string>
+    <string name="lab_start">Testi başlat</string>
+    <string name="lab_baseline">Atlatma olmadan: %2$d isteğin %1$d tanesi geçti.</string>
+    <string name="lab_baseline_all_open">Tüm siteler zaten açılıyor; bu ağda atlatılacak bir şey olmayabilir.</string>
+    <string name="lab_failed">Açılmayan: %1$s</string>
+    <string name="lab_none_worked">Hiçbir strateji siteleri açamadı. Topluluk listesini ya da başka bir ağı dene.</string>
+    <string name="lab_best_confirmed">En iyisi: %1$s (her turda tüm siteleri açtı)</string>
+    <string name="lab_best_unconfirmed">Şimdilik en iyisi: %1$s (her turda güvenilir değil)</string>
+    <string name="lab_confirmed">Doğrulandı</string>
+    <string name="lab_recommended">Sağlayıcın için önerilen</string>
+    <string name="lab_error">başlamadı</string>
+    <string name="lab_use_for">“%1$s” için kullan</string>
+    <string name="lab_use_new">Yeni profilde kullan</string>
 </resources>

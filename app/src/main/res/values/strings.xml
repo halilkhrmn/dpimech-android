@@ -39,4 +39,22 @@
     <string name="done">Done</string>
     <string name="back">Back</string>
     <string name="notice_not_vpn">DPIMech is not a VPN service. Android\'s VPN feature is only used to catch the chosen apps\' traffic on your phone; connections still go straight to the site and nothing passes through anyone else\'s server. Sites blocked by IP address stay blocked. Android allows one VPN at a time.</string>
+    <string name="lab_title">Strategy Lab</string>
+    <string name="lab_isp">Your provider: %1$s</string>
+    <string name="lab_isp_unknown">Looking up your provider…</string>
+    <string name="lab_community">Also test the community list</string>
+    <string name="lab_count">%1$d strategies will be tested</string>
+    <string name="lab_progress">%1$d of %2$d done</string>
+    <string name="lab_start">Start test</string>
+    <string name="lab_baseline">Without a bypass: %1$d of %2$d requests got through.</string>
+    <string name="lab_baseline_all_open">Every site opens already; there may be nothing to bypass on this network.</string>
+    <string name="lab_failed">Failed: %1$s</string>
+    <string name="lab_none_worked">No strategy opened the sites. Try the community list or another network.</string>
+    <string name="lab_best_confirmed">Best: %1$s (opened every site in every round)</string>
+    <string name="lab_best_unconfirmed">Best so far: %1$s (not reliable in every round)</string>
+    <string name="lab_confirmed">Confirmed</string>
+    <string name="lab_recommended">Recommended for your provider</string>
+    <string name="lab_error">did not start</string>
+    <string name="lab_use_for">Use for “%1$s”</string>
+    <string name="lab_use_new">Use in a new profile</string>
 </resources>

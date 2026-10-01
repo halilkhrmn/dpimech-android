@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -56,6 +57,7 @@ fun HomeScreen(
     onEdit: (String) -> Unit,
     onNew: () -> Unit,
     onRefreshStrategies: suspend () -> List<String>,
+    onLab: () -> Unit,
 ) {
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -66,6 +68,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
+                    IconButton(onClick = onLab) { Icon(Icons.Default.Science, stringResource(R.string.lab_title)) }
                     IconButton(onClick = {
                         scope.launch {
                             val errors = onRefreshStrategies()
