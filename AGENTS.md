@@ -57,7 +57,12 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
 engine/   Android library: BypassVpnService, Ciadpi (process), TProxy (hev JNI), EngineState
 app/      Compose UI (home, profile editor, app picker), Quick Settings tile, repositories
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
+site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
+
+- The launcher icon is the desktop octopus (`crates/gui/assets/logo-source.png` there), as an
+  adaptive icon with a light purple background; `site/logo.png` and `favicon.ico` are the desktop files.
+- The two landing pages link to each other (Desktop / Android switcher); keep them in step.
 
 - ciadpi runs as a **separate process** (`libciadpi.so` in nativeLibraryDir), one per profile or
   Lab test. hev-socks5-tunnel runs **in-process** through its JNI (it needs the TUN fd).

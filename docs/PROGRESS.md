@@ -11,6 +11,7 @@
   - [x] `app`: home, profile editor (packs, domains, strategy, apps, domain filter), app picker
   - [x] Remote strategy list (default.json) + community list, cached
   - [x] Quick Settings tile
+  - [x] Landing page (GitHub Pages), desktop logo as launcher icon
   - [ ] First test on a real phone (CI APK)
   - [ ] Release signing
 - [ ] **Phase 2 — Smarts:** Strategy Lab, ISP detection, per-network memory, DNS, watchdog, QUIC switch, wizard
@@ -18,6 +19,14 @@
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
 
 ## Work log
+
+### 2026-10-01 — Landing page and icon
+- Done: `site/` in the desktop page's style (same logo, favicon, flags) with a Desktop / Android
+  switcher; the desktop page gets the matching switcher in halilkhrmn/dpimech#8. `pages.yml` deploys
+  `site/` from `main`. Launcher icon is now the desktop octopus. README in en/tr/ru.
+- Verified how: both pages rendered in Chromium at 1000 px and 390 px (no script errors, no sideways
+  scroll); icon checked under a round mask.
+- Open/next: owner sets Settings → Pages → Source: "GitHub Actions" once in this repository.
 
 ### 2026-10-01 — Phase 1 skeleton: core, engines, VPN service, UI
 - Done: Gradle project (AGP 9.4.1, Kotlin 2.4.20, Gradle 9.8); `core` module ported from desktop

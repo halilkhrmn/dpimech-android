@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPIMech for Android - open the sites your provider blocks</title>
+<meta name="description" content="DPIMech for Android opens sites and apps that your internet provider blocks with DPI, only for the apps you choose. Free, open source, no root, not a VPN service.">
+<link rel="icon" href="favicon.ico">
+<style>
+  /* Deliberately old-school: one column, grey bevels, Verdana, blue links. */
+  body {
+    margin: 0;
+    padding: 12px;
+    background: #c0c0c0 repeating-linear-gradient(45deg, #c8c8c8 0 2px, #c0c0c0 2px 6px);
+    font: 13px/1.5 Verdana, Tahoma, Geneva, sans-serif;
+    color: #000;
+  }
+  #page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #fff;
+    border: 2px outset #eee;
+  }
+  #top {
+    background: linear-gradient(#0a246a, #3a6ea5);
+    color: #fff;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  #top img { width: 72px; height: 72px; }
+  #top h1 { margin: 0; font: bold 28px Tahoma, Verdana, sans-serif; letter-spacing: 1px; }
+  #top p { margin: 2px 0 0; color: #dde6ff; }
+  #nav {
+    background: #ece9d8;
+    border-bottom: 1px solid #808080;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  #nav a { margin-right: 10px; }
+  #platforms { background: #d4d0c8; border-bottom: 1px solid #808080; padding: 3px 10px; font-size: 12px; }
+  #platforms b, #platforms a { display: inline-block; padding: 1px 8px; margin-right: 4px; border: 2px outset #fff; background: #ece9d8; color: #000; text-decoration: none; }
+  #platforms b { border-style: inset; background: #fff; }
+  #nav img { width: 16px; height: 11px; vertical-align: -1px; margin-right: 3px; border: 1px solid #999; }
+  #get {
+    background: #ffffe1;
+    border-bottom: 1px dashed #c0a000;
+    padding: 12px 16px;
+    text-align: center;
+  }
+  #get-main {
+    display: inline-block;
+    padding: 8px 22px;
+    background: linear-gradient(#4f9a3a, #2f7a1f);
+    border: 2px outset #7cc36a;
+    color: #fff !important;
+    font: bold 16px Tahoma, Verdana, sans-serif;
+    text-decoration: none;
+  }
+  #get-main:active { border-style: inset; }
+  #get-info { display: block; font-size: 11px; color: #555; margin-top: 5px; }
+  #get-other { font-size: 12px; }
+  main { padding: 6px 16px 16px; }
+  h2 {
+    font: bold 15px Tahoma, Verdana, sans-serif;
+    background: #d4d0c8;
+    border: 1px solid #808080;
+    padding: 3px 8px;
+    margin: 18px 0 8px;
+  }
+  a { color: #0000ee; }
+  a:visited { color: #551a8b; }
+  .downloads { display: flex; flex-wrap: wrap; gap: 10px; }
+  .dl {
+    flex: 1 1 150px;
+    border: 2px outset #eee;
+    background: #f4f4f4;
+    padding: 8px 10px;
+  }
+  .dl b { font-size: 14px; }
+  .dl small { color: #555; display: block; }
+  .button {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    background: #d4d0c8;
+    border: 2px outset #fff;
+    color: #000 !important;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .button:active { border-style: inset; }
+  .cmd {
+    background: #000;
+    color: #0f0;
+    font: 12px/1.5 "Courier New", monospace;
+    padding: 8px 10px;
+    border: 2px inset #808080;
+    overflow-x: auto;
+  }
+  .note {
+    border: 1px solid #c0a000;
+    background: #ffffe1;
+    padding: 6px 10px;
+  }
+  ul { padding-left: 22px; margin: 6px 0; }
+  table { border-collapse: collapse; width: 100%; }
+  td { border: 1px solid #a0a0a0; padding: 4px 6px; vertical-align: top; }
+  td:first-child { background: #ece9d8; white-space: nowrap; font-weight: bold; }
+  hr { border: 0; border-top: 1px solid #808080; }
+  footer { text-align: center; font-size: 11px; color: #444; padding: 8px 12px 14px; }
+  .badge {
+    display: inline-block;
+    border: 1px solid #000;
+    font: 10px/1 Verdana, sans-serif;
+    margin: 3px 2px;
+  }
+  .badge i { font-style: normal; display: inline-block; padding: 3px 5px; background: #000; color: #fff; }
+  .badge u { text-decoration: none; display: inline-block; padding: 3px 5px; background: #ff0; }
+  @media (max-width: 520px) {
+    body { padding: 0; }
+    #page { border: 0; }
+    #top { flex-direction: column; text-align: center; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<div id="page">
+
+<header id="top">
+  <img src="logo.png" alt="DPIMech logo">
+  <div>
+    <h1>DPIMech <small style="font-size:16px">for Android</small></h1>
+    <p>Open the sites and apps your internet provider blocks &mdash; only for the apps you choose.</p>
+  </div>
+</header>
+
+<!-- The same switcher is on the desktop page: one DPIMech, two repositories. -->
+<div id="platforms">
+  <a href="https://halilkhrmn.github.io/dpimech/">&#128187; Desktop (Windows, Linux, macOS)</a>
+  <b>&#128241; Android</b>
+</div>
+
+<div id="nav">
+  <a href="#download">Download</a>
+  <a href="#what">What is it?</a>
+  <a href="#safe">Is it safe?</a>
+  <a href="#credits">Credits</a>
+  <a href="https://github.com/halilkhrmn/dpimech-android">Source code</a>
+  | <a href="https://github.com/halilkhrmn/dpimech-android/blob/main/README.md"><img src="flags/gb.svg" alt="">English</a>
+  <a href="https://github.com/halilkhrmn/dpimech-android/blob/main/README.tr.md"><img src="flags/tr.svg" alt="">Türkçe</a>
+  <a href="https://github.com/halilkhrmn/dpimech-android/blob/main/README.ru.md"><img src="flags/ru.svg" alt="">Русский</a>
+</div>
+
+<!-- Filled in by the script at the end: newest release and its APK. -->
+<div id="get">
+  <a id="get-main" href="https://github.com/halilkhrmn/dpimech-android/releases/latest">Download DPIMech for Android</a>
+  <span id="get-info">Free, for Android 8.0 and newer. No root needed.</span>
+  <a id="get-other" href="https://github.com/halilkhrmn/dpimech-android/releases">All versions</a>
+</div>
+
+<main>
+
+<h2 id="download">Download</h2>
+<div class="downloads">
+  <div class="dl">
+    <b>APK</b>
+    <small>From GitHub releases (works on every phone)</small>
+    <a class="button" id="dl-apk" href="https://github.com/halilkhrmn/dpimech-android/releases/latest">Download</a>
+  </div>
+  <div class="dl">
+    <b>IzzyOnDroid</b> <em>(planned)</em>
+    <small>F-Droid compatible repository, automatic updates</small>
+    <a class="button" href="https://apt.izzysoft.de/fdroid/">About</a>
+  </div>
+  <div class="dl">
+    <b>F-Droid</b> <em>(planned)</em>
+    <small>Built from source by F-Droid</small>
+    <a class="button" href="https://f-droid.org/">About</a>
+  </div>
+</div>
+<p class="note" id="early">
+  <b>Early stage.</b> The Android version is being built right now. Until the first release, test builds
+  come from <a href="https://github.com/halilkhrmn/dpimech-android/actions/workflows/ci.yml">CI</a>
+  (<i>dpimech-debug-apk</i>). Want it on your computer instead?
+  <a href="https://halilkhrmn.github.io/dpimech/">DPIMech for desktop</a>.
+</p>
+
+<h2 id="what">What is it?</h2>
+<p>
+  Some internet providers block sites and apps with <b>DPI</b> (deep packet inspection).
+  <b>ByeDPI</b> gets around it by changing how the first packets of a connection look.
+  DPIMech for Android runs ByeDPI on your phone, only for the apps you pick, with the same tested
+  strategies as the desktop app.
+</p>
+<p class="note">
+  <b>Not a VPN service.</b> Android's VPN feature is only used to catch the chosen apps' traffic on the phone.
+  Every connection still goes straight to the site: nothing passes through someone else's server,
+  your IP address is not hidden, and sites blocked by IP address stay blocked.
+</p>
+<ul>
+  <li>Per app: only the selected apps, or every app except the selected ones.</li>
+  <li>Ready-made packs: Discord, YouTube, Roblox, X, Instagram, Wattpad &mdash; the pack also ticks the app.</li>
+  <li>Only the pack's sites get the bypass; everything else in the app is left alone.</li>
+  <li>Strategies shared with the desktop app, updated without a new release, plus a community list.</li>
+  <li>Quick Settings tile and a notification with a stop button.</li>
+  <li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский.</li>
+</ul>
+
+<h2>Desktop and Android</h2>
+<table>
+  <tr><td>Desktop</td><td>Windows, Linux, macOS. zapret, ByeDPI, GoodbyeDPI; whole computer or per app. <a href="https://halilkhrmn.github.io/dpimech/">Go to the desktop page</a>.</td></tr>
+  <tr><td>Android</td><td>8.0 and newer. ByeDPI through Android's VPN feature, per app, no root. This page.</td></tr>
+</table>
+
+<h2 id="safe">Is it safe?</h2>
+<ul>
+  <li>All code is open. ByeDPI and hev-socks5-tunnel are built from source inside the APK; nothing executable is downloaded later.</li>
+  <li>Strategy lists are plain text, and every option is checked against an allowlist before ByeDPI starts.</li>
+  <li>The engine only listens on the phone itself (127.0.0.1).</li>
+  <li>No accounts, no ads, no analytics, no crash reporters.</li>
+  <li>Android allows one VPN at a time, so another VPN or a VPN-based ad blocker cannot run together with it.</li>
+</ul>
+
+<h2 id="credits">Credits</h2>
+<p>
+  DPIMech only manages these projects; the real work is theirs:
+  <a href="https://github.com/hufrea/byedpi">ByeDPI</a>,
+  <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>.
+  Community strategies from <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>.
+  Made with Kotlin and Jetpack Compose. Developed with AI assistance and tested by hand.
+</p>
+<p>
+  Found a bug? <a href="https://github.com/halilkhrmn/dpimech-android/issues">Open an issue</a>.
+</p>
+
+</main>
+
+<hr>
+<footer>
+  <span class="badge"><i>LICENSE</i><u>GPL v3</u></span>
+  <span class="badge"><i>MADE WITH</i><u>KOTLIN</u></span>
+  <span class="badge"><i>NO</i><u>ROOT</u></span>
+  <br>
+  DPIMech &middot; free software under the <a href="https://github.com/halilkhrmn/dpimech-android/blob/main/LICENSE">GNU GPL v3 or later</a>
+  &middot; <a href="https://halilkhrmn.github.io/dpimech/">desktop version</a>
+</footer>
+
+</div>
+<script>
+// Newest release and its APK from the GitHub API. Without the API (offline, rate limit, no
+// release yet) the links simply open the releases page.
+(async function () {
+  var repo = "halilkhrmn/dpimech-android";
+  var main = document.getElementById("get-main");
+  var info = document.getElementById("get-info");
+  var rel;
+  try {
+    var r = await fetch("https://api.github.com/repos/" + repo + "/releases/latest");
+    if (!r.ok) return;
+    rel = await r.json();
+  } catch (e) {
+    return;
+  }
+  var apks = (rel.assets || []).filter(function (a) { return /\.apk$/i.test(a.name); });
+  // The universal APK fits every phone; per-ABI ones are smaller but need the right choice.
+  var apk = apks.filter(function (a) { return /universal/i.test(a.name); })[0] || apks[0];
+  if (!apk) return;
+  var version = String(rel.tag_name || "").replace(/^v/, "");
+  var date = rel.published_at ? new Date(rel.published_at).toLocaleDateString() : "";
+  document.getElementById("dl-apk").href = apk.browser_download_url;
+  document.getElementById("early").style.display = "none";
+  main.textContent = "Download DPIMech " + version + " for Android";
+  main.href = apk.browser_download_url;
+  info.textContent = apk.name + " · " + (apk.size / 1048576).toFixed(1) + " MB" + (date ? " · released " + date : "");
+})();
+</script>
+</body>
+</html>
