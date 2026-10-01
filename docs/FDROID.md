@@ -10,7 +10,7 @@ rule against AI-assisted code (checked 2026-10-01), unlike IzzyOnDroid (see `IZZ
 - `fastlane/metadata/android/{en-US,tr,ru}`: descriptions, icon, featureGraphic, screenshots,
   changelog — F-Droid reads them from the tag.
 - F-Droid-style build checked: fresh clone with submodules, F-Droid's scanner (0 problems; the
-  only warning is hev's unused Windows `wintun.dll`, removed by `scandelete`), wrapper removed
+  only warning is hev's unused Windows `wintun.dll`, removed before the scan by `rm`), wrapper removed
   (F-Droid uses its own `gradlew-fdroid`; Gradle 9.8.0 is in its checksum list), no signing
   variables, `gradle assembleRelease` in `app/` → `app/build/outputs/apk/release/app-universal-release-unsigned.apk`.
 - Reproducible build: with `Binaries` + `AllowedAPKSigningKeys`, F-Droid compares its build with
@@ -59,7 +59,7 @@ The GitHub release APK works on every phone; Obtainium can follow GitHub release
 > - Android companion of the desktop app https://github.com/halilkhrmn/dpimech.
 > - Runs ByeDPI (https://github.com/hufrea/byedpi) and hev-socks5-tunnel
 >   (https://github.com/heiher/hev-socks5-tunnel), both pinned git submodules built from source with
->   ndk-build. No prebuilt binaries; hev's unused Windows `wintun.dll` is removed with `scandelete`.
+>   ndk-build. No prebuilt binaries; hev's unused Windows `wintun.dll` is removed with `rm`.
 > - `VpnService` is only used locally to hand the chosen apps' traffic to ByeDPI on 127.0.0.1;
 >   nothing goes to a remote server. `QUERY_ALL_PACKAGES` is needed for the per-app picker.
 > - NonFreeNet: the app asks ipwho.is for the provider's name (per-network strategy memory).

@@ -1,8 +1,7 @@
 AntiFeatures:
   NonFreeNet:
-    en-US: Asks ipwho.is (a free-of-charge but not open service) for the network
-      provider's name, used for the per-network strategy memory and provider 
-      presets.
+    en-US: Asks ipwho.is (a free-of-charge but not open service) for the network provider's
+      name, used for the per-network strategy memory and provider presets.
 Categories:
   - Connectivity
   - Internet
@@ -29,12 +28,11 @@ Builds:
     gradle:
       - yes
     output: build/outputs/apk/release/app-universal-release-unsigned.apk
-    scandelete:
+    rm:
       - native/hev-socks5-tunnel/third-part/wintun
     ndk: 29.0.14206865
 
-AllowedAPKSigningKeys: 
-  dd5e5e13f10e026a494c95c7e23a0b8fca475af71c710d690069a32495ed26ca
+AllowedAPKSigningKeys: dd5e5e13f10e026a494c95c7e23a0b8fca475af71c710d690069a32495ed26ca
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
