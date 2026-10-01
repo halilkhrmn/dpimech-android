@@ -5,5 +5,5 @@
     <string name="engine_running_text">Only the chosen apps are affected. Nothing goes to another server.</string>
     <string name="engine_stop">Turn off</string>
     <string name="engine_error_no_permission">Android did not allow DPIMech to start (VPN permission missing or always-on VPN set for another app).</string>
-    <string name="engine_error_died">ByeDPI stopped unexpectedly (code %1$d).</string>
+    <string name="engine_error_gave_up">ByeDPI kept stopping, so DPIMech turned the bypass off. Try another strategy.</string>
 </resources>

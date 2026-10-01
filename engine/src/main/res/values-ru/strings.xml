@@ -5,5 +5,5 @@
     <string name="engine_running_text">Действует только на выбранные приложения. Ничего не идёт на чужие серверы.</string>
     <string name="engine_stop">Выключить</string>
     <string name="engine_error_no_permission">Android не разрешил запуск DPIMech (нет разрешения VPN или постоянная VPN задана для другого приложения).</string>
-    <string name="engine_error_died">ByeDPI неожиданно остановился (код %1$d).</string>
+    <string name="engine_error_gave_up">ByeDPI постоянно останавливался, поэтому DPIMech выключил обход. Попробуйте другую стратегию.</string>
 </resources>

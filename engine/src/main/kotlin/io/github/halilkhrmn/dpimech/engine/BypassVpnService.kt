@@ -18,7 +18,9 @@ import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
 import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.TunnelConfig
+import io.github.halilkhrmn.dpimech.core.Socks5
 import io.github.halilkhrmn.dpimech.core.VpnApps
+import io.github.halilkhrmn.dpimech.core.Watchdog
 import java.io.File
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
@@ -33,6 +35,8 @@ class BypassVpnService : VpnService() {
     private var tun: ParcelFileDescriptor? = null
     private var engine: Ciadpi? = null
     private var profile: Profile? = null
+    private var engineArgs: List<String> = emptyList()
+    private var watchdog: Thread? = null
 
     /** Set while a stop is intended, so the engine watcher does not report a crash. */
     @Volatile
@@ -88,7 +92,8 @@ class BypassVpnService : VpnService() {
                     domainFilter = p.domainFilter && hostlist != null,
                 ),
             ).getOrThrow()
-            val ciadpi = Ciadpi.start(this, args, port, p.name).also { engine = it }
+            engine = Ciadpi.start(this, args, port, p.name)
+            engineArgs = args
 
             val config = TunnelConfig(socksPort = port)
             val builder = Builder()
@@ -110,7 +115,7 @@ class BypassVpnService : VpnService() {
             check(TProxy.TProxyStartService(yaml.path, fd.fd)) { "tunnel did not start" }
 
             profile = p
-            watch(ciadpi)
+            startWatchdog(port)
             EngineState.set(EngineState.Running(p.id, p.name))
             EngineLog.add("started profile ${p.name} on port $port")
         } catch (e: Exception) {
@@ -119,21 +124,55 @@ class BypassVpnService : VpnService() {
         }
     }
 
-    /** Reports an engine that exits on its own (Phase 2 adds restart and health probes). */
-    private fun watch(ciadpi: Ciadpi) {
-        thread(name = "ciadpi-watch", isDaemon = true) {
-            val code = ciadpi.waitFor()
-            if (!stopping && engine === ciadpi) {
-                worker.execute {
-                    stopEngine(EngineState.Failed(profile?.id, getString(R.string.engine_error_died, code)))
+    /**
+     * Restarts ciadpi on the same port when it exits or stops answering, so hev-socks5-tunnel
+     * keeps working without a new VPN interface. Gives up after a restart loop (see [Watchdog]).
+     */
+    private fun startWatchdog(port: Int) {
+        val policy = Watchdog()
+        watchdog = thread(name = "ciadpi-watchdog", isDaemon = true) {
+            val started = System.nanoTime()
+            while (!stopping) {
+                try {
+                    Thread.sleep(1000)
+                } catch (_: InterruptedException) {
+                    return@thread
+                }
+                val current = engine ?: return@thread
+                val now = (System.nanoTime() - started) / 1_000_000_000
+                val (action, reason) = policy.tick(now, current.isAlive) { Socks5.greets(port) }
+                when (action) {
+                    Watchdog.Action.NONE -> Unit
+                    Watchdog.Action.RESTART -> worker.execute { restartEngine(current, port, reason) }
+                    Watchdog.Action.GIVE_UP -> {
+                        worker.execute {
+                            stopEngine(EngineState.Failed(profile?.id, getString(R.string.engine_error_gave_up)))
+                        }
+                        return@thread
+                    }
                 }
             }
+        }
+    }
+
+    /** Must run on [worker]. */
+    private fun restartEngine(old: Ciadpi, port: Int, reason: String?) {
+        if (stopping || engine !== old) return
+        EngineLog.add("restarting ByeDPI: $reason")
+        old.stop()
+        try {
+            engine = Ciadpi.start(this, engineArgs, port, profile?.name ?: "engine")
+        } catch (e: Exception) {
+            // The next watchdog tick sees a dead engine and tries again (or gives up).
+            EngineLog.add("restart failed: $e")
         }
     }
 
     /** Must run on [worker]. A null [final] keeps the current state (used before a restart). */
     private fun stopEngine(final: EngineState?, stopService: Boolean = true) {
         stopping = true
+        watchdog?.interrupt()
+        watchdog = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         runCatching { tun?.close() }
         tun = null
@@ -172,12 +211,18 @@ class BypassVpnService : VpnService() {
             .setContentIntent(open)
             .addAction(0, getString(R.string.engine_stop), stop)
             .build()
-        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
-        } else {
-            0
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, 0)
+            return
         }
-        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, type)
+        // systemExempted is meant for VPN apps; if this Android does not grant it, specialUse
+        // keeps the service in the foreground instead of crashing it.
+        try {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED)
+        } catch (e: RuntimeException) {
+            EngineLog.add("foreground type systemExempted refused ($e), using specialUse")
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        }
     }
 
     companion object {
