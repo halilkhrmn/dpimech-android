@@ -29,6 +29,11 @@ data class Profile(
     /** Strategies that worked on other providers, keyed by [IspInfo.networkKey]. */
     val perNetwork: Map<String, StrategyEntry> = emptyMap(),
 ) {
+    /** Hosts to test strategies against: the packs' probes, or the user's own domains. */
+    val probes: List<String>
+        get() = (packs.flatMap { DomainPack.byId(it)?.probes.orEmpty() } + extraDomains.mapNotNull(Hostlist::normalize))
+            .distinct()
+
     /** The strategy remembered for this provider, or the profile's default one. */
     fun strategyFor(networkKey: String?): StrategyEntry = networkKey?.let(perNetwork::get) ?: strategy
 
