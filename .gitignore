@@ -10,3 +10,6 @@ captures/
 .cxx/
 *.keystore
 *.jks
+
+# Copied from fastlane by the Pages workflow
+site/screenshots/

@@ -5,7 +5,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "fastlane/metadata/android/en-US/images/phoneScreenshots/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # The store screenshots are the single source; the page shows the English ones.
+      - name: Add screenshots
+        run: cp -r fastlane/metadata/android/en-US/images/phoneScreenshots site/screenshots
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

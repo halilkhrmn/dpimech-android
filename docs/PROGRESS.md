@@ -44,6 +44,15 @@
 
 ## Work log
 
+### 2026-10-01 — Screenshots on the website
+- Done: a "Screenshots" section (five store screenshots as small windows, scrolls sideways on
+  phones). The Pages workflow copies them from `fastlane/…/en-US/images/phoneScreenshots`, so the
+  store images stay the only copy; it also runs when those images change.
+- Verified: Chromium renders at 1100 px (all five fit) and 390 px (scrolls).
+- F-Droid pipeline warnings, for the record: NDK 29 not preinstalled (downloaded, fine), androguard
+  knows API levels only up to 28 (tool limit), CI config/pip notices; the one report entry is the
+  "Reproducible build APK" info item. Nothing to change on our side.
+
 ### 2026-10-01 — fdroiddata merge request !50840
 - Opened by the owner. First pipeline: rewritemeta wanted two lines re-wrapped (newer formatter),
   and `fdroid build` stopped with "Unused scandelete path": the scanner only *warns* about
