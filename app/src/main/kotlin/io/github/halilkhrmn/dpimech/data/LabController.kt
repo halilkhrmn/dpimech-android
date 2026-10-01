@@ -1,7 +1,10 @@
 package io.github.halilkhrmn.dpimech.data
 
 import android.content.Context
+import io.github.halilkhrmn.dpimech.core.DnsCheck
 import io.github.halilkhrmn.dpimech.core.DomainPack
+import io.github.halilkhrmn.dpimech.core.TunnelConfig
+import java.net.InetSocketAddress
 import io.github.halilkhrmn.dpimech.core.IspInfo
 import io.github.halilkhrmn.dpimech.core.IspLookup
 import io.github.halilkhrmn.dpimech.core.LabRequest
@@ -29,6 +32,8 @@ data class LabState(
     val isp: IspInfo? = null,
     val error: String? = null,
     val finished: Boolean = false,
+    /** DNS answers that differ from DNS over HTTPS (signs of DNS blocking). */
+    val dns: List<DnsCheck.Finding> = emptyList(),
 )
 
 /** Runs the Strategy Lab in the background and keeps its progress for the UI (app-wide). */
@@ -69,6 +74,8 @@ class LabController(private val context: Context) {
             val lists = File(context.filesDir, "lists").apply { mkdirs() }
             val runner = LabRunner(AndroidEngineLauncher(context), lists)
             try {
+                val dns = checkDns(probes)
+                state.update { it.copy(dns = dns) }
                 runner.run(
                     LabRequest(strategies, probes),
                     listener = { done, total, r -> state.update { it.add(done, total, r) } },
@@ -80,6 +87,37 @@ class LabController(private val context: Context) {
                 state.update { it.copy(running = false, error = e.message ?: e.toString()) }
             }
         }
+    }
+
+    /**
+     * The phone's DNS and the tunnel's DNS server (plain UDP 53, as the bypassed apps use it)
+     * against DNS over HTTPS. Only mismatches are kept.
+     */
+    private fun checkDns(probes: List<String>): List<DnsCheck.Finding> {
+        val tunnelDns = TunnelConfig(socksPort = 1).dns
+        return DnsCheck.namesToCheck(probes).flatMap { name ->
+            val doh = doh(name)
+            listOf(
+                DnsCheck.compare(name, "system", DnsCheck.system(name), doh),
+                DnsCheck.compare(name, tunnelDns, DnsCheck.queryUdp(InetSocketAddress(tunnelDns, 53), name), doh),
+            )
+        }.filter { it.verdict == DnsCheck.Verdict.NOT_RESOLVED || it.verdict == DnsCheck.Verdict.DIFFERENT }
+            .onEach { EngineLog.add("DNS: ${it.name} via ${it.via} -> ${it.got} (DoH: ${it.doh})") }
+    }
+
+    /** 1.1.1.1 by address first (no DNS needed), the host name as a fallback. */
+    private fun doh(name: String): Set<String>? = listOf("https://1.1.1.1", "https://cloudflare-dns.com").firstNotNullOfOrNull { base ->
+        runCatching {
+            val conn = URL("$base/dns-query?name=$name&type=A").openConnection() as HttpURLConnection
+            conn.setRequestProperty("accept", "application/dns-json")
+            conn.connectTimeout = 4000
+            conn.readTimeout = 4000
+            try {
+                DnsCheck.parseDohJson(conn.inputStream.use { it.readBytes().decodeToString() })
+            } finally {
+                conn.disconnect()
+            }
+        }.getOrNull()
     }
 
     fun cancel() {

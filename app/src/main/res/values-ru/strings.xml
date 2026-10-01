@@ -56,4 +56,9 @@
     <string name="lab_error">не запустилась</string>
     <string name="lab_use_for">Использовать для «%1$s»</string>
     <string name="lab_use_new">Использовать в новом профиле</string>
+    <string name="dns_title">Признаки блокировки через DNS</string>
+    <string name="dns_via_system">DNS вашей сети</string>
+    <string name="dns_not_resolved">%1$s не определяется через %2$s.</string>
+    <string name="dns_different">%1$s → %3$s через %2$s, но %4$s через DNS over HTTPS.</string>
+    <string name="dns_advice">Если сайт не открывается, хотя стратегия работает, включите «Персональный DNS» в настройках Android (Сеть → Персональный DNS → 1dot1dot1dot1.cloudflare-dns.com). Это защитит и приложения в DPIMech.</string>
 </resources>

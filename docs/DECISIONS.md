@@ -63,3 +63,12 @@ Real-world testing needs a phone, but the data path can be checked on Linux: cor
 ciadpi with `ByeDpiCommand` output (domain filter, groups), and an end-to-end test routes one uid
 through a TUN → hev-socks5-tunnel → ciadpi, the same chain as on Android. CI runs both (root and
 IPv6 needed for the second).
+
+## 13. DNS: check and advise now, own DoH resolver later (2026-10-01)
+Bypassed apps send DNS as plain UDP to 1.1.1.1 through hev-socks5-tunnel and ciadpi. Some providers
+answer every port-53 query themselves, and a VPN app cannot point Android's resolver at a local DoH
+server (port 53 cannot be bound, the system resolver only talks to addresses on the VPN). hev's
+`mapdns` only moves resolution into ciadpi, which uses the network's DNS. A real DoH path needs a
+SOCKS5 front in the app or a ciadpi patch; both were left for later. For now the Strategy Lab checks
+the phone's DNS and UDP 53 to the tunnel's server against DNS over HTTPS (1.1.1.1, as on desktop)
+and, on a mismatch, advises Android's Private DNS, which encrypts DNS for the VPN network as well.

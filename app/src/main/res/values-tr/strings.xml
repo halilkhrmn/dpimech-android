@@ -56,4 +56,9 @@
     <string name="lab_error">başlamadı</string>
     <string name="lab_use_for">“%1$s” için kullan</string>
     <string name="lab_use_new">Yeni profilde kullan</string>
+    <string name="dns_title">DNS engeli belirtileri</string>
+    <string name="dns_via_system">ağının DNS\'i</string>
+    <string name="dns_not_resolved">%1$s, %2$s ile çözülmüyor.</string>
+    <string name="dns_different">%1$s → %2$s ile %3$s, ama DNS over HTTPS ile %4$s.</string>
+    <string name="dns_advice">Bir strateji çalıştığı hâlde site açılmıyorsa Android ayarlarında Özel DNS\'i aç (Ağ → Özel DNS → 1dot1dot1dot1.cloudflare-dns.com). Bu, DPIMech kullanan uygulamaları da korur.</string>
 </resources>

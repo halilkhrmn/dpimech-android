@@ -57,4 +57,9 @@
     <string name="lab_error">did not start</string>
     <string name="lab_use_for">Use for “%1$s”</string>
     <string name="lab_use_new">Use in a new profile</string>
+    <string name="dns_title">Signs of DNS blocking</string>
+    <string name="dns_via_system">your network\'s DNS</string>
+    <string name="dns_not_resolved">%1$s does not resolve with %2$s.</string>
+    <string name="dns_different">%1$s → %3$s with %2$s, but %4$s with DNS over HTTPS.</string>
+    <string name="dns_advice">If a site stays blocked although a strategy works, turn on Private DNS in Android settings (Network → Private DNS → 1dot1dot1dot1.cloudflare-dns.com). It also protects the apps that use DPIMech.</string>
 </resources>

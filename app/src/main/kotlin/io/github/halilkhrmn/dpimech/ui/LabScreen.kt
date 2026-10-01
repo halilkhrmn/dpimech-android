@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
+import io.github.halilkhrmn.dpimech.core.DnsCheck
 import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.data.LabState
@@ -131,6 +132,24 @@ fun LabScreen(
                 }
             }
             state.error?.let { item { Text(it, color = MaterialTheme.colorScheme.error) } }
+            if (state.dns.isNotEmpty()) {
+                item {
+                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                        Column(Modifier.padding(12.dp)) {
+                            Text(stringResource(R.string.dns_title), style = MaterialTheme.typography.titleSmall)
+                            state.dns.forEach { f ->
+                                val via = if (f.via == "system") stringResource(R.string.dns_via_system) else f.via
+                                Text(
+                                    if (f.verdict == DnsCheck.Verdict.NOT_RESOLVED) stringResource(R.string.dns_not_resolved, f.name, via)
+                                    else stringResource(R.string.dns_different, f.name, via, f.got.take(2).joinToString(", "), f.doh.take(2).joinToString(", ")),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            Text(stringResource(R.string.dns_advice), style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                }
+            }
             state.baseline?.let { b ->
                 item {
                     Text(
