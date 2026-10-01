@@ -101,3 +101,14 @@ dependency (no Google services involved, F-Droid compatible).
 The dev container has no emulator (no KVM). Robolectric with native graphics and Roborazzi renders
 the Compose screens on the JVM; the images are looked at by hand and uploaded by CI. They are not
 compared against references yet, so they catch crashes and let a reviewer see layout changes.
+
+## 19. Reproducible builds from the start (2026-10-01)
+IzzyOnDroid and F-Droid can verify that a published APK was built from the tagged source. NDK build
+ids and PNG crunching were the only differences found; both are off. The release workflow builds
+clean with JDK 17 (the verifiers' default) and keeps `version-control-info.textproto`.
+
+## 20. IzzyOnDroid's AI policy is an open question for the owner (2026-10-01)
+IzzyOnDroid rejects apps whose code was written by generative AI and treats hidden AI use as a
+reason for rejection. This code was written with an AI assistant, so the listing cannot be prepared
+"around" that: the request must say so honestly, or another channel must be used. Options are in
+docs/IZZYONDROID.md; the choice is the owner's.

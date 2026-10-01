@@ -26,8 +26,22 @@
   - [x] Automatic strategy per network (background test, switch, remember)
 - [ ] **Phase 3 — Extras:** widget, shortcuts, QR profile sharing
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
+  - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
+  - [ ] First signed release (owner: key and secrets)
+  - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
 
 ## Work log
+
+### 2026-10-01 — Logs, problem report, Material You switch, store listing
+- Done: Logs screen (live, copy, clear); "Report a problem" (GitHub issue or e-mail, the user sees
+  the report first); notification settings (strategy change, bypass stopped) with event
+  notifications from the service; settings grouped in sections; Material You switch (power button
+  stays green); fastlane metadata in en/tr/ru with generated store images; reproducible builds.
+- Verified how: 61 tests (core + 15 screen renders + 15 store screenshots), lint clean; release
+  APK manifest has no debuggable/testOnly/cleartext flags, 2.8 MB; two clean release builds in
+  different directories are byte-identical; fastlane texts within limits, HTML well-formed.
+- Open/next: owner decides on IzzyOnDroid given its AI policy (docs/IZZYONDROID.md), sets the
+  GitHub repository description, creates the release key; phone test.
 
 ### 2026-10-01 — Friendlier app: navigation, wizard, settings, automatic strategy
 - Done: bottom navigation (Home, Test, Settings, About); home with one big green ON / grey OFF button
