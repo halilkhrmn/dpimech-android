@@ -30,10 +30,13 @@ jobs:
           export CIADPI=$PWD/build/host/ciadpi
           ./gradlew :core:test --console=plain
       - name: End-to-end test (TUN -> hev -> ciadpi, needs root)
+        # Stop the runner user's daemon first: with -E the root client would otherwise reuse it
+        # and the test would run without root (and be skipped).
         run: |
+          ./gradlew --stop
           sudo -E env "PATH=$PATH" "JAVA_HOME=$JAVA_HOME" \
             CIADPI=$PWD/build/host/ciadpi HEV=$PWD/build/host/hev/bin/hev-socks5-tunnel \
-            ./gradlew :core:test --tests '*TunnelEndToEndTest' --rerun --console=plain
+            ./gradlew --no-daemon :core:test --tests '*TunnelEndToEndTest' --rerun --console=plain
       - name: Fail if the end-to-end test was skipped
         run: |
           f=core/build/test-results/test/TEST-io.github.halilkhrmn.dpimech.core.TunnelEndToEndTest.xml
