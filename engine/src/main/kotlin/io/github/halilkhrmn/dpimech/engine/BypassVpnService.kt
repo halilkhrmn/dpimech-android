@@ -18,6 +18,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
+import io.github.halilkhrmn.dpimech.core.IspLookup
+import io.github.halilkhrmn.dpimech.core.LabRequest
+import io.github.halilkhrmn.dpimech.core.LabResult
+import io.github.halilkhrmn.dpimech.core.LabRunner
+import io.github.halilkhrmn.dpimech.core.LabStrategy
+import io.github.halilkhrmn.dpimech.core.StrategyFile
 import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.TunnelConfig
@@ -44,6 +50,12 @@ class BypassVpnService : VpnService() {
     private var strategy: StrategyEntry? = null
     private var hostlist: File? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var dns = TunnelConfig(socksPort = 1).dns
+    private var autoStrategy = false
+    /** Networks the automatic strategy already tested in this session. */
+    private val autoTested = mutableSetOf<String>()
+    @Volatile
+    private var autoRun: Thread? = null
     private var watchdog: Thread? = null
 
     /** Set while a stop is intended, so the engine watcher does not report a crash. */
@@ -59,6 +71,8 @@ class BypassVpnService : VpnService() {
                     EngineState.set(EngineState.Failed(null, it.message ?: "bad profile"))
                     return START_NOT_STICKY
                 }
+                dns = intent.getStringExtra(EXTRA_DNS) ?: dns
+                autoStrategy = intent.getBooleanExtra(EXTRA_AUTO, false)
                 goForeground(p)
                 worker.execute { startEngine(p) }
             }
@@ -78,6 +92,7 @@ class BypassVpnService : VpnService() {
     }
 
     private fun startEngine(p: Profile) {
+        if (profile?.id != p.id) autoTested.clear()
         stopEngine(null, stopService = false)
         stopping = false
         EngineState.set(EngineState.Starting(p.id))
@@ -99,7 +114,7 @@ class BypassVpnService : VpnService() {
             strategy = entry
             this.hostlist = hostlist
 
-            val config = TunnelConfig(socksPort = port)
+            val config = TunnelConfig(socksPort = port, dns = dns)
             val builder = Builder()
                 .setSession(p.name)
                 .setMtu(config.mtu)
@@ -121,7 +136,7 @@ class BypassVpnService : VpnService() {
             profile = p
             startWatchdog(port)
             watchNetwork()
-            EngineState.set(EngineState.Running(p.id, p.name))
+            EngineState.set(EngineState.Running(p.id, p.name, entry.name))
             EngineLog.add("started profile ${p.name} on port $port")
         } catch (e: Exception) {
             EngineLog.add("start failed: $e")
@@ -183,7 +198,10 @@ class BypassVpnService : VpnService() {
                     val caps = cm.getNetworkCapabilities(network)
                     if (caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) return@thread
                     val isp = NetworkIdentity.lookup(network) ?: return@thread
-                    worker.execute { switchStrategyFor(isp.networkKey) }
+                    worker.execute {
+                        switchStrategyFor(isp.networkKey)
+                        maybeAutoStrategy(isp.networkKey, isp.known)
+                    }
                 }
             }
         }
@@ -206,6 +224,46 @@ class BypassVpnService : VpnService() {
         engineArgs = args
         strategy = entry
         restartEngine(old, enginePort, "network changed")
+        (EngineState.flow.value as? EngineState.Running)?.let { EngineState.set(it.copy(strategyName = entry.name)) }
+    }
+
+    /**
+     * Automatic strategy: on a provider with no remembered strategy, test the standard set
+     * against the profile's sites in the background (the bypass stays on meanwhile) and switch
+     * to the best confirmed one. Must run on [worker].
+     */
+    private fun maybeAutoStrategy(networkKey: String, isp: io.github.halilkhrmn.dpimech.core.Isp?) {
+        val p = profile ?: return
+        if (!autoStrategy || stopping || networkKey in p.perNetwork || !autoTested.add(networkKey)) return
+        val probes = p.probes.take(6)
+        if (probes.isEmpty() || autoRun?.isAlive == true) return
+        val standard = StrategyFile.load(File(filesDir, "strategies.json")).byeDpi
+        val strategies = IspLookup.markRecommended(standard.map { LabStrategy(it.name, it.args, LabResult.STANDARD_SET) }, isp)
+        setAutoTesting(true)
+        EngineLog.add("automatic strategy: testing ${strategies.size} strategies for $networkKey")
+        autoRun = thread(name = "auto-strategy", isDaemon = true) {
+            val results = runCatching {
+                LabRunner(AndroidEngineLauncher(this), File(filesDir, "lists"))
+                    .run(LabRequest(strategies, probes, repeats = 1), { _, _, _ -> }, cancelled = { stopping })
+            }.onFailure { EngineLog.add("automatic strategy failed: $it") }.getOrNull()
+            worker.execute {
+                setAutoTesting(false)
+                val best = results?.let(LabResult::best)?.takeIf { it.confirmed } ?: run {
+                    EngineLog.add("automatic strategy: nothing reliable found for $networkKey")
+                    return@execute
+                }
+                val s = best.strategy!!
+                val entry = StrategyEntry(s.name, s.args)
+                EngineLog.add("automatic strategy: \"${s.name}\" works on $networkKey (${best.ok}/${best.total})")
+                profile = profile?.withStrategy(entry, networkKey)
+                EngineEvents.emit(StrategyLearned(p.id, networkKey, entry))
+                switchStrategyFor(networkKey)
+            }
+        }
+    }
+
+    private fun setAutoTesting(on: Boolean) {
+        (EngineState.flow.value as? EngineState.Running)?.let { EngineState.set(it.copy(autoTesting = on)) }
     }
 
     /** Must run on [worker]. */
@@ -284,14 +342,18 @@ class BypassVpnService : VpnService() {
         const val ACTION_START = "io.github.halilkhrmn.dpimech.START"
         const val ACTION_STOP = "io.github.halilkhrmn.dpimech.STOP"
         const val EXTRA_PROFILE = "profile"
+        const val EXTRA_DNS = "dns"
+        const val EXTRA_AUTO = "auto"
         private const val CHANNEL = "engine"
         private const val NOTIFICATION_ID = 1
 
         /** Call only after [VpnService.prepare] returned null (permission granted). */
-        fun start(context: Context, profile: Profile) {
+        fun start(context: Context, profile: Profile, dns: String, autoStrategy: Boolean) {
             val intent = Intent(context, BypassVpnService::class.java)
                 .setAction(ACTION_START)
                 .putExtra(EXTRA_PROFILE, Json.encodeToString(Profile.serializer(), profile))
+                .putExtra(EXTRA_DNS, dns)
+                .putExtra(EXTRA_AUTO, autoStrategy)
             ContextCompat.startForegroundService(context, intent)
         }
 
