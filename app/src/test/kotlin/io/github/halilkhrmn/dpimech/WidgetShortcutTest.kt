@@ -73,7 +73,8 @@ class WidgetShortcutTest {
         Shortcuts.publish(app, app.profiles.saved.value)
         val list = app.getSystemService(ShortcutManager::class.java).dynamicShortcuts
         assertEquals(listOf("profile-d", "profile-y"), list.sortedBy { it.rank }.map { it.id })
-        assertEquals("Discord", list.first { it.id == "profile-d" }.shortLabel.toString())
+        assertEquals("DPI · Discord", list.first { it.id == "profile-d" }.shortLabel.toString())
+        assertTrue(list.first { it.id == "profile-d" }.longLabel.toString().startsWith("Start DPI with Discord"))
     }
 
     @Test

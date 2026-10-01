@@ -86,6 +86,10 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("${System.getProperty("roborazzi.output.dir", "build/screenshots")}/home_purple.png")
     }
 
+    @Test fun profileEditor() = shot("profile_editor") {
+        ProfileEditor(discord.copy(extraDomains = listOf("example.com", "cdn.example.net", "wattpad.com")), emptyList(), {}, {}, {})
+    }
+
     @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }
 
     @Test fun wizardWelcome() = shot("wizard_welcome") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }

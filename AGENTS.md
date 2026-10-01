@@ -19,6 +19,9 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
 
 ## Rules
 
+- Commits are authored as the owner: `Halil Kahraman <52932792+halilkhrmn@users.noreply.github.com>`
+  (`git config user.name/user.email` in the clone). No AI co-author or session trailers in commit
+  messages.
 - Each release: add `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt` (≤ 500 bytes)
   before tagging; keep short descriptions ≤ 80 characters.
 

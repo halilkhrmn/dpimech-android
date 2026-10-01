@@ -36,6 +36,15 @@
 
 ## Work log
 
+### 2026-10-01 — Phone feedback on Phase 3
+- Done: launcher shortcuts are labelled "DPI · <profile>" (long label "Start DPI with <profile>
+  and open <app>"), so they no longer look like the app's own icon name; extra domains in the
+  profile editor are pills (type or paste, separators or Done add them, ✕ removes; pasted URLs
+  are reduced to the host by `Hostlist.parseInput`); commits are now authored as the owner.
+- Verified: `HostlistInputTest`, shortcut label assertions in the app tests, editor render
+  `profile_editor.png`, lint clean.
+- Next: owner re-tests shortcuts and the editor on the phone.
+
 ### 2026-10-01 — Phase 3: widget and shortcuts (QR dropped)
 - Done: home-screen widget (green ON / grey OFF like the app, active profile, next profile; taps
   open the app when a profile or the VPN permission is missing); launcher shortcuts for up to four

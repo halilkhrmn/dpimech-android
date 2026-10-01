@@ -10,7 +10,9 @@
     <string name="profile_name">Name</string>
     <string name="profile_sites">Sites</string>
     <string name="profile_extra_domains">Other domains</string>
-    <string name="profile_extra_domains_hint">One per line, e.g. example.com (subdomains included)</string>
+    <string name="profile_extra_domains_hint">Type or paste, e.g. example.com (subdomains included)</string>
+    <string name="profile_domain_add">Add domain</string>
+    <string name="profile_domain_remove">Remove %1$s</string>
     <string name="profile_domain_filter">Only these sites</string>
     <string name="profile_domain_filter_hint">Other connections of the chosen apps are left untouched.</string>
     <string name="profile_strategy">Strategy</string>
@@ -157,7 +159,8 @@
     <string name="widget_next">Next profile</string>
     <string name="widget_no_profile">No profile yet</string>
     <string name="widget_description">Bypass on/off and the active profile</string>
-    <string name="shortcut_long">Turn on %1$s</string>
-    <string name="shortcut_long_open">Turn on %1$s and open %2$s</string>
+    <string name="shortcut_short">DPI · %1$s</string>
+    <string name="shortcut_long">Start DPI with %1$s</string>
+    <string name="shortcut_long_open">Start DPI with %1$s and open %2$s</string>
     <string name="shortcut_pin">Add to home screen</string>
 </resources>

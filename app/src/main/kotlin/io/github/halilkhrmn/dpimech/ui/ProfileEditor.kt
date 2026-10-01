@@ -10,18 +10,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -46,11 +53,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.AppMode
 import io.github.halilkhrmn.dpimech.core.ArgPolicy
 import io.github.halilkhrmn.dpimech.core.DomainPack
+import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.core.splitArgs
@@ -73,7 +83,8 @@ fun ProfileEditor(
     val id = remember { initial?.id ?: UUID.randomUUID().toString() }
     var name by rememberSaveable { mutableStateOf(initial?.name.orEmpty()) }
     var packs by rememberSaveable { mutableStateOf(initial?.packs.orEmpty()) }
-    var extra by rememberSaveable { mutableStateOf(initial?.extraDomains.orEmpty().joinToString("\n")) }
+    var domains by rememberSaveable { mutableStateOf(initial?.extraDomains.orEmpty()) }
+    var domainInput by rememberSaveable { mutableStateOf("") }
     var strategyName by rememberSaveable { mutableStateOf(initial?.strategy?.name ?: strategies.firstOrNull()?.entry?.name.orEmpty()) }
     var strategyArgs by rememberSaveable { mutableStateOf(initial?.strategy?.args ?: strategies.firstOrNull()?.entry?.args.orEmpty()) }
     var mode by rememberSaveable { mutableStateOf(initial?.appMode ?: AppMode.ONLY_SELECTED) }
@@ -133,11 +144,23 @@ fun ProfileEditor(
                     )
                 }
             }
-            OutlinedTextField(
-                value = extra, onValueChange = { extra = it },
-                label = { Text(stringResource(R.string.profile_extra_domains)) },
-                supportingText = { Text(stringResource(R.string.profile_extra_domains_hint)) },
-                minLines = 2, modifier = Modifier.fillMaxWidth(),
+            DomainPills(
+                domains = domains,
+                input = domainInput,
+                onInput = { text ->
+                    // A separator (space, comma, new line) turns what was typed into pills.
+                    if (text.any { it in " ,;\n\t" }) {
+                        domains = (domains + Hostlist.parseInput(text)).distinct()
+                        domainInput = ""
+                    } else {
+                        domainInput = text
+                    }
+                },
+                onAdd = {
+                    domains = (domains + Hostlist.parseInput(domainInput)).distinct()
+                    domainInput = ""
+                },
+                onRemove = { d -> domains = domains - d },
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
@@ -191,7 +214,7 @@ fun ProfileEditor(
                             id = id,
                             name = name.trim(),
                             packs = packs,
-                            extraDomains = extra.split('\n', ',', ' ').map { it.trim() }.filter { it.isNotEmpty() },
+                            extraDomains = (domains + Hostlist.parseInput(domainInput)).distinct(),
                             strategy = StrategyEntry(strategyName.ifBlank { strategyArgs }, strategyArgs.trim()),
                             appMode = mode,
                             apps = apps,
@@ -213,6 +236,52 @@ fun ProfileEditor(
     }
     if (pickApps) {
         AppPicker(selected = apps.toSet(), onDone = { apps = it.toList(); pickApps = false })
+    }
+}
+
+/** Extra domains as removable pills, with a field that adds what is typed or pasted. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DomainPills(
+    domains: List<String>,
+    input: String,
+    onInput: (String) -> Unit,
+    onAdd: () -> Unit,
+    onRemove: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        OutlinedTextField(
+            value = input, onValueChange = onInput,
+            label = { Text(stringResource(R.string.profile_extra_domains)) },
+            supportingText = { Text(stringResource(R.string.profile_extra_domains_hint)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onAdd() }),
+            trailingIcon = {
+                IconButton(onClick = onAdd, enabled = Hostlist.parseInput(input).isNotEmpty()) {
+                    Icon(Icons.Default.Add, stringResource(R.string.profile_domain_add))
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        if (domains.isNotEmpty()) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                domains.forEach { d ->
+                    InputChip(
+                        selected = true,
+                        onClick = { onRemove(d) },
+                        label = { Text(d) },
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.Close,
+                                stringResource(R.string.profile_domain_remove, d),
+                                Modifier.size(InputChipDefaults.AvatarSize),
+                            )
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
