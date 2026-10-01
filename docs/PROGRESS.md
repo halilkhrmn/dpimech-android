@@ -34,6 +34,12 @@
   - [x] Average ping of the profile's sites in the notification and on home (refresh button)
   - [x] Per-profile widgets with a configure screen
   - [x] Long-press shortcuts: Turn off (while on), profiles, Strategy test, Logs
+- [ ] **v0.2.0** (PLAN.md 4b)
+  - [x] Start on boot, always-on VPN, automatic list update, "next profile" in the notification
+  - [ ] Profile export / import
+  - [ ] Quick site check
+  - [ ] More countries + translations (app, README)
+  - [ ] Site packs shared with the desktop app
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
@@ -43,6 +49,18 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-01 — v0.2.0 plan; start on boot, always-on VPN, list auto-update
+- Plan for v0.2.0 agreed with the owner (PLAN.md 4b). Discord voice works on the owner's phone,
+  so that open item is closed.
+- Done: `BootReceiver` turns the selected profile on after boot when "Start when the phone
+  starts" is on and the VPN permission exists. The service remembers the last start request
+  (`StartMemory`) and replays it when Android starts it for always-on VPN or after the system
+  killed it. Strategy lists are downloaded on app start when older than a week (switch in
+  Settings, on by default). The bypass notification has "Next profile" when there is one.
+- Verified: `SystemStartTest` (boot on/off, no permission, start memory round trip, next-profile
+  button only with another profile); lint unchanged.
+- Next: phone test of always-on (Settings → Network → VPN → DPIMech → Always-on) and a reboot.
 
 ### 2026-10-01 — Screenshots on the website
 - Done: a "Screenshots" section (five store screenshots as small windows, scrolls sideways on

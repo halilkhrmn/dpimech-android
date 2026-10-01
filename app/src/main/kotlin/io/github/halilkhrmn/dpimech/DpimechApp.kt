@@ -2,6 +2,8 @@ package io.github.halilkhrmn.dpimech
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
+import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.data.LabController
 import io.github.halilkhrmn.dpimech.data.ProfileRepository
@@ -38,6 +40,11 @@ class DpimechApp : Application() {
         lab = LabController(this)
         NetworkIdentity.start(this)
         val scope = MainScope()
+        // The bypass notification offers "next profile" when there is another profile.
+        BypassVpnService.nextProfileAction = { ctx ->
+            if (profiles.saved.value.profiles.size > 1) BypassWidget.nextProfileIntent(ctx) else null
+        }
+        updateListsIfOld(scope)
         // Widget and launcher shortcuts follow the engine and the profiles.
         scope.launch { EngineState.flow.collect { BypassWidget.render(this@DpimechApp) } }
         scope.launch { profiles.saved.collect { BypassWidget.render(this@DpimechApp) } }
@@ -54,9 +61,24 @@ class DpimechApp : Application() {
         }
     }
 
+    /** Strategy lists older than [LIST_MAX_AGE_MS] are downloaded again in the background. */
+    private fun updateListsIfOld(scope: kotlinx.coroutines.CoroutineScope) {
+        if (!settings.settings.value.autoUpdateLists || Build.FINGERPRINT == "robolectric") return
+        val last = strategies.lastUpdated.value
+        if (last != null && System.currentTimeMillis() - last < LIST_MAX_AGE_MS) return
+        scope.launch {
+            val errors = strategies.refresh()
+            EngineLog.add(if (errors.isEmpty()) "strategy lists updated" else "strategy list update failed: ${errors.joinToString("; ")}")
+        }
+    }
+
     /** Starts the bypass with the current settings (VPN permission must already be granted). */
     fun startBypass(context: Context, profile: Profile) {
         val s = settings.settings.value
         BypassVpnService.start(context, profile, s.dns, s.autoStrategy, s.notifyStrategy, s.notifyErrors, s.encryptedDns, s.blockQuic)
+    }
+
+    private companion object {
+        const val LIST_MAX_AGE_MS = 7L * 24 * 60 * 60 * 1000
     }
 }

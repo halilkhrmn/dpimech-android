@@ -18,4 +18,5 @@
     <string name="engine_stats_ping">Средний пинг: %1$d мс · открываются %2$d из %3$d сайтов</string>
     <string name="engine_stats_ping_none">Сейчас ни один сайт не открывается (проверено %1$d)</string>
     <string name="engine_auto_progress">Поиск лучшей стратегии: %1$d из %2$d тестов</string>
+    <string name="engine_next_profile">Следующий профиль</string>
 </resources>

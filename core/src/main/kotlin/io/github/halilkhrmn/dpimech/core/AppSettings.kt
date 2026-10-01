@@ -22,6 +22,10 @@ data class AppSettings(
     val encryptedDns: Boolean = true,
     /** Drop QUIC (UDP 443) of the bypassed apps, so browsers and YouTube use TCP, where the bypass works. */
     val blockQuic: Boolean = false,
+    /** Turn the selected profile on when the phone starts (needs the VPN permission already). */
+    val startOnBoot: Boolean = false,
+    /** Download the strategy lists when the app starts and the copy is older than a week. */
+    val autoUpdateLists: Boolean = true,
     /** Material You: take the colours from the wallpaper (Android 12+). */
     val dynamicColor: Boolean = true,
     /** Notify when the automatic strategy switches to another strategy. */

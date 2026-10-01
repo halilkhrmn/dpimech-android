@@ -136,3 +136,12 @@ Cloudflare. When DoH fails the query falls back to the old path (plain DNS throu
 after three failures in a row DoH rests for a minute so lookups do not wait for timeouts. With
 both switches off nothing changes (hev gets the TUN), so the copy costs nothing for those users.
 The filter is Kotlin, not native code, to keep "native code only from pinned submodules".
+
+## 24. Always-on VPN replays the last start request (2026-10-01)
+When Android starts the VPN service for always-on VPN (or restarts it), the intent carries no
+profile, and the engine module does not know the app's profile store. The service therefore keeps
+its own copy of the last start request (`StartMemory`: profile JSON and switches) and replays it.
+Changes made to a profile while the bypass is off reach the copy the next time the app turns the
+bypass on. "Start when the phone starts" is a separate switch in the app for people who do not
+want to change system settings; it uses the app's current profile.
+

@@ -124,6 +124,9 @@ class BypassWidget : AppWidgetProvider() {
             return v
         }
 
+        /** "Next profile", as the widget's arrow does; for the ongoing notification. */
+        fun nextProfileIntent(context: Context): PendingIntent = broadcast(context, ACTION_NEXT, AppWidgetManager.INVALID_APPWIDGET_ID)
+
         private fun broadcast(context: Context, action: String, widgetId: Int): PendingIntent = PendingIntent.getBroadcast(
             context,
             // One request code per widget and action, so the widgets' intents stay apart.
