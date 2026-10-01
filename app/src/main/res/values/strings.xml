@@ -153,4 +153,11 @@
     <string name="settings_never_updated">Not updated yet; the built-in list is used.</string>
     <string name="settings_battery_ok">Allowed: Android will not stop DPIMech.</string>
     <string name="settings_battery_limited">Limited: tap to allow running in the background.</string>
+    <string name="widget_toggle">Turn the bypass on or off</string>
+    <string name="widget_next">Next profile</string>
+    <string name="widget_no_profile">No profile yet</string>
+    <string name="widget_description">Bypass on/off and the active profile</string>
+    <string name="shortcut_long">Turn on %1$s</string>
+    <string name="shortcut_long_open">Turn on %1$s and open %2$s</string>
+    <string name="shortcut_pin">Add to home screen</string>
 </resources>

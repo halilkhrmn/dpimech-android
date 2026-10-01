@@ -34,6 +34,15 @@ data class Profile(
         get() = (packs.flatMap { DomainPack.byId(it)?.probes.orEmpty() } + extraDomains.mapNotNull(Hostlist::normalize))
             .distinct()
 
+    /**
+     * The app a "turn on and open" shortcut starts: the profile's first chosen app, or for a
+     * whole-phone profile the first app of its site packs, among those that can be launched.
+     */
+    fun appToOpen(launchable: Set<String>): String? {
+        val candidates = if (appMode == AppMode.ONLY_SELECTED) apps else packs.flatMap { DomainPack.byId(it)?.packages.orEmpty() }
+        return candidates.firstOrNull { it in launchable }
+    }
+
     /** The strategy remembered for this provider, or the profile's default one. */
     fun strategyFor(networkKey: String?): StrategyEntry = networkKey?.let(perNetwork::get) ?: strategy
 

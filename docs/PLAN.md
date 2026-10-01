@@ -92,8 +92,6 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 - **Shortcuts:** "turn on the Discord profile, then open Discord" (pinned shortcut / app shortcut).
 - **Always-on VPN** support and **start on boot**.
 - **Battery optimisation prompt** so the system does not kill the service.
-- **QR profile sharing:** scan a profile/strategy exported from desktop DPIMech (format shared with
-  the desktop app; desktop side to be added there).
 
 ### Interface
 - Compose + Material 3 Expressive, dynamic colour, light/dark.
@@ -114,7 +112,7 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
    built-in + remote strategy list, Quick Settings tile, notification with stop action.
 2. **Smarts** — Strategy Lab, ISP detection, per-network memory, DNS (DoH/DoT + check), watchdog,
    QUIC switch, Easy-mode wizard.
-3. **Extras** — widget, shortcuts, QR profile sharing.
+3. **Extras** — widget, shortcuts. (QR profile sharing dropped, DECISIONS #22.)
 4. **Release** — GitHub Releases (signed APK, per-ABI + universal), IzzyOnDroid, then F-Droid.
 
 ## Build, CI and testing
@@ -139,6 +137,5 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 
 - Material 3 Expressive: Expressive components are still alpha (material3 1.5); the app uses stable
   material3 from the Compose BOM until they are stable (DECISIONS #11).
-- QR profile format (to agree with the desktop app).
 - Which alternative YouTube clients the YouTube pack should include.
 - UDP for Discord voice through ciadpi: verify on a real phone what works without root.

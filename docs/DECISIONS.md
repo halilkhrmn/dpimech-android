@@ -118,3 +118,8 @@ On mobile data Android gives the operator code and name without any permission, 
 known at once and also offline. `NetworkInfo` keys the memory by AS number when ipwho.is answers and
 by `mobile:<MCC+MNC>` otherwise. The Android ISP table adds Türkiye's operator codes and Türk
 Telekom's mobile AS (20978); the desktop table should get the AS number too.
+
+## 22. No QR profile sharing (2026-10-01)
+Dropped by the owner. It would have needed a profile format agreed with the desktop app and a
+camera/QR dependency for little gain; profiles are quick to make with the wizard and the Lab.
+Phase 3 is the home-screen widget and shortcuts.

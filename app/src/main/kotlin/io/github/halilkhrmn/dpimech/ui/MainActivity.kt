@@ -1,6 +1,7 @@
 package io.github.halilkhrmn.dpimech.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
@@ -57,12 +58,18 @@ private enum class Tab(val label: Int, val icon: ImageVector) {
 
 class MainActivity : AppCompatActivity() {
     private var pending: Profile? = null
+    /** App to open once a shortcut's profile runs (after the VPN permission was granted). */
+    private var openAfterStart: String? = null
     private val app get() = application as DpimechApp
 
     private val vpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val p = pending
         pending = null
-        if (result.resultCode == RESULT_OK && p != null) app.startBypass(this, p)
+        if (result.resultCode == RESULT_OK && p != null) {
+            app.startBypass(this, p)
+            openAfterStart?.let { pkg -> packageManager.getLaunchIntentForPackage(pkg)?.let { runCatching { startActivity(it) } } }
+        }
+        openAfterStart = null
     }
 
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -70,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        handleShortcut(intent)
         setContent {
             val themeSettings by app.settings.settings.collectAsStateWithLifecycle()
             DpimechTheme(dynamicColor = themeSettings.dynamicColor) {
@@ -291,6 +299,21 @@ class MainActivity : AppCompatActivity() {
         getSystemService(android.telephony.TelephonyManager::class.java)?.simCountryIso?.uppercase()?.ifEmpty { null }
     }.getOrNull()
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleShortcut(intent)
+    }
+
+    /** A shortcut needed the VPN permission: ask for it here, then turn on (and open the app). */
+    private fun handleShortcut(intent: Intent?) {
+        val id = intent?.getStringExtra(EXTRA_START_PROFILE) ?: return
+        intent.removeExtra(EXTRA_START_PROFILE)
+        val p = app.profiles.saved.value.profiles.find { it.id == id } ?: return
+        app.profiles.select(p.id)
+        openAfterStart = intent.getStringExtra(EXTRA_OPEN_APP)
+        turnOn(p)
+    }
+
     private fun versionName() = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull().orEmpty()
 
     private fun buildReport(): ProblemReport {
@@ -310,6 +333,11 @@ class MainActivity : AppCompatActivity() {
             isp = NetworkIdentity.flow.value?.isp ?: app.lab.flow.value.isp,
             log = EngineLog.snapshot().takeLast(300),
         )
+    }
+
+    companion object {
+        const val EXTRA_START_PROFILE = "start_profile"
+        const val EXTRA_OPEN_APP = "open_app"
     }
 
     private fun turnOn(profile: Profile) {

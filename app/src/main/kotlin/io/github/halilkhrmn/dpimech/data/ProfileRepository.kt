@@ -16,6 +16,7 @@ class ProfileRepository(dir: File) {
     fun save(profile: Profile) = update { it.upsert(profile) }
     fun remove(id: String) = update { it.remove(id) }
     fun select(id: String) = update { it.select(id) }
+    fun selectNext() = update { it.selectNext() }
 
     @Synchronized
     private fun update(change: (SavedProfiles) -> SavedProfiles) {

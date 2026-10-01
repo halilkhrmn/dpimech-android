@@ -9,6 +9,9 @@ import io.github.halilkhrmn.dpimech.data.SettingsRepository
 import io.github.halilkhrmn.dpimech.data.StrategyRepository
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineEvents
+import io.github.halilkhrmn.dpimech.engine.EngineState
+import io.github.halilkhrmn.dpimech.shortcut.Shortcuts
+import io.github.halilkhrmn.dpimech.widget.BypassWidget
 import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -30,8 +33,17 @@ class DpimechApp : Application() {
         settings = SettingsRepository(filesDir)
         lab = LabController(this)
         NetworkIdentity.start(this)
+        val scope = MainScope()
+        // Widget and launcher shortcuts follow the engine and the profiles.
+        scope.launch { EngineState.flow.collect { BypassWidget.render(this@DpimechApp) } }
+        scope.launch {
+            profiles.saved.collect {
+                BypassWidget.render(this@DpimechApp)
+                Shortcuts.publish(this@DpimechApp, it)
+            }
+        }
         // The automatic strategy runs in the VPN service; keep what it learns with the profile.
-        MainScope().launch {
+        scope.launch {
             EngineEvents.strategyLearned.collect { e ->
                 profiles.saved.value.profiles.find { it.id == e.profileId }
                     ?.let { profiles.save(it.withStrategy(e.strategy, e.networkKey)) }

@@ -24,7 +24,9 @@
   - [ ] QUIC switch (needs a ciadpi change, DECISIONS #15)
   - [x] Easy mode: first-start wizard, whole-phone country preset, "use the best and turn on"
   - [x] Automatic strategy per network (background test, switch, remember)
-- [ ] **Phase 3 — Extras:** widget, shortcuts, QR profile sharing
+- [x] **Phase 3 — Extras:** widget, shortcuts (QR sharing dropped)
+  - [x] Home-screen widget: ON/OFF at a glance, active profile, next-profile button
+  - [x] Launcher shortcuts per profile ("turn on and open the app"), pin from the profile editor
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [ ] First signed release (owner: key and secrets)
@@ -33,6 +35,16 @@
   - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
 
 ## Work log
+
+### 2026-10-01 — Phase 3: widget and shortcuts (QR dropped)
+- Done: home-screen widget (green ON / grey OFF like the app, active profile, next profile; taps
+  open the app when a profile or the VPN permission is missing); launcher shortcuts for up to four
+  profiles and "Add to home screen" in the profile editor: turn the profile on, wait until it runs,
+  then open its app (e.g. Discord); without VPN permission the main screen asks first and then opens
+  the app. QR profile sharing removed from the plan (DECISIONS #22).
+- Verified how: 92 tests; new Robolectric tests render the widget, press "next profile", publish
+  shortcuts and run the shortcut with and without VPN permission; lint clean.
+- Open/next: try the widget and a pinned Discord shortcut on the phone.
 
 ### 2026-10-01 — Phone test passed
 - Done: owner tested the build from `main` (after #6) on a phone.

@@ -25,6 +25,13 @@ data class SavedProfiles(
         return copy(profiles = list, selectedId = selectedId.takeIf { it != id } ?: list.firstOrNull()?.id)
     }
 
+    /** The widget's "next profile" button: the one after the selected, wrapping around. */
+    fun selectNext(): SavedProfiles {
+        if (profiles.isEmpty()) return this
+        val i = profiles.indexOfFirst { it.id == selected?.id }
+        return copy(selectedId = profiles[(i + 1) % profiles.size].id)
+    }
+
     fun select(id: String): SavedProfiles = if (profiles.any { it.id == id }) copy(selectedId = id) else this
 
     fun encode(): String = json.encodeToString(serializer(), this)
