@@ -1,0 +1,68 @@
+# Builds signed APKs for a vX.Y.Z tag and attaches them to the GitHub release.
+# Secrets (Settings → Secrets → Actions): DPIMECH_KEYSTORE_BASE64, DPIMECH_KEYSTORE_PASSWORD,
+# DPIMECH_KEY_ALIAS, DPIMECH_KEY_PASSWORD. See docs/RELEASING.md.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  NDK_VERSION: 29.0.14206865
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Check that the tag matches versionName
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          name=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
+          test "$tag" = "$name" || { echo "tag v$tag but versionName $name"; exit 1; }
+      - name: Install NDK and platform
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
+      - name: Tests
+        run: |
+          ./native/build-host.sh
+          CIADPI=$PWD/build/host/ciadpi ./gradlew :core:test --console=plain
+      - name: Build signed APKs
+        env:
+          DPIMECH_KEYSTORE_BASE64: ${{ secrets.DPIMECH_KEYSTORE_BASE64 }}
+          DPIMECH_KEYSTORE_PASSWORD: ${{ secrets.DPIMECH_KEYSTORE_PASSWORD }}
+          DPIMECH_KEY_ALIAS: ${{ secrets.DPIMECH_KEY_ALIAS }}
+          DPIMECH_KEY_PASSWORD: ${{ secrets.DPIMECH_KEY_PASSWORD }}
+        run: |
+          test -n "$DPIMECH_KEYSTORE_BASE64" || { echo "signing secrets are missing"; exit 1; }
+          export DPIMECH_KEYSTORE="$RUNNER_TEMP/release.jks"
+          echo "$DPIMECH_KEYSTORE_BASE64" | base64 -d > "$DPIMECH_KEYSTORE"
+          ./gradlew :app:assembleRelease --console=plain
+          rm -f "$DPIMECH_KEYSTORE"
+      - name: Collect and verify
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          mkdir dist
+          for f in app/build/outputs/apk/release/app-*-release.apk; do
+            abi=$(basename "$f" | sed -E 's/^app-(.*)-release\.apk$/\1/')
+            cp "$f" "dist/dpimech-$v-$abi.apk"
+          done
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          for f in dist/*.apk; do "$apksigner" verify --print-certs "$f" | head -3; done
+          (cd dist && sha256sum *.apk > SHA256SUMS)
+          ls -la dist
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --title "DPIMech for Android ${GITHUB_REF_NAME#v}" --generate-notes \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber

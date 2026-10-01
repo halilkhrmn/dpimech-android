@@ -11,12 +11,38 @@ android {
         applicationId = "io.github.halilkhrmn.dpimech"
         minSdk = 26
         targetSdk = 36
+        // Release tags are vX.Y.Z and versionName must match (checked by the release workflow).
         versionCode = 1
         versionName = "0.1.0"
     }
 
+    // Release signing comes from the environment (CI secrets, see docs/RELEASING.md); without it
+    // release APKs are built unsigned.
+    val keystore = System.getenv("DPIMECH_KEYSTORE")?.let(::file)?.takeIf { it.exists() }
+    signingConfigs {
+        if (keystore != null) {
+            create("release") {
+                storeFile = keystore
+                storePassword = System.getenv("DPIMECH_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("DPIMECH_KEY_ALIAS")
+                keyPassword = System.getenv("DPIMECH_KEY_PASSWORD")
+            }
+        }
+    }
+
+    // One APK per ABI plus a universal one (the website and IzzyOnDroid offer the universal APK).
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = true
+        }
+    }
+
     buildTypes {
         release {
+            if (keystore != null) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
