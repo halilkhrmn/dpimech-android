@@ -43,6 +43,8 @@ android {
     buildTypes {
         release {
             if (keystore != null) signingConfig = signingConfigs.getByName("release")
+            // Reproducible builds: PNG crunching is not deterministic; images are optimised in git.
+            isCrunchPngs = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

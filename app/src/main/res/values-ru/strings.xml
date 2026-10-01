@@ -92,7 +92,6 @@
     <string name="about_website">Сайт</string>
     <string name="about_source">Исходный код</string>
     <string name="about_desktop">DPIMech для Windows, Linux и macOS</string>
-    <string name="about_report">Сообщить о проблеме</string>
     <string name="about_credits">Основано на ByeDPI (hufrea) и hev-socks5-tunnel (heiher). Стратегии сообщества из ByeDPIManager (romanvht).</string>
     <string name="about_license">Свободное ПО под GNU GPL v3 или новее.</string>
     <string name="wizard_step">Шаг %1$d из %2$d</string>
@@ -119,4 +118,24 @@
     <string name="wizard_profile_whole_phone">Заблокированные сайты</string>
     <string name="settings_dynamic_color">Цвета обоев (Material You)</string>
     <string name="settings_dynamic_color_hint">Брать цвета приложения из обоев. Выкл.: фиолетовый DPIMech.</string>
+    <string name="settings_section_look">Оформление</string>
+    <string name="settings_section_bypass">Обход</string>
+    <string name="settings_section_notifications">Уведомления</string>
+    <string name="settings_section_help">Помощь и проблемы</string>
+    <string name="settings_section_system">Система</string>
+    <string name="settings_notify_strategy">Когда автоматическая стратегия меняется</string>
+    <string name="settings_notify_errors">Когда обход останавливается сам</string>
+    <string name="settings_notifications_hint">Настройки уведомлений Android (звук, каналы)</string>
+    <string name="logs_title">Журнал</string>
+    <string name="logs_hint">Что делали движок, проверки и автоматическая стратегия</string>
+    <string name="logs_copy">Копировать</string>
+    <string name="logs_clear">Очистить</string>
+    <string name="logs_empty">Пока пусто. Включите обход или запустите проверку.</string>
+    <string name="report_title">Сообщить о проблеме</string>
+    <string name="report_hint">Отправить настройки и журнал как issue на GitHub или по почте</string>
+    <string name="report_text">Вот что будет отправлено. Ничего не отправляется само; вы выбираете куда. Список установленных приложений не включается.</string>
+    <string name="report_issue_title">Сообщение о проблеме</string>
+    <string name="report_github">Создать issue на GitHub</string>
+    <string name="report_email">Отправить по почте</string>
+    <string name="report_copy">Скопировать отчёт</string>
 </resources>

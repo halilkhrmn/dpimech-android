@@ -6,4 +6,7 @@
     <string name="engine_stop">Kapat</string>
     <string name="engine_error_no_permission">Android, DPIMech\'in başlamasına izin vermedi (VPN izni yok ya da her zaman açık VPN başka bir uygulamada).</string>
     <string name="engine_error_gave_up">ByeDPI sürekli durdu, bu yüzden DPIMech atlatmayı kapattı. Başka bir strateji dene.</string>
+    <string name="event_channel">Olaylar</string>
+    <string name="event_strategy">Otomatik strateji: bu ağ için “%1$s” stratejisine geçildi.</string>
+    <string name="event_revoked">DPIMech kapatıldı: başka bir VPN başladı ya da VPN izni geri alındı.</string>
 </resources>

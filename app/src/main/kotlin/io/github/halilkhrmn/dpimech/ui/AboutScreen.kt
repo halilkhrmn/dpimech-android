@@ -13,6 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +38,7 @@ import io.github.halilkhrmn.dpimech.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(versionName: String, bottomPadding: PaddingValues) {
+fun AboutScreen(versionName: String, onReport: () -> Unit, onLogs: () -> Unit, bottomPadding: PaddingValues) {
     val context = LocalContext.current
     fun open(url: String) = runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri())) }
 
@@ -61,7 +63,6 @@ fun AboutScreen(versionName: String, bottomPadding: PaddingValues) {
                     R.string.about_website to "https://halilkhrmn.github.io/dpimech-android/",
                     R.string.about_source to "https://github.com/halilkhrmn/dpimech-android",
                     R.string.about_desktop to "https://halilkhrmn.github.io/dpimech/",
-                    R.string.about_report to "https://github.com/halilkhrmn/dpimech-android/issues/new",
                 ).forEach { (label, url) ->
                     ListItem(
                         headlineContent = { Text(stringResource(label)) },
@@ -70,6 +71,20 @@ fun AboutScreen(versionName: String, bottomPadding: PaddingValues) {
                         modifier = Modifier.clickable { open(url) },
                     )
                 }
+            }
+            Column(Modifier.fillMaxWidth()) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.report_title)) },
+                    supportingContent = { Text(stringResource(R.string.report_hint)) },
+                    trailingContent = { Icon(Icons.Default.BugReport, null) },
+                    modifier = Modifier.clickable(onClick = onReport),
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.logs_title)) },
+                    supportingContent = { Text(stringResource(R.string.logs_hint)) },
+                    trailingContent = { Icon(Icons.Default.Article, null) },
+                    modifier = Modifier.clickable(onClick = onLogs),
+                )
             }
             Text(stringResource(R.string.about_credits), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
             Text(stringResource(R.string.about_license), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)

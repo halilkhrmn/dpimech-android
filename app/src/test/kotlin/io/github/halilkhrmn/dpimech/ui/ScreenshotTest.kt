@@ -63,7 +63,7 @@ class ScreenshotTest {
     @Test fun homeFailed() = home(EngineState.Failed("1", "ByeDPI did not start listening on port 1080"))
     @Test fun homeEmpty() = shot("home_empty") { HomeScreen(SavedProfiles(), EngineState.Stopped, {}, {}, {}, {}, {}, PaddingValues()) }
 
-    @Test fun settings() = shot("settings") { SettingsScreen(AppSettings(language = "tr"), {}, {}, {}, { emptyList() }, PaddingValues()) }
+    @Test fun settings() = shot("settings") { SettingsScreen(AppSettings(language = "tr"), {}, {}, {}, { emptyList() }, {}, {}, PaddingValues()) }
 
     /** The octopus purple used when wallpaper colours are off (or before Android 12). */
     @Test fun homePurple() {
@@ -73,9 +73,31 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("${System.getProperty("roborazzi.output.dir", "build/screenshots")}/home_purple.png")
     }
 
-    @Test fun about() = shot("about") { AboutScreen("0.1.0", PaddingValues()) }
+    @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }
 
     @Test fun wizardWelcome() = shot("wizard_welcome") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }
+
+    @Test fun logs() = shot("logs") {
+        LogsScreen(
+            listOf(
+                "08:00:01 turning on profile \"Blocked sites\" (TLS record split)",
+                "08:00:01 started profile Blocked sites on port 41231",
+                "08:00:03 automatic strategy: testing 12 strategies for AS9121",
+                "08:00:41 automatic strategy: \"Disorder SNI\" works on AS9121 (8/8)",
+                "08:00:41 network AS9121: switching to \"Disorder SNI\"",
+            ),
+            {}, {}, {},
+        )
+    }
+
+    @Test fun report() = shot("report") {
+        ReportDialog(
+            io.github.halilkhrmn.dpimech.core.ProblemReport.build(
+                "0.1.0", "Google Pixel 8, Android 16 (API 36)", AppSettings(), saved, "on (Blocked sites, TLS record split)", null,
+                listOf("08:00:01 started profile Blocked sites on port 41231"),
+            ),
+        ) {}
+    }
 
     @Test fun lab() {
         val std = LabResult.STANDARD_SET

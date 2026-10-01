@@ -93,7 +93,6 @@
     <string name="about_website">Website</string>
     <string name="about_source">Source code</string>
     <string name="about_desktop">DPIMech for Windows, Linux and macOS</string>
-    <string name="about_report">Report a problem</string>
     <string name="about_credits">Built on ByeDPI (hufrea) and hev-socks5-tunnel (heiher). Community strategies from ByeDPIManager (romanvht).</string>
     <string name="about_license">Free software under the GNU GPL v3 or later.</string>
     <string name="wizard_step">Step %1$d of %2$d</string>
@@ -120,4 +119,24 @@
     <string name="wizard_profile_whole_phone">Blocked sites</string>
     <string name="settings_dynamic_color">Wallpaper colours (Material You)</string>
     <string name="settings_dynamic_color_hint">Take the app colours from your wallpaper. Off: DPIMech purple.</string>
+    <string name="settings_section_look">Appearance</string>
+    <string name="settings_section_bypass">Bypass</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_section_help">Help and problems</string>
+    <string name="settings_section_system">System</string>
+    <string name="settings_notify_strategy">When the automatic strategy changes</string>
+    <string name="settings_notify_errors">When the bypass stops on its own</string>
+    <string name="settings_notifications_hint">Android notification settings (sound, channels)</string>
+    <string name="logs_title">Logs</string>
+    <string name="logs_hint">What the engine, the tests and the automatic strategy did</string>
+    <string name="logs_copy">Copy</string>
+    <string name="logs_clear">Clear</string>
+    <string name="logs_empty">Nothing logged yet. Turn the bypass on or run a test.</string>
+    <string name="report_title">Report a problem</string>
+    <string name="report_hint">Send the settings and the log as a GitHub issue or by e-mail</string>
+    <string name="report_text">This is what will be sent. Nothing is sent automatically; you choose where. Installed apps are not listed.</string>
+    <string name="report_issue_title">Problem report</string>
+    <string name="report_github">Open a GitHub issue</string>
+    <string name="report_email">Send by e-mail</string>
+    <string name="report_copy">Copy the report</string>
 </resources>

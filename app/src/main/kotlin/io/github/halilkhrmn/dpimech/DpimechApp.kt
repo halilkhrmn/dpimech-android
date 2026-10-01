@@ -40,6 +40,6 @@ class DpimechApp : Application() {
     /** Starts the bypass with the current settings (VPN permission must already be granted). */
     fun startBypass(context: Context, profile: Profile) {
         val s = settings.settings.value
-        BypassVpnService.start(context, profile, s.dns, s.autoStrategy)
+        BypassVpnService.start(context, profile, s.dns, s.autoStrategy, s.notifyStrategy, s.notifyErrors)
     }
 }

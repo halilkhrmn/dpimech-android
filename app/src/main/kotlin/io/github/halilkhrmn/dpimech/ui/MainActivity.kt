@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,10 +39,13 @@ import io.github.halilkhrmn.dpimech.core.AppMode
 import io.github.halilkhrmn.dpimech.core.CountryPreset
 import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.LabResult
+import io.github.halilkhrmn.dpimech.core.ProblemReport
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
+import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
+import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
 import java.util.UUID
 
 private enum class Tab(val label: Int, val icon: ImageVector) {
@@ -78,10 +82,19 @@ class MainActivity : AppCompatActivity() {
                 // null: no editor; "": a new profile; otherwise the id being edited.
                 var editing by rememberSaveable { mutableStateOf<String?>(null) }
                 var wizard by rememberSaveable { mutableStateOf(!settings.wizardDone && saved.profiles.isEmpty()) }
+                var logs by rememberSaveable { mutableStateOf(false) }
+                var report by remember { mutableStateOf<ProblemReport?>(null) }
+                val logLines by EngineLog.flow.collectAsStateWithLifecycle()
+                val openReport = { report = buildReport() }
 
-                BackHandler(enabled = editing != null || tab != Tab.HOME) {
-                    if (editing != null) editing = null else tab = Tab.HOME
+                BackHandler(enabled = editing != null || logs || tab != Tab.HOME) {
+                    when {
+                        editing != null -> editing = null
+                        logs -> logs = false
+                        else -> tab = Tab.HOME
+                    }
                 }
+                report?.let { ReportDialog(it, onDismiss = { report = null }) }
 
                 val edit = editing
                 when {
@@ -113,6 +126,7 @@ class MainActivity : AppCompatActivity() {
                             wizard = false
                         },
                     )
+                    logs -> LogsScreen(logLines, onClear = EngineLog::clear, onReport = openReport, onBack = { logs = false })
                     edit != null -> ProfileEditor(
                         initial = saved.profiles.find { it.id == edit },
                         strategies = strategies,
@@ -139,14 +153,23 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         },
-                    ) { padding -> Content(tab, padding, onEdit = { editing = it }, onWizard = { wizard = true }) }
+                    ) { padding ->
+                        Content(tab, padding, onEdit = { editing = it }, onWizard = { wizard = true }, onLogs = { logs = true }, onReport = openReport)
+                    }
                 }
             }
         }
     }
 
     @Composable
-    private fun Content(tab: Tab, padding: PaddingValues, onEdit: (String) -> Unit, onWizard: () -> Unit) {
+    private fun Content(
+        tab: Tab,
+        padding: PaddingValues,
+        onEdit: (String) -> Unit,
+        onWizard: () -> Unit,
+        onLogs: () -> Unit,
+        onReport: () -> Unit,
+    ) {
         val saved by app.profiles.saved.collectAsStateWithLifecycle()
         val engine by EngineState.flow.collectAsStateWithLifecycle()
         val strategies by app.strategies.options.collectAsStateWithLifecycle()
@@ -197,10 +220,14 @@ class MainActivity : AppCompatActivity() {
                 },
                 onWizard = onWizard,
                 onRefreshStrategies = { app.strategies.refresh() },
+                onLogs = onLogs,
+                onReport = onReport,
                 bottomPadding = padding,
             )
             Tab.ABOUT -> AboutScreen(
-                versionName = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull().orEmpty(),
+                versionName = versionName(),
+                onReport = onReport,
+                onLogs = onLogs,
                 bottomPadding = padding,
             )
         }
@@ -253,7 +280,29 @@ class MainActivity : AppCompatActivity() {
         return if (choice.best != null) base.withStrategy(entry, networkKey) else base
     }
 
+    private fun versionName() = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull().orEmpty()
+
+    private fun buildReport(): ProblemReport {
+        val engine = EngineState.flow.value
+        val state = when (engine) {
+            is EngineState.Running -> "on (${engine.profileName}, ${engine.strategyName})"
+            is EngineState.Starting -> "starting"
+            is EngineState.Failed -> "failed: ${engine.message}"
+            EngineState.Stopped -> "off"
+        }
+        return ProblemReport.build(
+            appVersion = versionName(),
+            device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})",
+            settings = app.settings.settings.value,
+            profiles = app.profiles.saved.value,
+            engineState = state,
+            isp = NetworkIdentity.flow.value ?: app.lab.flow.value.isp,
+            log = EngineLog.snapshot().takeLast(300),
+        )
+    }
+
     private fun turnOn(profile: Profile) {
+        EngineLog.add("turning on profile \"${profile.name}\" (${profile.strategy.name})")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
