@@ -1,0 +1,14 @@
+<p>Bazı internet sağlayıcıları siteleri ve uygulamaları (Discord, Roblox, YouTube…) <b>DPI</b> (derin paket incelemesi) ile engeller. DPIMech bunu telefonunda <a href="https://github.com/hufrea/byedpi">ByeDPI</a> ile aşar: bağlantının ilk paketlerinin görünüşünü değiştirir, böylece sağlayıcının filtresi onları tanımaz.</p>
+<p><b>VPN hizmeti değildir.</b> Android'in VPN özelliği yalnızca telefondaki trafiği yakalamak için kullanılır. Her bağlantı yine doğrudan siteye gider: hiçbir şey başkasının sunucusundan geçmez, IP adresin gizlenmez ve IP adresiyle engellenen siteler engelli kalır.</p>
+<p>Özellikler:</p>
+<ul>
+<li>Kurulum sihirbazı: siteleri seç, DPIMech bağlantını test eder ve çalışan ayarı açar.</li>
+<li>Ülkende sık engellenen siteler için tüm telefon ya da yalnızca seçtiğin uygulamalar. Diğer bağlantılara dokunulmaz.</li>
+<li>Strateji Laboratuvarı: stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında hangisinin çalıştığını gösterir.</li>
+<li>Otomatik strateji: yeni bir ağda çalışanı bulur ve hatırlar.</li>
+<li>Masaüstü uygulamasıyla (Windows, Linux, macOS) ortak stratejiler, yeni sürüm gerekmeden güncellenir; ayrıca topluluk listesi.</li>
+<li>DNS engeli kontrolü, motoru yeniden başlatan bekçi, Hızlı Ayarlar kutucuğu, günlük ve sorun bildirme.</li>
+<li>Root yok, Google servisleri yok, reklam yok, izleme yok. Türkçe, English, Русский.</li>
+</ul>
+<p>Android aynı anda yalnızca bir VPN'e izin verir; başka bir VPN ya da VPN tabanlı reklam engelleyici DPIMech ile birlikte çalışamaz.</p>
+<p>Motorlar uygulamanın içinde kaynak koddan derlenir: <a href="https://github.com/hufrea/byedpi">ByeDPI</a> ve <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>. Topluluk stratejileri <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>'dan.</p>

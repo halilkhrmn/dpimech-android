@@ -1,0 +1,14 @@
+<p>Some internet providers block sites and apps (Discord, Roblox, YouTube…) with <b>DPI</b> (deep packet inspection). DPIMech gets around it on your phone with <a href="https://github.com/hufrea/byedpi">ByeDPI</a>, which changes how the first packets of a connection look so the provider's filter does not recognise them.</p>
+<p><b>Not a VPN service.</b> Android's VPN feature is only used to catch traffic on the phone. Every connection still goes straight to the site: nothing passes through anyone else's server, your IP address is not hidden, and sites blocked by IP address stay blocked.</p>
+<p>Features:</p>
+<ul>
+<li>Setup wizard: pick the sites, DPIMech tests your connection and turns on the setting that works.</li>
+<li>Whole phone for the sites commonly blocked in your country, or only the apps you pick. Other connections are left untouched.</li>
+<li>Strategy Lab: tests strategies against real sites with confirmation rounds and shows which one works on your provider.</li>
+<li>Automatic strategy: on a new network it finds and remembers what works there.</li>
+<li>Strategies shared with the desktop app (Windows, Linux, macOS), updated without a new release, plus a community list.</li>
+<li>DNS blocking check, watchdog that restarts the engine, Quick Settings tile, logs and problem report.</li>
+<li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский.</li>
+</ul>
+<p>Android allows one VPN at a time, so another VPN or a VPN-based ad blocker cannot run together with DPIMech.</p>
+<p>The engines are built from source inside the app: <a href="https://github.com/hufrea/byedpi">ByeDPI</a> and <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>. Community strategies from <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>.</p>

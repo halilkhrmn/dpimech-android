@@ -1,0 +1,1 @@
+First release: ByeDPI per app or whole phone, setup wizard, Strategy Lab, automatic strategy per network, DNS check, Quick Settings tile, logs and problem report. English, Turkish, Russian.
