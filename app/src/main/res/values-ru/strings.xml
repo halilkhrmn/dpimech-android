@@ -138,4 +138,6 @@
     <string name="report_github">Создать issue на GitHub</string>
     <string name="report_email">Отправить по почте</string>
     <string name="report_copy">Скопировать отчёт</string>
+    <string name="source_standard">Стандартный набор DPIMech</string>
+    <string name="source_community">Список сообщества</string>
 </resources>

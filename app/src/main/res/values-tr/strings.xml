@@ -138,4 +138,6 @@
     <string name="report_github">GitHub issue aç</string>
     <string name="report_email">E-posta ile gönder</string>
     <string name="report_copy">Raporu kopyala</string>
+    <string name="source_standard">DPIMech standart set</string>
+    <string name="source_community">Topluluk listesi</string>
 </resources>

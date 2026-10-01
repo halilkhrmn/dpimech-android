@@ -139,4 +139,6 @@
     <string name="report_github">Open a GitHub issue</string>
     <string name="report_email">Send by e-mail</string>
     <string name="report_copy">Copy the report</string>
+    <string name="source_standard">DPIMech standard set</string>
+    <string name="source_community">Community list</string>
 </resources>

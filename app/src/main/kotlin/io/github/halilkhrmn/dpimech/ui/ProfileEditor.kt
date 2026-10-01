@@ -228,7 +228,7 @@ private fun StrategyDialog(options: List<StrategyOption>, onPick: (StrategyOptio
                     ListItem(
                         headlineContent = { Text(o.entry.name) },
                         supportingContent = {
-                            Text(o.entry.args + "\n" + o.source + if (o.origin.isNotEmpty()) " · ${o.origin}" else "")
+                            Text(o.entry.args + "\n" + sourceLabel(o.source) + if (o.origin.isNotEmpty()) " · ${o.origin}" else "")
                         },
                         modifier = Modifier.clickable { onPick(o) },
                     )

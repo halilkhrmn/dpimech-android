@@ -208,7 +208,7 @@ private fun ResultCard(r: LabResult, targetProfile: String?, enabled: Boolean, o
             }
             Text(s.args, style = MaterialTheme.typography.bodySmall)
             Text(
-                s.source + (if (s.origin.isNotEmpty()) " · ${s.origin}" else "") +
+                sourceLabel(s.source) + (if (s.origin.isNotEmpty()) " · ${s.origin}" else "") +
                     (r.error?.let { "\n$it" } ?: if (r.failedDomains.isNotEmpty()) "\n" + stringResource(R.string.lab_failed, r.failedDomains.joinToString(", ")) else ""),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -223,4 +223,12 @@ private fun ResultCard(r: LabResult, targetProfile: String?, enabled: Boolean, o
             }
         }
     }
+}
+
+/** The standard set and the community list get their names in the app language. */
+@Composable
+fun sourceLabel(source: String): String = when (source) {
+    LabResult.STANDARD_SET -> stringResource(R.string.source_standard)
+    io.github.halilkhrmn.dpimech.core.OnlineSource.COMMUNITY.label -> stringResource(R.string.source_community)
+    else -> source
 }

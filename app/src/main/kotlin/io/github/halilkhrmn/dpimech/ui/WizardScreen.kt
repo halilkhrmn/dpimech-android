@@ -65,9 +65,11 @@ fun WizardScreen(
     onCancelTest: () -> Unit,
     onDone: (WizardChoice) -> Unit,
     onSkip: () -> Unit,
+    /** For screenshots: open at a later step. */
+    initialStep: Int = 0,
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
-    var step by rememberSaveable { mutableStateOf(0) }
+    var step by rememberSaveable { mutableStateOf(initialStep) }
     var wholePhone by rememberSaveable { mutableStateOf(true) }
     val locale = LocalConfiguration.current.locales[0]
     val preset = CountryPreset.forCountry(country ?: locale.country)
