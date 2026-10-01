@@ -50,6 +50,8 @@
 - Verified: `sha256sum -c` on the release; apksigner shows one signer (v2); a clean local build of
   the tag matches the signed APK (`apksigcopier compare`); `fdroid rewritemeta` leaves the file
   unchanged and `fdroid lint` (with fdroiddata's categories and anti-features) reports nothing.
+- F-Droid and IzzyOnDroid are not mentioned on the website or in the READMEs until the app is
+  actually published there (owner's wish); add them back then.
 - Next (owner): GitLab fork of fdroiddata and the merge request (docs/FDROID.md, steps 4–6); try
   the release APK on the phone.
 

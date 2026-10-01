@@ -25,10 +25,8 @@
 |---|---|
 | **GitHub Releases** | [`dpimech-<версия>-universal.apk`](https://github.com/halilkhrmn/dpimech-android/releases/latest) работает на любом телефоне. В том же выпуске есть APK поменьше для отдельных архитектур (`arm64-v8a` для большинства телефонов) и `SHA256SUMS`. |
 | **Obtainium** | Добавьте `https://github.com/halilkhrmn/dpimech-android`, чтобы получать обновления автоматически. |
-| **F-Droid** | Заявка подаётся. |
 
-Android 8.0 и новее. APK везде подписаны одним ключом, поэтому источник можно сменить без
-переустановки.
+Android 8.0 и новее.
 
 ## Скриншоты
 

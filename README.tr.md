@@ -25,10 +25,8 @@
 |---|---|
 | **GitHub Releases** | [`dpimech-<sürüm>-universal.apk`](https://github.com/halilkhrmn/dpimech-android/releases/latest) her telefonda çalışır. Aynı sürümde mimariye özel daha küçük APK'lar (çoğu telefon için `arm64-v8a`) ve `SHA256SUMS` dosyası da var. |
 | **Obtainium** | Güncellemeleri otomatik almak için `https://github.com/halilkhrmn/dpimech-android` adresini ekle. |
-| **F-Droid** | Başvuru sürüyor. |
 
-Android 8.0 ve üstü. APK'lar her yerde aynı anahtarla imzalanır; kaynak değiştirirken yeniden kurman
-gerekmez.
+Android 8.0 ve üstü.
 
 ## Ekran görüntüleri
 
