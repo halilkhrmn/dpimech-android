@@ -6,8 +6,11 @@
 <li>Ülkende sık engellenen siteler için tüm telefon ya da yalnızca seçtiğin uygulamalar. Diğer bağlantılara dokunulmaz.</li>
 <li>Strateji Laboratuvarı: stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında hangisinin çalıştığını gösterir.</li>
 <li>Otomatik strateji: yeni bir ağda çalışanı bulur ve hatırlar.</li>
+<li>Atlatılan uygulamalar için şifreli DNS (DNS over HTTPS) ve tarayıcılarla YouTube'u TCP'ye geçiren isteğe bağlı QUIC engeli.</li>
+<li>Ana ekranda canlı trafik, sitelerinin ortalama ping'i ve DNS sayıları; bildirim de aynısını gösterir.</li>
+<li>Widget'lar (istersen her profile bir tane), profili açıp uygulamasını başlatan kısayollar, Hızlı Ayarlar kutucuğu.</li>
 <li>Masaüstü uygulamasıyla (Windows, Linux, macOS) ortak stratejiler, yeni sürüm gerekmeden güncellenir; ayrıca topluluk listesi.</li>
-<li>DNS engeli kontrolü, motoru yeniden başlatan bekçi, Hızlı Ayarlar kutucuğu, günlük ve sorun bildirme.</li>
+<li>DNS engeli kontrolü, motoru yeniden başlatan bekçi, günlük ve sorun bildirme.</li>
 <li>Root yok, Google servisleri yok, reklam yok, izleme yok. Türkçe, English, Русский.</li>
 </ul>
 <p>Android aynı anda yalnızca bir VPN'e izin verir; başka bir VPN ya da VPN tabanlı reklam engelleyici DPIMech ile birlikte çalışamaz.</p>

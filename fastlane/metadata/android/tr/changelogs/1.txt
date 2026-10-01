@@ -1,0 +1,1 @@
+İlk sürüm. Tüm telefon (ülkendeki engelli siteler) ya da seçili uygulamalar için ByeDPI; kurulum sihirbazı; Strateji Laboratuvarı; ağa göre otomatik strateji; şifreli DNS (DoH) ve QUIC engeli; ana ekranda canlı trafik ve ping; widget'lar ve kısayollar; Hızlı Ayarlar kutucuğu; günlük ve sorun bildirme.
