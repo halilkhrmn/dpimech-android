@@ -152,4 +152,11 @@
     <string name="settings_never_updated">Henüz güncellenmedi; uygulamadaki liste kullanılıyor.</string>
     <string name="settings_battery_ok">İzin verildi: Android DPIMech\'i durdurmaz.</string>
     <string name="settings_battery_limited">Kısıtlı: arka planda çalışmasına izin vermek için dokun.</string>
+    <string name="widget_toggle">Atlatmayı aç ya da kapat</string>
+    <string name="widget_next">Sonraki profil</string>
+    <string name="widget_no_profile">Henüz profil yok</string>
+    <string name="widget_description">Atlatma açık/kapalı ve etkin profil</string>
+    <string name="shortcut_long">%1$s profilini aç</string>
+    <string name="shortcut_long_open">%1$s profilini aç ve %2$s uygulamasını başlat</string>
+    <string name="shortcut_pin">Ana ekrana ekle</string>
 </resources>

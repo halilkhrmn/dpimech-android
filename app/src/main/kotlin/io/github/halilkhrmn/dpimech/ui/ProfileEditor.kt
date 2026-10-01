@@ -55,6 +55,7 @@ import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.core.splitArgs
 import io.github.halilkhrmn.dpimech.data.StrategyOption
+import io.github.halilkhrmn.dpimech.shortcut.Shortcuts
 import java.io.File
 import java.util.UUID
 
@@ -177,6 +178,11 @@ fun ProfileEditor(
                 Text(stringResource(R.string.profile_apps_needed), color = MaterialTheme.colorScheme.error)
             }
 
+            if (initial != null && Shortcuts.canPin(context)) {
+                OutlinedButton(onClick = { Shortcuts.pin(context, initial) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.shortcut_pin))
+                }
+            }
             Button(
                 enabled = canSave,
                 onClick = {

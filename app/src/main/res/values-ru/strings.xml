@@ -152,4 +152,11 @@
     <string name="settings_never_updated">Ещё не обновлялось; используется встроенный список.</string>
     <string name="settings_battery_ok">Разрешено: Android не будет останавливать DPIMech.</string>
     <string name="settings_battery_limited">Ограничено: нажмите, чтобы разрешить работу в фоне.</string>
+    <string name="widget_toggle">Включить или выключить обход</string>
+    <string name="widget_next">Следующий профиль</string>
+    <string name="widget_no_profile">Профилей пока нет</string>
+    <string name="widget_description">Обход вкл./выкл. и активный профиль</string>
+    <string name="shortcut_long">Включить %1$s</string>
+    <string name="shortcut_long_open">Включить %1$s и открыть %2$s</string>
+    <string name="shortcut_pin">Добавить на главный экран</string>
 </resources>
