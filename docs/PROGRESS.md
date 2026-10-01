@@ -43,6 +43,13 @@
 
 ## Work log
 
+### 2026-10-01 — fdroiddata merge request !50840
+- Opened by the owner. First pipeline: rewritemeta wanted two lines re-wrapped (newer formatter),
+  and `fdroid build` stopped with "Unused scandelete path": the scanner only *warns* about
+  hev's `wintun.dll`, and a warning does not use `scandelete`, which is then an error. Fixed with
+  `rm:` (the directory is deleted before the scan) and the formatting the CI asked for.
+- Next: owner replaces the file in the fork; pipeline again.
+
 ### 2026-10-01 — Release APK tested on a phone
 - Verified: the signed, minified v0.1.0 release APK (`dpimech-0.1.0-universal.apk`) works on the
   owner's Samsung Galaxy S23.
