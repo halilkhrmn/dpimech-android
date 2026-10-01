@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_on">Включено: %1$s</string>
+    <string name="status_off">Выключено</string>
+    <string name="status_starting">Запуск…</string>
+    <string name="status_failed">Не удалось запустить</string>
+    <string name="status_no_profile">Создайте профиль, чтобы начать.</string>
+    <string name="status_profile">Профиль: %1$s</string>
+    <string name="turn_on">Включить</string>
+    <string name="turn_off">Выключить</string>
+    <string name="profiles_empty">Профилей пока нет. Нажмите «Новый профиль», выберите сайты (Discord, YouTube…) и приложения, для которых нужен обход.</string>
+    <string name="profile_new">Новый профиль</string>
+    <string name="profile_edit">Изменить профиль</string>
+    <string name="profile_delete">Удалить профиль</string>
+    <string name="profile_summary">%1$s · приложений: %2$d</string>
+    <string name="profile_name">Название</string>
+    <string name="profile_sites">Сайты</string>
+    <string name="profile_extra_domains">Другие домены</string>
+    <string name="profile_extra_domains_hint">По одному в строке, напр. example.com (с поддоменами)</string>
+    <string name="profile_domain_filter">Только эти сайты</string>
+    <string name="profile_domain_filter_hint">Остальные соединения выбранных приложений не затрагиваются.</string>
+    <string name="profile_strategy">Стратегия</string>
+    <string name="profile_strategy_choose">Выбрать стратегию</string>
+    <string name="profile_strategy_args">Аргументы ByeDPI</string>
+    <string name="profile_apps">Приложения</string>
+    <string name="mode_only">Только выбранные</string>
+    <string name="mode_except">Все, кроме выбранных</string>
+    <string name="profile_apps_choose">Выбрать приложения (выбрано: %1$d)</string>
+    <string name="profile_apps_needed">Выберите хотя бы одно приложение.</string>
+    <string name="apps_title">Приложения (%1$d)</string>
+    <string name="apps_search">Поиск</string>
+    <string name="apps_show_system">Показывать системные</string>
+    <string name="strategies_update">Обновить списки стратегий</string>
+    <string name="strategies_updated">Списки стратегий обновлены.</string>
+    <string name="strategies_update_failed">Не все списки обновились; используются сохранённые копии.</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+    <string name="done">Готово</string>
+    <string name="back">Назад</string>
+    <string name="notice_not_vpn">DPIMech — не VPN-сервис. Функция VPN в Android используется только чтобы перехватить трафик выбранных приложений на телефоне; соединения идут напрямую к сайту, ничего не проходит через чужие серверы. Сайты, заблокированные по IP-адресу, останутся заблокированными. Android допускает только одну VPN одновременно.</string>
+</resources>

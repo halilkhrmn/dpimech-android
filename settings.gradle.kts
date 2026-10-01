@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "dpimech-android"
 
-include(":core", ":engine")
+include(":core", ":engine", ":app")

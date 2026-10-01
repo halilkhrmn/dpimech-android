@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_on">Açık: %1$s</string>
+    <string name="status_off">Kapalı</string>
+    <string name="status_starting">Başlatılıyor…</string>
+    <string name="status_failed">Başlatılamadı</string>
+    <string name="status_no_profile">Başlamak için bir profil oluştur.</string>
+    <string name="status_profile">Profil: %1$s</string>
+    <string name="turn_on">Aç</string>
+    <string name="turn_off">Kapat</string>
+    <string name="profiles_empty">Henüz profil yok. “Yeni profil”e dokun, siteleri (Discord, YouTube…) ve atlatmanın uygulanacağı uygulamaları seç.</string>
+    <string name="profile_new">Yeni profil</string>
+    <string name="profile_edit">Profili düzenle</string>
+    <string name="profile_delete">Profili sil</string>
+    <string name="profile_summary">%1$s · uygulama: %2$d</string>
+    <string name="profile_name">Ad</string>
+    <string name="profile_sites">Siteler</string>
+    <string name="profile_extra_domains">Diğer alan adları</string>
+    <string name="profile_extra_domains_hint">Her satıra bir tane, ör. example.com (alt alan adları dahil)</string>
+    <string name="profile_domain_filter">Yalnızca bu siteler</string>
+    <string name="profile_domain_filter_hint">Seçili uygulamaların diğer bağlantılarına dokunulmaz.</string>
+    <string name="profile_strategy">Strateji</string>
+    <string name="profile_strategy_choose">Strateji seç</string>
+    <string name="profile_strategy_args">ByeDPI argümanları</string>
+    <string name="profile_apps">Uygulamalar</string>
+    <string name="mode_only">Yalnızca seçilenler</string>
+    <string name="mode_except">Seçilenler hariç hepsi</string>
+    <string name="profile_apps_choose">Uygulama seç (seçili: %1$d)</string>
+    <string name="profile_apps_needed">En az bir uygulama seç.</string>
+    <string name="apps_title">Uygulamalar (%1$d)</string>
+    <string name="apps_search">Ara</string>
+    <string name="apps_show_system">Sistem uygulamalarını göster</string>
+    <string name="strategies_update">Strateji listelerini güncelle</string>
+    <string name="strategies_updated">Strateji listeleri güncellendi.</string>
+    <string name="strategies_update_failed">Tüm listeler güncellenemedi; kayıtlı kopyalar kullanılıyor.</string>
+    <string name="save">Kaydet</string>
+    <string name="cancel">Vazgeç</string>
+    <string name="done">Tamam</string>
+    <string name="back">Geri</string>
+    <string name="notice_not_vpn">DPIMech bir VPN hizmeti değildir. Android\'in VPN özelliği yalnızca seçili uygulamaların trafiğini telefonda yakalamak için kullanılır; bağlantılar yine doğrudan siteye gider, hiçbir şey başkasının sunucusundan geçmez. IP adresiyle engellenen siteler engelli kalır. Android aynı anda yalnızca bir VPN\'e izin verir.</string>
+</resources>

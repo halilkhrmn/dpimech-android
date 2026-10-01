@@ -28,4 +28,39 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
 
 ## Commands
 
-To be filled in with the Gradle skeleton (Phase 1).
+Needs JDK 17+ (21 used), Android SDK with platform `android-37.0` and NDK `29.0.14206865`
+(`local.properties` → `sdk.dir=…`, not committed). Clone with `--recurse-submodules`.
+
+| What | Command |
+|---|---|
+| Core unit tests (pure JVM, fast) | `./gradlew :core:test` |
+| Build engines for Linux | `./native/build-host.sh` → `build/host/ciadpi`, `build/host/hev/bin/hev-socks5-tunnel` |
+| + real ciadpi integration test | `CIADPI=$PWD/build/host/ciadpi ./gradlew :core:test` |
+| + end-to-end TUN test (root, IPv6) | `sudo -E env PATH=$PATH CIADPI=… HEV=… ./gradlew :core:test --tests '*TunnelEndToEndTest'` |
+| Debug APK | `./gradlew :app:assembleDebug` |
+| Lint | `./gradlew :app:lintDebug` |
+| Release APK (unsigned for now) | `./gradlew :app:assembleRelease` |
+
+Tests that need `$CIADPI`/`$HEV`/root are skipped when those are missing; CI runs all of them
+(`.github/workflows/ci.yml`) and fails if the end-to-end test was skipped.
+
+## Architecture and file map
+
+```
+core/     pure Kotlin, no Android: everything that can be unit-tested
+  StrategyFile      shared default.json (format 1); embedded copy in resources/strategies/
+  ArgPolicy         ciadpi option allowlist (port of desktop argpolicy.rs, ByeDPI table)
+  ByeDpiCommand     strategy → ciadpi argv: placeholders, managed options, domain filter
+  DomainPack, Isp   packs (+ Android package names) and ISP table from desktop catalog.rs
+  Lab               Strategy Lab result scoring (same order as desktop)
+  Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
+engine/   Android library: BypassVpnService, Ciadpi (process), TProxy (hev JNI), EngineState
+app/      Compose UI (home, profile editor, app picker), Quick Settings tile, repositories
+native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
+```
+
+- ciadpi runs as a **separate process** (`libciadpi.so` in nativeLibraryDir), one per profile or
+  Lab test. hev-socks5-tunnel runs **in-process** through its JNI (it needs the TUN fd).
+- DPIMech's own package is always outside the VPN, so ciadpi's sockets reach the network directly.
+- The domain filter puts `--hosts <file>` at the start of every ciadpi group; when every group is
+  limited, ciadpi adds an empty group, so other hosts pass untouched (checked by the ciadpi test).
