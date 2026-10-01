@@ -29,8 +29,18 @@
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [ ] First signed release (owner: key and secrets)
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
+  - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
+  - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
 
 ## Work log
+
+### 2026-10-01 — F-Droid submission prepared
+- Done: fdroiddata build metadata (`docs/fdroid/io.github.halilkhrmn.dpimech.yml`) and
+  `docs/FDROID.md` with the steps; reproducible-build fields (Binaries, AllowedAPKSigningKeys).
+- Verified how: `fdroid lint` clean and `fdroid rewritemeta` leaves the file unchanged (using
+  fdroiddata's categories and anti-features); F-Droid's source scanner: 0 problems; a fresh clone
+  built the F-Droid way (no wrapper, plain Gradle 9.8, no signing) produces the APK at `output`.
+- Open/next: first signed release, then fill in the certificate hash and open the merge request.
 
 ### 2026-10-01 — Logs, problem report, Material You switch, store listing
 - Done: Logs screen (live, copy, clear); "Report a problem" (GitHub issue or e-mail, the user sees
