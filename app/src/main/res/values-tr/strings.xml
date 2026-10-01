@@ -61,4 +61,8 @@
     <string name="dns_not_resolved">%1$s, %2$s ile çözülmüyor.</string>
     <string name="dns_different">%1$s → %2$s ile %3$s, ama DNS over HTTPS ile %4$s.</string>
     <string name="dns_advice">Bir strateji çalıştığı hâlde site açılmıyorsa Android ayarlarında Özel DNS\'i aç (Ağ → Özel DNS → 1dot1dot1dot1.cloudflare-dns.com). Bu, DPIMech kullanan uygulamaları da korur.</string>
+    <string name="easy_title">Hemen çalıştır</string>
+    <string name="easy_text">Açmak istediğin siteleri seç (Discord, YouTube…). DPIMech stratejileri senin bağlantında dener ve çalışanı açar.</string>
+    <string name="easy_button">Çalışan ayarı bul</string>
+    <string name="lab_use_and_turn_on">En iyisini kullan ve aç</string>
 </resources>

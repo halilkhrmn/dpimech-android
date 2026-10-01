@@ -58,7 +58,7 @@ fun LabScreen(
     onDetectIsp: () -> Unit,
     onStart: (List<DomainPack>, List<StrategyOption>) -> Unit,
     onCancel: () -> Unit,
-    onUse: (LabResult, List<String>) -> Unit,
+    onUse: (result: LabResult, packs: List<String>, turnOn: Boolean) -> Unit,
     onBack: () -> Unit,
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
@@ -171,10 +171,15 @@ fun LabScreen(
                         },
                         style = MaterialTheme.typography.titleMedium,
                     )
+                    if (best != null) {
+                        Button(onClick = { onUse(best, packs, true) }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                            Text(stringResource(R.string.lab_use_and_turn_on))
+                        }
+                    }
                 }
             }
             items(state.results, key = { r -> r.strategy!!.let { it.name + it.args } }) { r ->
-                ResultCard(r, targetProfile, enabled = !state.running, onUse = { onUse(r, packs) })
+                ResultCard(r, targetProfile, enabled = !state.running, onUse = { onUse(r, packs, false) })
             }
         }
     }

@@ -61,4 +61,8 @@
     <string name="dns_not_resolved">%1$s не определяется через %2$s.</string>
     <string name="dns_different">%1$s → %3$s через %2$s, но %4$s через DNS over HTTPS.</string>
     <string name="dns_advice">Если сайт не открывается, хотя стратегия работает, включите «Персональный DNS» в настройках Android (Сеть → Персональный DNS → 1dot1dot1dot1.cloudflare-dns.com). Это защитит и приложения в DPIMech.</string>
+    <string name="easy_title">Просто включить</string>
+    <string name="easy_text">Выберите сайты (Discord, YouTube…). DPIMech проверит стратегии на вашем подключении и включит рабочую.</string>
+    <string name="easy_button">Найти рабочую настройку</string>
+    <string name="lab_use_and_turn_on">Использовать лучшую и включить</string>
 </resources>

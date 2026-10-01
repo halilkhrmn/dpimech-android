@@ -13,6 +13,7 @@ import io.github.halilkhrmn.dpimech.core.LabRunner
 import io.github.halilkhrmn.dpimech.core.LabStrategy
 import io.github.halilkhrmn.dpimech.engine.AndroidEngineLauncher
 import io.github.halilkhrmn.dpimech.engine.EngineLog
+import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -47,17 +48,7 @@ class LabController(private val context: Context) {
     fun detectIsp() {
         if (state.value.isp != null) return
         thread(name = "isp", isDaemon = true) {
-            runCatching {
-                val conn = URL(IspLookup.URL).openConnection() as HttpURLConnection
-                conn.connectTimeout = 8000
-                conn.readTimeout = 8000
-                try {
-                    IspLookup.parse(conn.inputStream.use { it.readBytes().decodeToString() }).getOrThrow()
-                } finally {
-                    conn.disconnect()
-                }
-            }.onSuccess { info -> state.update { it.copy(isp = info) } }
-                .onFailure { EngineLog.add("ISP lookup failed: $it") }
+            NetworkIdentity.lookup()?.let { info -> state.update { it.copy(isp = info) } }
         }
     }
 

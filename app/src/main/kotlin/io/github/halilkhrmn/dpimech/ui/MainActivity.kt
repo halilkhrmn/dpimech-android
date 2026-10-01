@@ -62,13 +62,17 @@ class MainActivity : ComponentActivity() {
                         onDetectIsp = app.lab::detectIsp,
                         onStart = app.lab::start,
                         onCancel = app.lab::cancel,
-                        onUse = { result, packs ->
+                        onUse = { result, packs, start ->
                             val s = result.strategy!!
                             val entry = StrategyEntry(s.name, s.args)
                             val current = saved.selected
+                            val networkKey = lab.isp?.networkKey
                             if (current != null) {
-                                app.profiles.save(current.copy(strategy = entry))
+                                val updated = current.withStrategy(entry, networkKey)
+                                app.profiles.save(updated)
                                 inLab = false
+                                // A start on a running service replaces its engine, so no stop first.
+                                if (start) turnOn(updated)
                             } else {
                                 // No profile yet: make one from the tested sites and open it.
                                 val installed = InstalledApps.packageNames(packageManager)
@@ -78,11 +82,14 @@ class MainActivity : ComponentActivity() {
                                     name = chosen.joinToString(" + ") { it.name },
                                     packs = chosen.map { it.id },
                                     strategy = entry,
+                                    perNetwork = networkKey?.let { mapOf(it to entry) }.orEmpty(),
                                     apps = chosen.flatMap { it.packages }.filter { it in installed },
                                 )
                                 app.profiles.save(p)
+                                app.profiles.select(p.id)
                                 inLab = false
-                                editing = p.id
+                                // Straight on when the pack's apps are installed; otherwise pick apps first.
+                                if (start && p.apps.isNotEmpty()) turnOn(p) else editing = p.id
                             }
                         },
                         onBack = { inLab = false },

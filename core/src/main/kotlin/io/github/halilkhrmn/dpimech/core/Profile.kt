@@ -26,7 +26,18 @@ data class Profile(
     val apps: List<String> = emptyList(),
     /** Apply the strategy only to the profile's domains; other connections pass untouched. */
     val domainFilter: Boolean = true,
+    /** Strategies that worked on other providers, keyed by [IspInfo.networkKey]. */
+    val perNetwork: Map<String, StrategyEntry> = emptyMap(),
 ) {
+    /** The strategy remembered for this provider, or the profile's default one. */
+    fun strategyFor(networkKey: String?): StrategyEntry = networkKey?.let(perNetwork::get) ?: strategy
+
+    /** Uses [entry] from now on, and remembers it for the provider it was tested on. */
+    fun withStrategy(entry: StrategyEntry, networkKey: String?): Profile = copy(
+        strategy = entry,
+        perNetwork = if (networkKey == null) perNetwork else perNetwork + (networkKey to entry),
+    )
+
     /** Hostlist domains: the packs' domains plus the user's own, de-duplicated and sanitised. */
     val domains: List<String>
         get() = (packs.flatMap { DomainPack.byId(it)?.domains.orEmpty() } + extraDomains)

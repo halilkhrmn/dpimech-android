@@ -9,7 +9,13 @@ data class IspInfo(
     val country: String,
     /** The entry from the built-in ISP table, when recognised. */
     val known: Isp?,
-)
+) {
+    /**
+     * What the per-network memory is keyed by: the provider's AS number. DPI depends on the
+     * provider, not on the Wi-Fi name, and reading Wi-Fi names would need the location permission.
+     */
+    val networkKey: String get() = asn?.let { "AS$it" } ?: "name:${provider.lowercase()}"
+}
 
 /** ISP detection through ipwho.is, the same service the desktop app asks. */
 object IspLookup {

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -99,11 +100,14 @@ fun HomeScreen(
             item { StatusCard(saved.selected, engine, onToggle) }
             if (saved.profiles.isEmpty()) {
                 item {
-                    Text(
-                        stringResource(R.string.profiles_empty),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(vertical = 24.dp),
-                    )
+                    Column(Modifier.padding(vertical = 16.dp)) {
+                        Text(stringResource(R.string.easy_title), style = MaterialTheme.typography.titleLarge)
+                        Text(stringResource(R.string.easy_text), style = MaterialTheme.typography.bodyLarge)
+                        Button(onClick = onLab, modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
+                            Text(stringResource(R.string.easy_button))
+                        }
+                        Text(stringResource(R.string.profiles_empty), style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
             }
             items(saved.profiles, key = { it.id }) { p ->

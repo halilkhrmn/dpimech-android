@@ -62,4 +62,8 @@
     <string name="dns_not_resolved">%1$s does not resolve with %2$s.</string>
     <string name="dns_different">%1$s → %3$s with %2$s, but %4$s with DNS over HTTPS.</string>
     <string name="dns_advice">If a site stays blocked although a strategy works, turn on Private DNS in Android settings (Network → Private DNS → 1dot1dot1dot1.cloudflare-dns.com). It also protects the apps that use DPIMech.</string>
+    <string name="easy_title">Just make it work</string>
+    <string name="easy_text">Pick the sites you want to open (Discord, YouTube…). DPIMech tests the strategies on your connection and turns on the one that works.</string>
+    <string name="easy_button">Find a working setup</string>
+    <string name="lab_use_and_turn_on">Use the best and turn on</string>
 </resources>
