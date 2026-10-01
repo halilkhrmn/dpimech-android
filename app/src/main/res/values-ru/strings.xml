@@ -117,4 +117,6 @@
     <string name="wizard_try_community">Проверить и список сообщества</string>
     <string name="wizard_save_only">Сохранить, не включая</string>
     <string name="wizard_profile_whole_phone">Заблокированные сайты</string>
+    <string name="settings_dynamic_color">Цвета обоев (Material You)</string>
+    <string name="settings_dynamic_color_hint">Брать цвета приложения из обоев. Выкл.: фиолетовый DPIMech.</string>
 </resources>

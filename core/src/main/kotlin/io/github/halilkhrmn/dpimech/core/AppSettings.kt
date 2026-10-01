@@ -15,6 +15,8 @@ data class AppSettings(
      * in the background and switch to the best confirmed one.
      */
     val autoStrategy: Boolean = true,
+    /** Material You: take the colours from the wallpaper (Android 12+). */
+    val dynamicColor: Boolean = true,
     /** The first-start wizard was finished or skipped. */
     val wizardDone: Boolean = false,
 ) {

@@ -118,4 +118,6 @@
     <string name="wizard_try_community">Also try the community list</string>
     <string name="wizard_save_only">Save without turning on</string>
     <string name="wizard_profile_whole_phone">Blocked sites</string>
+    <string name="settings_dynamic_color">Wallpaper colours (Material You)</string>
+    <string name="settings_dynamic_color_hint">Take the app colours from your wallpaper. Off: DPIMech purple.</string>
 </resources>

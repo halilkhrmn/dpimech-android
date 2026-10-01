@@ -28,7 +28,7 @@ class CountryPresetTest {
 
     @Test
     fun settingsRoundTrip() {
-        val s = AppSettings(language = "tr", dns = "9.9.9.9", autoStrategy = false, wizardDone = true)
+        val s = AppSettings(language = "tr", dns = "9.9.9.9", autoStrategy = false, dynamicColor = false, wizardDone = true)
         assertEquals(s, AppSettings.decode(s.encode()))
         assertEquals(AppSettings(), AppSettings.decode("{broken"))
         assertTrue(AppSettings.isValidDns("94.140.14.14"))

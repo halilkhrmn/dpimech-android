@@ -67,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DpimechTheme {
+            val themeSettings by app.settings.settings.collectAsStateWithLifecycle()
+            DpimechTheme(dynamicColor = themeSettings.dynamicColor) {
                 val saved by app.profiles.saved.collectAsStateWithLifecycle()
                 val engine by EngineState.flow.collectAsStateWithLifecycle()
                 val strategies by app.strategies.options.collectAsStateWithLifecycle()
@@ -187,9 +188,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 },
                 onChange = { change ->
+                    val before = app.settings.settings.value
                     app.settings.update(change)
+                    val after = app.settings.settings.value
                     // DNS and the automatic strategy are read at start: apply them to a running bypass.
-                    if (engine is EngineState.Running) saved.selected?.let(::turnOn)
+                    val engineSettingChanged = before.dns != after.dns || before.autoStrategy != after.autoStrategy
+                    if (engineSettingChanged && engine is EngineState.Running) saved.selected?.let(::turnOn)
                 },
                 onWizard = onWizard,
                 onRefreshStrategies = { app.strategies.refresh() },

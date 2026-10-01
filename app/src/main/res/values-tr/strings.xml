@@ -117,4 +117,6 @@
     <string name="wizard_try_community">Topluluk listesini de dene</string>
     <string name="wizard_save_only">Açmadan kaydet</string>
     <string name="wizard_profile_whole_phone">Engelli siteler</string>
+    <string name="settings_dynamic_color">Duvar kağıdı renkleri (Material You)</string>
+    <string name="settings_dynamic_color_hint">Uygulama renklerini duvar kağıdından al. Kapalı: DPIMech moru.</string>
 </resources>

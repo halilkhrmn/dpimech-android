@@ -1,6 +1,7 @@
 package io.github.halilkhrmn.dpimech.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.clickable
@@ -71,6 +72,14 @@ fun SettingsScreen(
                 supportingContent = { Text(languageName(settings.language)) },
                 modifier = Modifier.clickable { pickLanguage = true },
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_dynamic_color)) },
+                    supportingContent = { Text(stringResource(R.string.settings_dynamic_color_hint)) },
+                    trailingContent = { Switch(settings.dynamicColor, { on -> onChange { it.copy(dynamicColor = on) } }) },
+                    modifier = Modifier.clickable { onChange { it.copy(dynamicColor = !it.dynamicColor) } },
+                )
+            }
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_auto)) },
                 supportingContent = { Text(stringResource(R.string.settings_auto_hint)) },
