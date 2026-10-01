@@ -44,7 +44,7 @@ class BypassTileService : TileService() {
             openApp()
             return
         }
-        BypassVpnService.start(this, profile)
+        (application as DpimechApp).startBypass(this, profile)
     }
 
     private fun render(state: EngineState) {

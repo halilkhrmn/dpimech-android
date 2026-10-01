@@ -59,7 +59,8 @@ fun LabScreen(
     onStart: (List<DomainPack>, List<StrategyOption>) -> Unit,
     onCancel: () -> Unit,
     onUse: (result: LabResult, packs: List<String>, turnOn: Boolean) -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
+    bottomPadding: PaddingValues = PaddingValues(),
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
     var packs by rememberSaveable { mutableStateOf(initialPacks.ifEmpty { listOf("discord") }) }
@@ -71,7 +72,7 @@ fun LabScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.lab_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)) }
+                    onBack?.let { IconButton(onClick = it) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)) } }
                 },
             )
         },
@@ -81,7 +82,7 @@ fun LabScreen(
             contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp,
                 top = padding.calculateTopPadding() + 8.dp,
-                bottom = padding.calculateBottomPadding() + 16.dp,
+                bottom = maxOf(padding.calculateBottomPadding(), bottomPadding.calculateBottomPadding()) + 16.dp,
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -213,7 +214,7 @@ private fun ResultCard(r: LabResult, targetProfile: String?, enabled: Boolean, o
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (r.error == null && r.ok > 0) {
-                TextButton(onClick = onUse, enabled = enabled) {
+                OutlinedButton(onClick = onUse, enabled = enabled, modifier = Modifier.padding(top = 8.dp)) {
                     Text(
                         targetProfile?.let { stringResource(R.string.lab_use_for, it) }
                             ?: stringResource(R.string.lab_use_new),

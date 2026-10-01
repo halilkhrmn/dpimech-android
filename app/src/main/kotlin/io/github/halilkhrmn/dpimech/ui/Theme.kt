@@ -11,7 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val Teal = Color(0xFF00696E)
+// The octopus purple, for phones without wallpaper colours (before Android 12).
+private val Purple = Color(0xFF7B3FB3)
 
 /** Material You colours on Android 12+, a teal scheme before that. */
 @Composable
@@ -21,8 +22,8 @@ fun DpimechTheme(content: @Composable () -> Unit) {
     val colors = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
             if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        dark -> darkColorScheme(primary = Color(0xFF4FD8DE))
-        else -> lightColorScheme(primary = Teal)
+        dark -> darkColorScheme(primary = Color(0xFFD9B8FF))
+        else -> lightColorScheme(primary = Purple)
     }
     MaterialTheme(colorScheme = colors, content = content)
 }

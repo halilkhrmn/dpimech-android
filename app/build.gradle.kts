@@ -62,6 +62,19 @@ android {
         // ciadpi is executed from nativeLibraryDir, so native libraries must be extracted.
         jniLibs.useLegacyPackaging = true
     }
+    testOptions {
+        unitTests {
+            // Robolectric renders the Compose screens for the screenshot tests.
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("robolectric.graphicsMode", "NATIVE")
+                // Screenshots go to build/screenshots/ (looked at by hand, not compared yet).
+                it.systemProperty("roborazzi.test.record", "true")
+                it.systemProperty("roborazzi.output.dir", layout.buildDirectory.dir("screenshots").get().asFile.path)
+                System.getenv("ROBOLECTRIC_REPO")?.let { url -> it.systemProperty("robolectric.dependency.repo.url", url) }
+            }
+        }
+    }
     dependenciesInfo {
         // F-Droid / IzzyOnDroid: no Google-encrypted dependency blob in the APK.
         includeInApk = false
@@ -73,6 +86,7 @@ dependencies {
     implementation(project(":engine"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -82,4 +96,11 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
+    testImplementation(libs.junit4)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
 }
