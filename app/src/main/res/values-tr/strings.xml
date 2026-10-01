@@ -9,7 +9,9 @@
     <string name="profile_name">Ad</string>
     <string name="profile_sites">Siteler</string>
     <string name="profile_extra_domains">Diğer alan adları</string>
-    <string name="profile_extra_domains_hint">Her satıra bir tane, ör. example.com (alt alan adları dahil)</string>
+    <string name="profile_extra_domains_hint">Yazın ya da yapıştırın, ör. example.com (alt alan adları dahil)</string>
+    <string name="profile_domain_add">Alan adı ekle</string>
+    <string name="profile_domain_remove">%1$s kaldır</string>
     <string name="profile_domain_filter">Yalnızca bu siteler</string>
     <string name="profile_domain_filter_hint">Seçili uygulamaların diğer bağlantılarına dokunulmaz.</string>
     <string name="profile_strategy">Strateji</string>
@@ -156,7 +158,8 @@
     <string name="widget_next">Sonraki profil</string>
     <string name="widget_no_profile">Henüz profil yok</string>
     <string name="widget_description">Atlatma açık/kapalı ve etkin profil</string>
-    <string name="shortcut_long">%1$s profilini aç</string>
-    <string name="shortcut_long_open">%1$s profilini aç ve %2$s uygulamasını başlat</string>
+    <string name="shortcut_short">DPI · %1$s</string>
+    <string name="shortcut_long">%1$s ile DPI başlat</string>
+    <string name="shortcut_long_open">%1$s ile DPI başlat ve %2$s aç</string>
     <string name="shortcut_pin">Ana ekrana ekle</string>
 </resources>

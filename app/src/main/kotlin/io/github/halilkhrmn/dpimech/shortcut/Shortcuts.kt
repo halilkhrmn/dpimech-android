@@ -42,7 +42,7 @@ object Shortcuts {
             .putExtra(EXTRA_PROFILE, p.id)
             .apply { open?.let { putExtra(EXTRA_OPEN, it) } }
         return ShortcutInfoCompat.Builder(context, "profile-${p.id}")
-            .setShortLabel(p.name.take(25))
+            .setShortLabel(context.getString(R.string.shortcut_short, p.name).take(25))
             .setLongLabel(
                 appLabel?.let { context.getString(R.string.shortcut_long_open, p.name, it) }
                     ?: context.getString(R.string.shortcut_long, p.name),

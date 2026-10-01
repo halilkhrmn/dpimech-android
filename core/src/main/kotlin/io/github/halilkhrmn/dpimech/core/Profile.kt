@@ -83,6 +83,17 @@ object Hostlist {
         return d
     }
 
+    /**
+     * Domains typed or pasted by the user: separated by spaces, commas or new lines; a pasted
+     * address like `https://www.example.com:443/path` becomes `www.example.com`. Invalid
+     * entries are dropped.
+     */
+    fun parseInput(text: String): List<String> =
+        text.split('\n', ',', ' ', '\t', ';')
+            .map { it.substringAfter("://").substringBefore('/').substringBefore('?').substringBefore(':') }
+            .mapNotNull(::normalize)
+            .distinct()
+
     /** File body for ciadpi `--hosts <file>`: one hostname per line. */
     fun body(domains: List<String>): String =
         domains.mapNotNull(::normalize).distinct().joinToString("") { "$it\n" }

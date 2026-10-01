@@ -9,7 +9,9 @@
     <string name="profile_name">Название</string>
     <string name="profile_sites">Сайты</string>
     <string name="profile_extra_domains">Другие домены</string>
-    <string name="profile_extra_domains_hint">По одному в строке, напр. example.com (с поддоменами)</string>
+    <string name="profile_extra_domains_hint">Введите или вставьте, напр. example.com (с поддоменами)</string>
+    <string name="profile_domain_add">Добавить домен</string>
+    <string name="profile_domain_remove">Удалить %1$s</string>
     <string name="profile_domain_filter">Только эти сайты</string>
     <string name="profile_domain_filter_hint">Остальные соединения выбранных приложений не затрагиваются.</string>
     <string name="profile_strategy">Стратегия</string>
@@ -156,7 +158,8 @@
     <string name="widget_next">Следующий профиль</string>
     <string name="widget_no_profile">Профилей пока нет</string>
     <string name="widget_description">Обход вкл./выкл. и активный профиль</string>
-    <string name="shortcut_long">Включить %1$s</string>
-    <string name="shortcut_long_open">Включить %1$s и открыть %2$s</string>
+    <string name="shortcut_short">DPI · %1$s</string>
+    <string name="shortcut_long">Запустить DPI с %1$s</string>
+    <string name="shortcut_long_open">Запустить DPI с %1$s и открыть %2$s</string>
     <string name="shortcut_pin">Добавить на главный экран</string>
 </resources>
