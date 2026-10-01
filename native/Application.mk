@@ -4,5 +4,6 @@ APP_MODULES := hev-socks5-tunnel ciadpi
 APP_SUPPORT_FLEXIBLE_PAGE_SIZES := true
 # hev-socks5-tunnel registers its natives on this class (engine module).
 APP_CFLAGS := -DPKGNAME=io/github/halilkhrmn/dpimech/engine -DCLSNAME=TProxy
-# Reproducible builds: no absolute build paths in the binaries.
+# Reproducible builds: no absolute build paths and no build ids in the binaries.
 APP_CFLAGS += -ffile-prefix-map=$(abspath $(NDK_PROJECT_PATH))=.
+APP_LDFLAGS := -Wl,--build-id=none
