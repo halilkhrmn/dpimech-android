@@ -22,11 +22,22 @@
   - [x] DNS check (system DNS and UDP 53 vs DNS over HTTPS) with Private DNS advice
   - [ ] Own DoH/DoT resolver inside the tunnel (DECISIONS #13)
   - [ ] QUIC switch (needs a ciadpi change, DECISIONS #15)
-  - [x] Easy mode: "Just make it work" → Lab → use the best and turn on
+  - [x] Easy mode: first-start wizard, whole-phone country preset, "use the best and turn on"
+  - [x] Automatic strategy per network (background test, switch, remember)
 - [ ] **Phase 3 — Extras:** widget, shortcuts, QR profile sharing
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
 
 ## Work log
+
+### 2026-10-01 — Friendlier app: navigation, wizard, settings, automatic strategy
+- Done: bottom navigation (Home, Test, Settings, About); home with one big green ON / grey OFF button
+  and a status line; settings (language, automatic strategy, DNS server, list update, wizard,
+  always-on VPN, battery, notifications); About screen; first-start wizard (whole phone with the
+  country's commonly blocked sites, or only some apps → test → turn on); automatic strategy in the
+  VPN service per provider; country presets (TR, RU) and five new site packs.
+- Verified how: 58 tests (core + 12 Robolectric screen renders), lint clean, debug build; screenshots
+  of every main screen checked by eye (light, dark, Turkish). Probe hosts of the new packs answer HTTPS.
+- Open/next: phone test of the wizard and the automatic strategy on a real network change.
 
 ### 2026-10-01 — Phase 2: Strategy Lab, watchdog, DNS check, per-network memory, release workflow
 - Done: `LabRunner` (baseline, 4 engines at a time, confirmation rounds), `Socks5`, `SiteCheck`,

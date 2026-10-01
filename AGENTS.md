@@ -39,6 +39,7 @@ Needs JDK 17+ (21 used), Android SDK with platform `android-37.0` and NDK `29.0.
 | + end-to-end TUN test (root, IPv6) | `sudo -E env PATH=$PATH CIADPI=… HEV=… ./gradlew :core:test --tests '*TunnelEndToEndTest'` |
 | Debug APK | `./gradlew :app:assembleDebug` |
 | Lint | `./gradlew :app:lintDebug` |
+| Screen renders (Robolectric) → `app/build/screenshots/` | `./gradlew :app:testDebugUnitTest` |
 | Release APKs (signed with `DPIMECH_*` env, else unsigned) | `./gradlew :app:assembleRelease` — see `docs/RELEASING.md` |
 
 Tests that need `$CIADPI`/`$HEV`/root are skipped when those are missing; CI runs all of them
@@ -56,10 +57,13 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   Socks5, SiteCheck SOCKS5 client for ciadpi; "does the site open" HTTPS check
   Watchdog          when to restart ciadpi (exit / failed health probes / give up)
   IspLookup, DnsCheck  provider detection (per-network memory key), DNS blocking check
+  CountryPreset     sites commonly blocked per country (whole-phone profile)
+  AppSettings       language, DNS server, automatic strategy, wizard flag
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity, AndroidEngineLauncher (Lab)
-app/      Compose UI (home + Easy mode, profile editor, app picker, Strategy Lab), QS tile, repositories
+app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
+          profile editor, app picker; QS tile; repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```

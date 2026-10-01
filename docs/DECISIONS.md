@@ -84,3 +84,20 @@ Dropping UDP/443 for bypassed apps cannot be expressed with ciadpi 0.17 groups: 
 limited, ciadpi appends a catch-all group, so a datagram always finds one; `--no-udp` drops all UDP
 (DNS, Discord voice). A small patch in ciadpi (or upstream option) is needed; apps fall back to TCP
 on their own when QUIC is blocked, so this is not urgent.
+
+## 16. Whole phone with the country's blocked sites is the default setup (2026-10-01)
+Most users want "blocked sites open", not a per-app setup. The wizard therefore suggests a profile
+for every app (`ALL_EXCEPT` with no exceptions) that is limited to the sites commonly blocked in the
+user's country (`CountryPreset`, country from the ISP lookup or the phone's locale). Because the
+domain filter scopes every ciadpi group, other traffic passes through untouched. Per-app profiles
+stay available. Country lists are kept short and only name widely reported blocks.
+
+## 17. AppCompat for the in-app language (2026-10-01)
+Android 13+ has per-app languages built in; older versions need AppCompat's
+`setApplicationLocales` and its locale holder service. That is the one reason for the AppCompat
+dependency (no Google services involved, F-Droid compatible).
+
+## 18. Screens checked with Robolectric screenshots (2026-10-01)
+The dev container has no emulator (no KVM). Robolectric with native graphics and Roborazzi renders
+the Compose screens on the JVM; the images are looked at by hand and uploaded by CI. They are not
+compared against references yet, so they catch crashes and let a reviewer see layout changes.
