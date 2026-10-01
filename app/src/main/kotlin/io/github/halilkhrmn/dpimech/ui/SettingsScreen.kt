@@ -111,6 +111,18 @@ fun SettingsScreen(
                 modifier = Modifier.clickable { pickDns = true },
             )
             ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_doh)) },
+                supportingContent = { Text(stringResource(R.string.settings_doh_hint)) },
+                trailingContent = { Switch(settings.encryptedDns, { on -> onChange { it.copy(encryptedDns = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(encryptedDns = !it.encryptedDns) } },
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_quic)) },
+                supportingContent = { Text(stringResource(R.string.settings_quic_hint)) },
+                trailingContent = { Switch(settings.blockQuic, { on -> onChange { it.copy(blockQuic = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(blockQuic = !it.blockQuic) } },
+            )
+            ListItem(
                 headlineContent = { Text(stringResource(R.string.strategies_update)) },
                 supportingContent = {
                     Text(

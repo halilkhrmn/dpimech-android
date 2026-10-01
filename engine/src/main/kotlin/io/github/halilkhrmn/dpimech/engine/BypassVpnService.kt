@@ -15,6 +15,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
+import io.github.halilkhrmn.dpimech.core.DohClient
+import io.github.halilkhrmn.dpimech.core.TrafficStats
+import io.github.halilkhrmn.dpimech.core.TunnelFilter
 import io.github.halilkhrmn.dpimech.core.IspLookup
 import io.github.halilkhrmn.dpimech.core.LabRequest
 import io.github.halilkhrmn.dpimech.core.LabResult
@@ -36,6 +39,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -48,6 +53,13 @@ import kotlinx.serialization.json.Json
 class BypassVpnService : VpnService() {
     private val worker = Executors.newSingleThreadExecutor()
     private var tun: ParcelFileDescriptor? = null
+    private var filter: PacketFilter? = null
+    private var tunnelFilter: TunnelFilter? = null
+    private var doh: DohClient? = null
+    private var encryptDns = true
+    private var blockQuic = false
+    private var statsJob: Job? = null
+    private var restarts = 0
     private var engine: Ciadpi? = null
     private var profile: Profile? = null
     private var engineArgs: List<String> = emptyList()
@@ -88,6 +100,8 @@ class BypassVpnService : VpnService() {
                 autoStrategy = intent.getBooleanExtra(EXTRA_AUTO, false)
                 notifyStrategy = intent.getBooleanExtra(EXTRA_NOTIFY_STRATEGY, true)
                 notifyErrors = intent.getBooleanExtra(EXTRA_NOTIFY_ERRORS, true)
+                encryptDns = intent.getBooleanExtra(EXTRA_DOH, true)
+                blockQuic = intent.getBooleanExtra(EXTRA_BLOCK_QUIC, false)
                 goForeground(p)
                 worker.execute { startEngine(p) }
             }
@@ -139,6 +153,7 @@ class BypassVpnService : VpnService() {
             profile = p
             startWatchdog(port)
             watchNetwork()
+            startStats(p)
             EngineState.set(EngineState.Running(p.id, p.name, entry.name))
             EngineLog.add("started profile ${p.name} on port $port")
         } catch (e: Exception) {
@@ -202,9 +217,21 @@ class BypassVpnService : VpnService() {
         val fd = builder.establish() ?: error(getString(R.string.engine_error_no_permission))
         tun = fd
         tunnelIpv6 = ipv6
+        // DoH and the QUIC switch need to see the packets first; otherwise hev gets the TUN.
+        val rules = tunnelFilter ?: TunnelFilter(encryptDns, blockQuic).also { tunnelFilter = it }
+        val pf = if (rules.active) {
+            PacketFilter(fd, rules, doh ?: DohClient(DohClient.urlFor(dns)).also { doh = it }, config.mtu)
+        } else {
+            null
+        }
+        filter = pf
         val yaml = File(cacheDir, "hev.yml").apply { writeText(config.hevYaml()) }
-        check(TProxy.TProxyStartService(yaml.path, fd.fd)) { "tunnel did not start" }
-        EngineLog.add("tunnel up (IPv6 ${if (ipv6) "on" else "off"})")
+        check(TProxy.TProxyStartService(yaml.path, pf?.hevFd?.fd ?: fd.fd)) { "tunnel did not start" }
+        EngineLog.add(
+            "tunnel up (IPv6 ${if (ipv6) "on" else "off"}" +
+                (if (encryptDns) ", DNS over HTTPS ${doh?.url}" else "") +
+                (if (blockQuic) ", QUIC blocked" else "") + ")",
+        )
     }
 
     /** The network gained or lost IPv6: rebuild the TUN to match. Must run on [worker]. */
@@ -212,6 +239,8 @@ class BypassVpnService : VpnService() {
         if (stopping || engine == null || tunnelIpv6 == ipv6) return
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         val old = tun
+        val oldFilter = filter
+        oldFilter?.stop()
         try {
             openTunnel(enginePort)
         } catch (e: Exception) {
@@ -324,6 +353,7 @@ class BypassVpnService : VpnService() {
     private fun restartEngine(old: Ciadpi, port: Int, reason: String?) {
         if (stopping || engine !== old) return
         EngineLog.add("restarting ByeDPI: $reason")
+        if (reason != "network changed") EngineStats.update { it.copy(restarts = ++restarts) }
         old.stop()
         try {
             engine = Ciadpi.start(this, engineArgs, port, profile?.name ?: "engine")
@@ -343,9 +373,16 @@ class BypassVpnService : VpnService() {
         ipv6Job?.cancel()
         ipv6Job = null
         tunnelIpv6 = null
+        statsJob?.cancel()
+        statsJob = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
+        filter?.stop()
+        filter = null
+        tunnelFilter = null
+        doh = null
         runCatching { tun?.close() }
         tun = null
+        EngineStats.reset()
         engine?.stop()
         engine = null
         profile = null
@@ -353,6 +390,34 @@ class BypassVpnService : VpnService() {
         if (stopService) {
             ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
             stopSelf()
+        }
+    }
+
+    /**
+     * Samples hev's counters once a second for the home screen chart and refreshes the ongoing
+     * notification with the same numbers every few seconds.
+     */
+    private fun startStats(p: Profile) {
+        restarts = 0
+        EngineStats.reset(TrafficStats(since = System.currentTimeMillis(), encryptedDns = encryptDns, blockQuic = blockQuic))
+        statsJob?.cancel()
+        statsJob = scope.launch {
+            var tick = 0
+            while (isActive) {
+                val c = runCatching { TProxy.TProxyGetStats() }.getOrNull()
+                val rules = tunnelFilter
+                val resolver = doh
+                EngineStats.update { s ->
+                    (if (c != null && c.size >= 4) s.sample(downCounter = c[3], upCounter = c[1], now = System.currentTimeMillis()) else s)
+                        .copy(
+                            dnsQueries = rules?.dnsQueries?.get() ?: 0,
+                            dnsEncrypted = resolver?.answered?.get() ?: 0,
+                            quicBlocked = rules?.quicDropped?.get() ?: 0,
+                        )
+                }
+                if (tick++ % NOTIFY_EVERY == 0 && !stopping) runCatching { goForeground(p, EngineStats.flow.value) }
+                delay(1000)
+            }
         }
     }
 
@@ -379,7 +444,7 @@ class BypassVpnService : VpnService() {
     private fun installedPackages(): Set<String> =
         packageManager.getInstalledApplications(PackageManager.GET_META_DATA).mapTo(HashSet()) { it.packageName }
 
-    private fun goForeground(p: Profile) {
+    private fun goForeground(p: Profile, stats: TrafficStats? = null) {
         val nm = getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nm.createNotificationChannel(
@@ -396,7 +461,11 @@ class BypassVpnService : VpnService() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(R.drawable.ic_engine)
             .setContentTitle(getString(R.string.engine_running_title, p.name))
-            .setContentText(getString(R.string.engine_running_text))
+            .setContentText(stats?.let(::statsLine) ?: getString(R.string.engine_running_text))
+            .apply { stats?.let { setStyle(NotificationCompat.BigTextStyle().bigText(statsText(it))) } }
+            .setOnlyAlertOnce(true)
+            .setShowWhen(stats != null)
+            .apply { stats?.since?.takeIf { it > 0 }?.let { setWhen(it).setUsesChronometer(true) } }
             .setOngoing(true)
             .setContentIntent(open)
             .addAction(0, getString(R.string.engine_stop), stop)
@@ -415,7 +484,24 @@ class BypassVpnService : VpnService() {
         }
     }
 
+    private fun statsLine(s: TrafficStats) =
+        getString(R.string.engine_stats_line, TrafficStats.bytes(s.downRate), TrafficStats.bytes(s.upRate))
+
+    private fun statsText(s: TrafficStats) = buildString {
+        append(statsLine(s))
+        append('\n').append(getString(R.string.engine_stats_total, TrafficStats.bytes(s.downTotal), TrafficStats.bytes(s.upTotal)))
+        (EngineState.flow.value as? EngineState.Running)?.strategyName?.takeIf { it.isNotEmpty() }?.let {
+            append('\n').append(getString(R.string.engine_stats_strategy, it))
+        }
+        if (s.encryptedDns) append('\n').append(getString(R.string.engine_stats_dns, s.dnsEncrypted, s.dnsQueries))
+        if (s.blockQuic) append('\n').append(getString(R.string.engine_stats_quic, s.quicBlocked))
+        append('\n').append(getString(R.string.engine_stats_restarts, s.restarts))
+    }
+
     companion object {
+        private const val NOTIFY_EVERY = 5
+        const val EXTRA_DOH = "doh"
+        const val EXTRA_BLOCK_QUIC = "block_quic"
         const val ACTION_START = "io.github.halilkhrmn.dpimech.START"
         const val ACTION_STOP = "io.github.halilkhrmn.dpimech.STOP"
         const val EXTRA_PROFILE = "profile"
@@ -436,6 +522,8 @@ class BypassVpnService : VpnService() {
             autoStrategy: Boolean,
             notifyStrategy: Boolean = true,
             notifyErrors: Boolean = true,
+            encryptDns: Boolean = true,
+            blockQuic: Boolean = false,
         ) {
             val intent = Intent(context, BypassVpnService::class.java)
                 .setAction(ACTION_START)
@@ -444,6 +532,8 @@ class BypassVpnService : VpnService() {
                 .putExtra(EXTRA_AUTO, autoStrategy)
                 .putExtra(EXTRA_NOTIFY_STRATEGY, notifyStrategy)
                 .putExtra(EXTRA_NOTIFY_ERRORS, notifyErrors)
+                .putExtra(EXTRA_DOH, encryptDns)
+                .putExtra(EXTRA_BLOCK_QUIC, blockQuic)
             ContextCompat.startForegroundService(context, intent)
         }
 

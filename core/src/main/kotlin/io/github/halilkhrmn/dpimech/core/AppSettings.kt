@@ -15,6 +15,13 @@ data class AppSettings(
      * in the background and switch to the best confirmed one.
      */
     val autoStrategy: Boolean = true,
+    /**
+     * Answer the bypassed apps' DNS over HTTPS (to the [dns] server's DoH endpoint), so the
+     * provider cannot read or replace it; plain DNS through the tunnel when DoH is unreachable.
+     */
+    val encryptedDns: Boolean = true,
+    /** Drop QUIC (UDP 443) of the bypassed apps, so browsers and YouTube use TCP, where the bypass works. */
+    val blockQuic: Boolean = false,
     /** Material You: take the colours from the wallpaper (Android 12+). */
     val dynamicColor: Boolean = true,
     /** Notify when the automatic strategy switches to another strategy. */

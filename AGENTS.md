@@ -66,9 +66,12 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   IspLookup, DnsCheck  provider detection (per-network memory key), DNS blocking check
   NetworkInfo       transport, mobile operator (MCC+MNC) and provider → per-network key
   CountryPreset     sites commonly blocked per country (whole-phone profile)
-  AppSettings       language, DNS server, automatic strategy, wizard flag
+  AppSettings       language, DNS server, DoH, QUIC switch, automatic strategy, wizard flag
+  IpPacket, TunnelDns  UDP packet parse/build; TunnelFilter verdicts, DnsMessage, DohClient
+  TrafficStats      traffic samples for the home chart and the notification
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
-engine/   Android library: BypassVpnService (+ watchdog, network changes), Ciadpi (process),
+engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
+          (TUN ↔ hev with DoH / QUIC switch), EngineStats, Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
           AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,

@@ -163,4 +163,21 @@
     <string name="shortcut_long">Start DPI with %1$s</string>
     <string name="shortcut_long_open">Start DPI with %1$s and open %2$s</string>
     <string name="shortcut_pin">Add to home screen</string>
+    <string name="settings_doh">Encrypted DNS (DoH)</string>
+    <string name="settings_doh_hint">DNS of the bypassed apps goes over HTTPS to the server above, so the provider cannot read or replace it. Applies the next time the bypass starts.</string>
+    <string name="settings_quic">Block QUIC</string>
+    <string name="settings_quic_hint">Browsers and YouTube fall back to TCP, where the bypass works. Turn on if videos or sites still do not load.</string>
+    <string name="home_state_on">Bypass is on</string>
+    <string name="home_state_off">Bypass is off</string>
+    <string name="chip_doh">Encrypted DNS</string>
+    <string name="chip_quic">QUIC blocked</string>
+    <string name="home_traffic">Live traffic</string>
+    <string name="home_download">Download</string>
+    <string name="home_upload">Upload</string>
+    <string name="home_seconds_ago">%1$d s ago</string>
+    <string name="home_total">Total</string>
+    <string name="home_dns">DNS (DoH)</string>
+    <string name="home_quic">QUIC blocked</string>
+    <string name="home_restarts">Restarts</string>
+    <string name="home_chart">Traffic of the bypassed apps in the last minute</string>
 </resources>

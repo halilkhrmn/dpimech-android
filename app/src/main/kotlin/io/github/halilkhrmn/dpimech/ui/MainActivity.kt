@@ -46,6 +46,7 @@ import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
+import io.github.halilkhrmn.dpimech.engine.EngineStats
 import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
 import java.util.UUID
 
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 var report by remember { mutableStateOf<ProblemReport?>(null) }
                 val logLines by EngineLog.flow.collectAsStateWithLifecycle()
                 val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
+        val stats by EngineStats.flow.collectAsStateWithLifecycle()
                 val openReport = { report = buildReport() }
 
                 BackHandler(enabled = editing != null || logs || tab != Tab.HOME) {
@@ -185,6 +187,7 @@ class MainActivity : AppCompatActivity() {
         val lab by app.lab.flow.collectAsStateWithLifecycle()
         val settings by app.settings.settings.collectAsStateWithLifecycle()
         val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
+        val stats by EngineStats.flow.collectAsStateWithLifecycle()
         val lastUpdated by app.strategies.lastUpdated.collectAsStateWithLifecycle()
         when (tab) {
             Tab.HOME -> HomeScreen(
@@ -202,6 +205,9 @@ class MainActivity : AppCompatActivity() {
                 bottomPadding = padding,
                 network = network,
                 autoStrategy = settings.autoStrategy,
+                stats = stats,
+                encryptedDns = settings.encryptedDns,
+                blockQuic = settings.blockQuic,
             )
             Tab.TEST -> LabScreen(
                 state = lab,

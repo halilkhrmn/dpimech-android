@@ -162,4 +162,21 @@
     <string name="shortcut_long">Запустить DPI с %1$s</string>
     <string name="shortcut_long_open">Запустить DPI с %1$s и открыть %2$s</string>
     <string name="shortcut_pin">Добавить на главный экран</string>
+    <string name="settings_doh">Шифрованный DNS (DoH)</string>
+    <string name="settings_doh_hint">DNS-запросы приложений идут по HTTPS на сервер выше, провайдер не может их прочитать или подменить. Применяется при следующем включении.</string>
+    <string name="settings_quic">Блокировать QUIC</string>
+    <string name="settings_quic_hint">Браузеры и YouTube переходят на TCP, где обход работает. Включите, если видео или сайты всё ещё не открываются.</string>
+    <string name="home_state_on">Обход включён</string>
+    <string name="home_state_off">Обход выключен</string>
+    <string name="chip_doh">Шифрованный DNS</string>
+    <string name="chip_quic">QUIC заблокирован</string>
+    <string name="home_traffic">Трафик</string>
+    <string name="home_download">Загрузка</string>
+    <string name="home_upload">Отдача</string>
+    <string name="home_seconds_ago">%1$d с назад</string>
+    <string name="home_total">Всего</string>
+    <string name="home_dns">DNS (DoH)</string>
+    <string name="home_quic">Заблок. QUIC</string>
+    <string name="home_restarts">Перезапуски</string>
+    <string name="home_chart">Трафик приложений с обходом за последнюю минуту</string>
 </resources>

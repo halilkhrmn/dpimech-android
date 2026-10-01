@@ -10,4 +10,10 @@
     <string name="app_name_engine" translatable="false">DPIMech</string>
     <string name="event_strategy">Automatic strategy: switched to “%1$s” for this network.</string>
     <string name="event_revoked">DPIMech was turned off: another VPN started or the VPN permission was withdrawn.</string>
+    <string name="engine_stats_line">↓ %1$s/s  ↑ %2$s/s</string>
+    <string name="engine_stats_total">Total ↓ %1$s  ↑ %2$s</string>
+    <string name="engine_stats_strategy">Strategy: %1$s</string>
+    <string name="engine_stats_dns">DNS over HTTPS: %1$d of %2$d queries</string>
+    <string name="engine_stats_quic">QUIC blocked: %1$d packets</string>
+    <string name="engine_stats_restarts">Engine restarts: %1$d</string>
 </resources>

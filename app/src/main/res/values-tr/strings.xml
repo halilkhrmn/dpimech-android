@@ -162,4 +162,21 @@
     <string name="shortcut_long">%1$s ile DPI başlat</string>
     <string name="shortcut_long_open">%1$s ile DPI başlat ve %2$s aç</string>
     <string name="shortcut_pin">Ana ekrana ekle</string>
+    <string name="settings_doh">Şifreli DNS (DoH)</string>
+    <string name="settings_doh_hint">Atlatılan uygulamaların DNS sorguları yukarıdaki sunucuya HTTPS ile gider; sağlayıcı okuyamaz, değiştiremez. Atlatma bir sonraki açılışta uygulanır.</string>
+    <string name="settings_quic">QUIC\'i engelle</string>
+    <string name="settings_quic_hint">Tarayıcılar ve YouTube, atlatmanın çalıştığı TCP\'ye geçer. Videolar ya da siteler hâlâ açılmıyorsa açın.</string>
+    <string name="home_state_on">Atlatma açık</string>
+    <string name="home_state_off">Atlatma kapalı</string>
+    <string name="chip_doh">Şifreli DNS</string>
+    <string name="chip_quic">QUIC engelli</string>
+    <string name="home_traffic">Canlı trafik</string>
+    <string name="home_download">İndirme</string>
+    <string name="home_upload">Yükleme</string>
+    <string name="home_seconds_ago">%1$d sn önce</string>
+    <string name="home_total">Toplam</string>
+    <string name="home_dns">DNS (DoH)</string>
+    <string name="home_quic">Engellenen QUIC</string>
+    <string name="home_restarts">Yeniden başlatma</string>
+    <string name="home_chart">Atlatılan uygulamaların son bir dakikadaki trafiği</string>
 </resources>
