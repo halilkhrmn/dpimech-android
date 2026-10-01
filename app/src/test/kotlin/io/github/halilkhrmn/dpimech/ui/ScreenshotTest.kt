@@ -56,14 +56,27 @@ class ScreenshotTest {
     }
 
     @Test fun homeOff() = home(EngineState.Stopped)
-    @Test fun homeOn() = home(EngineState.Running("1", "Blocked sites", "TLS record split"))
+    @Test fun homeOn() = shot("home_Running") {
+        val tt = io.github.halilkhrmn.dpimech.core.IspInfo("Turk Telekom", 9121, "TR", io.github.halilkhrmn.dpimech.core.Isp.match(9121, ""))
+        HomeScreen(
+            saved.copy(profiles = listOf(whole.withStrategy(strategy, "AS9121"), discord)),
+            EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(),
+            network = io.github.halilkhrmn.dpimech.core.NetworkInfo(io.github.halilkhrmn.dpimech.core.Transport.WIFI, isp = tt),
+        )
+    }
+    @Test fun homeMobile() = shot("home_mobile") {
+        HomeScreen(
+            saved, EngineState.Stopped, {}, {}, {}, {}, {}, PaddingValues(),
+            network = io.github.halilkhrmn.dpimech.core.NetworkInfo(io.github.halilkhrmn.dpimech.core.Transport.CELLULAR, "28601", "Turkcell"),
+        )
+    }
     @Test fun homeAutoTesting() = shot("home_auto") {
         HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split", autoTesting = true), {}, {}, {}, {}, {}, PaddingValues())
     }
     @Test fun homeFailed() = home(EngineState.Failed("1", "ByeDPI did not start listening on port 1080"))
     @Test fun homeEmpty() = shot("home_empty") { HomeScreen(SavedProfiles(), EngineState.Stopped, {}, {}, {}, {}, {}, PaddingValues()) }
 
-    @Test fun settings() = shot("settings") { SettingsScreen(AppSettings(language = "tr"), {}, {}, {}, { emptyList() }, {}, {}, PaddingValues()) }
+    @Test fun settings() = shot("settings") { SettingsScreen(AppSettings(language = "tr"), {}, {}, {}, { emptyList() }, 1_790_000_000_000, {}, {}, PaddingValues()) }
 
     /** The octopus purple used when wallpaper colours are off (or before Android 12). */
     @Test fun homePurple() {

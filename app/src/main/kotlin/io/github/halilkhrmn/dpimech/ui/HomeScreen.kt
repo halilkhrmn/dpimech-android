@@ -19,6 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Lan
+import androidx.compose.material.icons.filled.SignalCellularAlt
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.Button
@@ -49,6 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.AppMode
+import io.github.halilkhrmn.dpimech.core.NetworkInfo
+import io.github.halilkhrmn.dpimech.core.Transport
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.SavedProfiles
 import io.github.halilkhrmn.dpimech.engine.EngineState
@@ -64,6 +70,8 @@ fun HomeScreen(
     onNew: () -> Unit,
     onWizard: () -> Unit,
     bottomPadding: PaddingValues,
+    network: NetworkInfo? = null,
+    autoStrategy: Boolean = true,
 ) {
     Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text(stringResource(R.string.app_name)) }) }) { padding ->
         LazyColumn(
@@ -77,6 +85,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item { PowerButton(saved.selected, engine, onToggle, onWizard) }
+            item { NetworkLine(network, saved.selected, autoStrategy) }
             saved.selected?.let { p -> item { ActiveProfileCard(p, engine, onEdit = { onEdit(p.id) }) } }
             item {
                 Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -172,6 +181,51 @@ private fun PowerButton(profile: Profile?, engine: EngineState, onToggle: (Profi
 }
 
 private val OnGreen = Color(0xFF1E8E3E)
+
+/**
+ * Which network the phone is on and what the profile remembers for it: the per-network strategy
+ * memory is keyed by the provider, so this is where the user sees it at work.
+ */
+@Composable
+private fun NetworkLine(network: NetworkInfo?, profile: Profile?, autoStrategy: Boolean) {
+    val kind = when (network?.transport) {
+        Transport.WIFI -> stringResource(R.string.net_wifi)
+        Transport.CELLULAR -> stringResource(R.string.net_mobile)
+        Transport.ETHERNET -> "Ethernet"
+        Transport.OTHER -> stringResource(R.string.net_other)
+        null -> stringResource(R.string.net_none)
+    }
+    val icon = when (network?.transport) {
+        Transport.WIFI -> Icons.Default.Wifi
+        Transport.CELLULAR -> Icons.Default.SignalCellularAlt
+        null -> Icons.Default.CloudOff
+        else -> Icons.Default.Lan
+    }
+    val key = network?.networkKey
+    val remembered = key?.let { profile?.perNetwork?.get(it) }
+    Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.secondaryContainer, modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, null, Modifier.size(28.dp))
+            Column(Modifier.padding(start = 12.dp)) {
+                Text(
+                    listOfNotNull(kind, network?.providerName ?: if (network != null && key == null) stringResource(R.string.net_looking_up) else null)
+                        .joinToString(" · "),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                if (network != null && profile != null) {
+                    Text(
+                        when {
+                            remembered != null -> stringResource(R.string.net_remembered, remembered.name)
+                            autoStrategy -> stringResource(R.string.net_auto)
+                            else -> stringResource(R.string.net_default, profile.strategy.name)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun ActiveProfileCard(p: Profile, engine: EngineState, onEdit: () -> Unit) {

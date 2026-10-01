@@ -10,6 +10,8 @@ data class Isp(
     val asns: List<Int>,
     val nameHints: List<String>,
     val presetKeys: List<String>,
+    /** Mobile network codes (MCC + MNC) of the operator; Android only, no permission needed. */
+    val mobileCodes: List<String> = emptyList(),
 ) {
     /** Whether a strategy named [strategyName] was made for this ISP. */
     fun isPresetFor(strategyName: String): Boolean {
@@ -19,13 +21,18 @@ data class Isp(
 
     companion object {
         val ALL: List<Isp> = listOf(
-            Isp("Türk Telekom", listOf(9121), listOf("turk telekom", "türk telekom", "ttnet"), listOf("türk telekom", "turk telekom")),
+            // 20978: Türk Telekom's mobile network (formerly Avea).
+            Isp("Türk Telekom", listOf(9121, 20978), listOf("turk telekom", "türk telekom", "ttnet", "avea"), listOf("türk telekom", "turk telekom"), listOf("28603")),
             Isp("Superonline (Turkcell)", listOf(34984), listOf("superonline"), listOf("superonline")),
-            Isp("Turkcell (mobile)", listOf(16135), listOf("turkcell"), listOf("turkcell")),
-            Isp("Vodafone Türkiye", listOf(15897), listOf("vodafone"), listOf("vodafone")),
+            Isp("Turkcell (mobile)", listOf(16135), listOf("turkcell"), listOf("turkcell"), listOf("28601")),
+            Isp("Vodafone Türkiye", listOf(15897), listOf("vodafone"), listOf("vodafone"), listOf("28602")),
             Isp("TurkNet", listOf(12735), listOf("turknet", "turk net"), listOf("turknet")),
             Isp("Kablonet (Türksat)", listOf(47524), listOf("turksat", "türksat", "kablonet"), listOf("kablonet")),
         )
+
+        /** The mobile operator from Android's MCC+MNC (e.g. "28601") or its display name. */
+        fun matchMobile(mccMnc: String?, operatorName: String?): Isp? =
+            ALL.find { mccMnc != null && mccMnc in it.mobileCodes } ?: operatorName?.let { match(null, it) }
 
         fun match(asn: Int?, provider: String): Isp? {
             val p = provider.lowercase()

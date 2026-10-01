@@ -102,7 +102,7 @@
     <string name="wizard_where_title">Atlatma nerede çalışsın?</string>
     <string name="wizard_whole_phone">Tüm telefon</string>
     <string name="wizard_recommended">önerilen</string>
-    <string name="wizard_whole_phone_text_country">Tüm uygulamalar, yalnızca %1$s\'de sık engellenen siteler için. Geri kalan her şeye dokunulmaz.</string>
+    <string name="wizard_whole_phone_text_country">Tüm uygulamalar, yalnızca sık engellenen siteler için (%1$s). Geri kalan her şeye dokunulmaz.</string>
     <string name="wizard_whole_phone_text">Tüm uygulamalar, yalnızca aşağıda seçtiğin siteler için. Geri kalan her şeye dokunulmaz.</string>
     <string name="wizard_apps">Yalnızca bazı uygulamalar</string>
     <string name="wizard_apps_text">Yalnızca seçilen sitelerin uygulamaları (Discord uygulaması, YouTube uygulaması…).</string>
@@ -140,4 +140,16 @@
     <string name="report_copy">Raporu kopyala</string>
     <string name="source_standard">DPIMech standart set</string>
     <string name="source_community">Topluluk listesi</string>
+    <string name="net_wifi">Wi-Fi</string>
+    <string name="net_mobile">Mobil veri</string>
+    <string name="net_other">Ağ</string>
+    <string name="net_none">Bağlantı yok</string>
+    <string name="net_looking_up">sağlayıcı bulunuyor…</string>
+    <string name="net_remembered">Bu ağ için strateji: %1$s</string>
+    <string name="net_auto">Bu ağ için kayıtlı strateji yok; otomatik strateji bulacak.</string>
+    <string name="net_default">Bu ağda profil stratejisi kullanılıyor: %1$s</string>
+    <string name="settings_last_update">Son güncelleme: %1$s</string>
+    <string name="settings_never_updated">Henüz güncellenmedi; uygulamadaki liste kullanılıyor.</string>
+    <string name="settings_battery_ok">İzin verildi: Android DPIMech\'i durdurmaz.</string>
+    <string name="settings_battery_limited">Kısıtlı: arka planda çalışmasına izin vermek için dokun.</string>
 </resources>

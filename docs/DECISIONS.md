@@ -112,3 +112,9 @@ IzzyOnDroid rejects apps whose code was written by generative AI and treats hidd
 reason for rejection. This code was written with an AI assistant, so the listing cannot be prepared
 "around" that: the request must say so honestly, or another channel must be used. Options are in
 docs/IZZYONDROID.md; the choice is the owner's.
+
+## 21. Mobile operator from MCC+MNC before the provider lookup (2026-10-01)
+On mobile data Android gives the operator code and name without any permission, so the provider is
+known at once and also offline. `NetworkInfo` keys the memory by AS number when ipwho.is answers and
+by `mobile:<MCC+MNC>` otherwise. The Android ISP table adds Türkiye's operator codes and Türk
+Telekom's mobile AS (20978); the desktop table should get the AS number too.

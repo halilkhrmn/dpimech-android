@@ -34,6 +34,20 @@
 
 ## Work log
 
+### 2026-10-01 — Phone feedback: network line, provider on mobile data, battery, list update
+- Done: app-wide network watcher (Wi-Fi / mobile data, operator by MCC+MNC, provider by ipwho.is),
+  logged on every change and shown under the power button with the strategy remembered for that
+  network; Türkiye's mobile operators matched by code; battery-optimisation request fixed (missing
+  permission) with state shown; strategy list update shows progress and last update time; wizard
+  country from network → SIM → phone, Turkish text without a case suffix.
+- Verified how: 82 tests (core with the real ciadpi; Robolectric renders of home on Wi-Fi and on
+  mobile data, settings in Turkish), lint clean, store screenshots regenerated.
+- Phone test by the owner: everything works, Discord opens. The log showed "connect: Network is
+  unreachable" bursts: IPv6 attempts on an IPv4-only network. Fixed: the TUN takes IPv6 only when
+  the network has a global IPv6 address and is rebuilt when that changes; repeated log lines fold.
+- Open/next: owner re-tests on the phone (Wi-Fi ↔ mobile data switch, battery dialog, list update,
+  no more unreachable bursts).
+
 ### 2026-10-01 — F-Droid submission prepared
 - Done: fdroiddata build metadata (`docs/fdroid/io.github.halilkhrmn.dpimech.yml`) and
   `docs/FDROID.md` with the steps; reproducible-build fields (Binaries, AllowedAPKSigningKeys).

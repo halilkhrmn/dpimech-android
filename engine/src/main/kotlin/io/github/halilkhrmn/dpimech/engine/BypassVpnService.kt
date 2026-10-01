@@ -8,9 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -34,6 +31,14 @@ import io.github.halilkhrmn.dpimech.core.Watchdog
 import java.io.File
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 /**
@@ -49,8 +54,14 @@ class BypassVpnService : VpnService() {
     private var enginePort = 0
     private var strategy: StrategyEntry? = null
     private var hostlist: File? = null
-    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var networkJob: Job? = null
+    private var ipv6Job: Job? = null
     private var dns = TunnelConfig(socksPort = 1).dns
+    private var vpnApps: VpnApps? = null
+    private var tunnelProfileName = ""
+    /** Whether the open TUN takes IPv6 (only when the real network has it). */
+    private var tunnelIpv6: Boolean? = null
     private var autoStrategy = false
     private var notifyStrategy = true
     private var notifyErrors = true
@@ -92,6 +103,7 @@ class BypassVpnService : VpnService() {
     }
 
     override fun onDestroy() {
+        scope.cancel()
         worker.execute { stopEngine(EngineState.Stopped, stopService = false) }
         worker.shutdown()
         super.onDestroy()
@@ -120,24 +132,9 @@ class BypassVpnService : VpnService() {
             strategy = entry
             this.hostlist = hostlist
 
-            val config = TunnelConfig(socksPort = port, dns = dns)
-            val builder = Builder()
-                .setSession(p.name)
-                .setMtu(config.mtu)
-                .addAddress(config.ipv4, 32)
-                .addRoute("0.0.0.0", 0)
-                .addAddress(config.ipv6, 128)
-                .addRoute("::", 0)
-                .addDnsServer(config.dns)
-                .setBlocking(false)
-            apps.allowed.forEach { builder.addAllowedApplication(it) }
-            apps.disallowed.forEach { builder.addDisallowedApplication(it) }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) builder.setMetered(false)
-            val fd = builder.establish() ?: error(getString(R.string.engine_error_no_permission))
-            tun = fd
-
-            val yaml = File(cacheDir, "hev.yml").apply { writeText(config.hevYaml()) }
-            check(TProxy.TProxyStartService(yaml.path, fd.fd)) { "tunnel did not start" }
+            vpnApps = apps
+            tunnelProfileName = p.name
+            openTunnel(port)
 
             profile = p
             startWatchdog(port)
@@ -182,6 +179,50 @@ class BypassVpnService : VpnService() {
         }
     }
 
+    /**
+     * Builds the TUN for the selected apps and hands it to hev-socks5-tunnel. IPv6 is routed in
+     * only when the real network has it: otherwise every IPv6 attempt would fail inside ciadpi
+     * ("Network is unreachable") before the app falls back to IPv4. Must run on [worker].
+     */
+    private fun openTunnel(port: Int) {
+        val apps = vpnApps ?: error("no app list")
+        val ipv6 = NetworkIdentity.flow.value?.hasIpv6 ?: true
+        val config = TunnelConfig(socksPort = port, dns = dns, useIpv6 = ipv6)
+        val builder = Builder()
+            .setSession(tunnelProfileName)
+            .setMtu(config.mtu)
+            .addAddress(config.ipv4, 32)
+            .addRoute("0.0.0.0", 0)
+            .addDnsServer(config.dns)
+            .setBlocking(false)
+        if (ipv6) builder.addAddress(config.ipv6, 128).addRoute("::", 0)
+        apps.allowed.forEach { builder.addAllowedApplication(it) }
+        apps.disallowed.forEach { builder.addDisallowedApplication(it) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) builder.setMetered(false)
+        val fd = builder.establish() ?: error(getString(R.string.engine_error_no_permission))
+        tun = fd
+        tunnelIpv6 = ipv6
+        val yaml = File(cacheDir, "hev.yml").apply { writeText(config.hevYaml()) }
+        check(TProxy.TProxyStartService(yaml.path, fd.fd)) { "tunnel did not start" }
+        EngineLog.add("tunnel up (IPv6 ${if (ipv6) "on" else "off"})")
+    }
+
+    /** The network gained or lost IPv6: rebuild the TUN to match. Must run on [worker]. */
+    private fun reopenTunnelFor(ipv6: Boolean) {
+        if (stopping || engine == null || tunnelIpv6 == ipv6) return
+        runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
+        val old = tun
+        try {
+            openTunnel(enginePort)
+        } catch (e: Exception) {
+            EngineLog.add("tunnel rebuild failed: $e")
+            stopEngine(EngineState.Failed(profile?.id, e.message ?: e.toString()))
+        } finally {
+            // Closed after the new one exists, so the VPN does not drop in between.
+            runCatching { old?.close() }
+        }
+    }
+
     private fun buildArgs(p: Profile, entry: StrategyEntry, port: Int, hostlist: File?) = ByeDpiCommand.build(
         ByeDpiCommand.Request(
             strategyArgs = entry.args,
@@ -198,23 +239,28 @@ class BypassVpnService : VpnService() {
      * DPIMech's default network is the real one, since DPIMech itself is outside the VPN.
      */
     private fun watchNetwork() {
-        val cm = getSystemService(ConnectivityManager::class.java)
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                thread(name = "isp-lookup", isDaemon = true) {
-                    val caps = cm.getNetworkCapabilities(network)
-                    if (caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) return@thread
-                    val isp = NetworkIdentity.lookup(network) ?: return@thread
-                    worker.execute {
-                        switchStrategyFor(isp.networkKey)
-                        maybeAutoStrategy(isp.networkKey, isp.known)
+        // NetworkIdentity follows the real network for the whole app; act on each new provider.
+        NetworkIdentity.start(this)
+        networkJob?.cancel()
+        networkJob = scope.launch {
+            NetworkIdentity.flow
+                .map { it?.networkKey to it?.known }
+                .distinctUntilChanged()
+                .collect { (key, known) ->
+                    if (key != null) {
+                        worker.execute {
+                            switchStrategyFor(key)
+                            maybeAutoStrategy(key, known)
+                        }
                     }
                 }
+        }
+        ipv6Job?.cancel()
+        ipv6Job = scope.launch {
+            NetworkIdentity.flow.map { it?.hasIpv6 }.distinctUntilChanged().collect { v6 ->
+                if (v6 != null) worker.execute { reopenTunnelFor(v6) }
             }
         }
-        runCatching { cm.registerDefaultNetworkCallback(callback) }
-            .onSuccess { networkCallback = callback }
-            .onFailure { EngineLog.add("network callback failed: $it") }
     }
 
     /** Must run on [worker]. */
@@ -292,8 +338,11 @@ class BypassVpnService : VpnService() {
         stopping = true
         watchdog?.interrupt()
         watchdog = null
-        networkCallback?.let { cb -> runCatching { getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(cb) } }
-        networkCallback = null
+        networkJob?.cancel()
+        networkJob = null
+        ipv6Job?.cancel()
+        ipv6Job = null
+        tunnelIpv6 = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         runCatching { tun?.close() }
         tun = null

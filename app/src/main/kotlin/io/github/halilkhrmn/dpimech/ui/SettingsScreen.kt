@@ -1,5 +1,6 @@
 package io.github.halilkhrmn.dpimech.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
@@ -10,9 +11,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -33,10 +36,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.AppSettings
 import kotlinx.coroutines.launch
@@ -49,6 +54,7 @@ fun SettingsScreen(
     onChange: ((AppSettings) -> AppSettings) -> Unit,
     onWizard: () -> Unit,
     onRefreshStrategies: suspend () -> List<String>,
+    lastUpdated: Long?,
     onLogs: () -> Unit,
     onReport: () -> Unit,
     bottomPadding: PaddingValues,
@@ -57,6 +63,13 @@ fun SettingsScreen(
     var pickLanguage by remember { mutableStateOf(false) }
     var pickDns by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
+    var refreshing by remember { mutableStateOf(false) }
+    // Re-read when coming back from Android's battery screen.
+    var ignoringBattery by remember { mutableStateOf(isIgnoringBattery(context)) }
+    LifecycleResumeEffect(Unit) {
+        ignoringBattery = isIgnoringBattery(context)
+        onPauseOrDispose { }
+    }
     val scope = rememberCoroutineScope()
     val updated = stringResource(R.string.strategies_updated)
     val failed = stringResource(R.string.strategies_update_failed)
@@ -99,10 +112,19 @@ fun SettingsScreen(
             )
             ListItem(
                 headlineContent = { Text(stringResource(R.string.strategies_update)) },
-                supportingContent = { Text(stringResource(R.string.settings_update_hint)) },
-                modifier = Modifier.clickable {
+                supportingContent = {
+                    Text(
+                        stringResource(R.string.settings_update_hint) + "\n" +
+                            (lastUpdated?.let { stringResource(R.string.settings_last_update, formatTime(it, LocalConfiguration.current.locales[0])) }
+                                ?: stringResource(R.string.settings_never_updated)),
+                    )
+                },
+                trailingContent = { if (refreshing) CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp) },
+                modifier = Modifier.clickable(enabled = !refreshing) {
+                    refreshing = true
                     scope.launch {
                         val errors = onRefreshStrategies()
+                        refreshing = false
                         snackbar.showSnackbar(if (errors.isEmpty()) updated else failed + "\n" + errors.joinToString("\n"))
                     }
                 },
@@ -153,18 +175,28 @@ fun SettingsScreen(
                     runCatching { context.startActivity(Intent(Settings.ACTION_VPN_SETTINGS)) }
                 },
             )
-            val pm = context.getSystemService(PowerManager::class.java)
-            if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.settings_battery)) },
-                    supportingContent = { Text(stringResource(R.string.settings_battery_hint)) },
-                    modifier = Modifier.clickable {
-                        @Suppress("BatteryLife") // a VPN-style service the user turned on; the user confirms
-                        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:${context.packageName}".toUri())
-                        runCatching { context.startActivity(intent) }
-                    },
-                )
-            }
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_battery)) },
+                supportingContent = {
+                    Text(
+                        stringResource(R.string.settings_battery_hint) + "\n" +
+                            stringResource(if (ignoringBattery) R.string.settings_battery_ok else R.string.settings_battery_limited),
+                    )
+                },
+                modifier = Modifier.clickable {
+                    val intent = if (ignoringBattery) {
+                        Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    } else {
+                        @SuppressLint("BatteryLife") // a VPN-style service the user turned on; the user confirms
+                        val ask = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:${context.packageName}".toUri())
+                        ask
+                    }
+                    // Some phones lack the direct dialog: fall back to the list of apps.
+                    runCatching { context.startActivity(intent) }.onFailure {
+                        runCatching { context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+                    }
+                },
+            )
         }
     }
 
@@ -187,6 +219,13 @@ fun SettingsScreen(
         )
     }
 }
+
+private fun isIgnoringBattery(context: android.content.Context) =
+    context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)
+
+/** In the app's language, which may differ from the phone's. */
+private fun formatTime(ms: Long, locale: java.util.Locale): String =
+    java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT, locale).format(java.util.Date(ms))
 
 @Composable
 private fun Section(title: String) {
