@@ -123,3 +123,16 @@ Telekom's mobile AS (20978); the desktop table should get the AS number too.
 Dropped by the owner. It would have needed a profile format agreed with the desktop app and a
 camera/QR dependency for little gain; profiles are quick to make with the wizard and the Lab.
 Phase 3 is the home-screen widget and shortcuts.
+
+## 23. DoH and the QUIC switch through a packet filter in front of hev (2026-10-01)
+Decisions #13 and #15 left both waiting for a ciadpi change. Instead, when either is on, the TUN
+is not given to hev-socks5-tunnel directly: the service reads it (non-blocking, `poll`) and hands
+hev one end of an `AF_UNIX SOCK_SEQPACKET` pair, which hev reads and writes like a TUN (one packet
+per read/write). Each packet the apps send is checked: UDP to port 53 (any server, so hard-coded
+resolvers are covered too) is answered over DNS over HTTPS by DPIMech itself, outside the VPN;
+UDP to port 443 is dropped when the QUIC switch is on; everything else goes to hev unchanged.
+DoH uses the chosen DNS server's endpoint by IP (no lookup needed first); unknown servers use
+Cloudflare. When DoH fails the query falls back to the old path (plain DNS through ciadpi), and
+after three failures in a row DoH rests for a minute so lookups do not wait for timeouts. With
+both switches off nothing changes (hev gets the TUN), so the copy costs nothing for those users.
+The filter is Kotlin, not native code, to keep "native code only from pinned submodules".

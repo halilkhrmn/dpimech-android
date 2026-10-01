@@ -9,4 +9,13 @@
     <string name="event_channel">События</string>
     <string name="event_strategy">Автоматическая стратегия: для этой сети выбрана «%1$s».</string>
     <string name="event_revoked">DPIMech выключен: запущена другая VPN или отозвано разрешение VPN.</string>
+    <string name="engine_stats_line">↓ %1$s/с  ↑ %2$s/с</string>
+    <string name="engine_stats_total">Всего ↓ %1$s  ↑ %2$s</string>
+    <string name="engine_stats_strategy">Стратегия: %1$s</string>
+    <string name="engine_stats_dns">DNS over HTTPS: %1$d из %2$d запросов</string>
+    <string name="engine_stats_quic">Заблокировано QUIC: %1$d пакетов</string>
+    <string name="engine_stats_restarts">Перезапуски движка: %1$d</string>
+    <string name="engine_stats_ping">Средний пинг: %1$d мс · открываются %2$d из %3$d сайтов</string>
+    <string name="engine_stats_ping_none">Сейчас ни один сайт не открывается (проверено %1$d)</string>
+    <string name="engine_auto_progress">Поиск лучшей стратегии: %1$d из %2$d тестов</string>
 </resources>

@@ -34,12 +34,21 @@ class SiteCheck(
     /** Some DPI boxes cut the connection after the first few kilobytes. */
     private val bodySample: Int = 16 * 1024,
 ) {
-    fun opens(connector: Connector, host: String, port: Int = 443): Boolean = try {
+    fun opens(connector: Connector, host: String, port: Int = 443): Boolean = measure(connector, host, port) != null
+
+    /**
+     * Like [opens], but returns how long the connection and TLS handshake took (ms), the
+     * "ping" of a site through the bypass; null when the site does not open.
+     */
+    fun measure(connector: Connector, host: String, port: Int = 443): Long? = try {
+        val started = System.nanoTime()
+        var handshake = 0L
         connector.open(host, port, timeoutMs).use { raw ->
             (tls.createSocket(raw, host, port, true) as SSLSocket).use { s ->
                 s.sslParameters = s.sslParameters.apply { serverNames = listOf(SNIHostName(host)) }
                 s.soTimeout = timeoutMs
                 s.startHandshake()
+                handshake = (System.nanoTime() - started) / 1_000_000
                 s.getOutputStream().apply {
                     write(
                         "GET / HTTP/1.1\r\nHost: $host\r\nUser-Agent: $USER_AGENT\r\nAccept: */*\r\nConnection: close\r\n\r\n"
@@ -54,17 +63,17 @@ class SiteCheck(
                 while (read < bodySample) {
                     val n = inp.read(buf)
                     if (n < 0) break
-                    if (first && !String(buf, 0, minOf(n, 5)).startsWith("HTTP/")) return false
+                    if (first && !String(buf, 0, minOf(n, 5)).startsWith("HTTP/")) return null
                     first = false
                     read += n
                 }
-                read > 0
+                if (read > 0) handshake else null
             }
         }
     } catch (_: IOException) {
-        false
+        null
     } catch (_: IllegalArgumentException) {
-        false
+        null
     }
 
     companion object {

@@ -35,6 +35,7 @@ class ScreenshotTest {
     private val whole = CountryPreset.forCountry("TR").profile("1", "Blocked sites", strategy)
     private val discord = Profile("2", "Discord", packs = listOf("discord"), strategy = strategy, apps = listOf("com.discord"), appMode = AppMode.ONLY_SELECTED)
     private val saved = SavedProfiles(listOf(whole, discord), "1")
+    private val stats = sampleStats()
 
     private fun shot(name: String, content: @Composable () -> Unit) {
         compose.setContent { DpimechTheme(content = content) }
@@ -46,13 +47,13 @@ class ScreenshotTest {
     }
 
     @Test @Config(qualifiers = "+tr") fun homeTurkish() = shot("home_tr") {
-        HomeScreen(saved, EngineState.Running("1", "Engelli siteler", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues())
+        HomeScreen(saved, EngineState.Running("1", "Engelli siteler", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
     }
 
     @Test @Config(qualifiers = "+tr") fun wizardTurkish() = shot("wizard_tr") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }
 
     @Test @Config(qualifiers = "+night") fun homeDark() = shot("home_dark") {
-        HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues())
+        HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
     }
 
     @Test fun homeOff() = home(EngineState.Stopped)
@@ -62,7 +63,12 @@ class ScreenshotTest {
             saved.copy(profiles = listOf(whole.withStrategy(strategy, "AS9121"), discord)),
             EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(),
             network = io.github.halilkhrmn.dpimech.core.NetworkInfo(io.github.halilkhrmn.dpimech.core.Transport.WIFI, isp = tt),
+            stats = stats.copy(blockQuic = true, quicBlocked = 214),
         )
+    }
+    /** Tall screen, so the traffic card's tiles are in the picture. */
+    @Test @Config(qualifiers = "w411dp-h1400dp-xxhdpi") fun homeTraffic() = shot("home_traffic") {
+        HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
     }
     @Test fun homeMobile() = shot("home_mobile") {
         HomeScreen(
@@ -88,6 +94,10 @@ class ScreenshotTest {
 
     @Test fun profileEditor() = shot("profile_editor") {
         ProfileEditor(discord.copy(extraDomains = listOf("example.com", "cdn.example.net", "wattpad.com")), emptyList(), {}, {}, {})
+    }
+
+    @Test fun widgetConfig() = shot("widget_config") {
+        io.github.halilkhrmn.dpimech.widget.WidgetConfig(saved, "2") {}
     }
 
     @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }

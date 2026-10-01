@@ -13,7 +13,11 @@ import io.github.halilkhrmn.dpimech.engine.EngineState
 import io.github.halilkhrmn.dpimech.shortcut.Shortcuts
 import io.github.halilkhrmn.dpimech.widget.BypassWidget
 import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
+import io.github.halilkhrmn.dpimech.ui.isActive
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class DpimechApp : Application() {
@@ -36,11 +40,10 @@ class DpimechApp : Application() {
         val scope = MainScope()
         // Widget and launcher shortcuts follow the engine and the profiles.
         scope.launch { EngineState.flow.collect { BypassWidget.render(this@DpimechApp) } }
+        scope.launch { profiles.saved.collect { BypassWidget.render(this@DpimechApp) } }
         scope.launch {
-            profiles.saved.collect {
-                BypassWidget.render(this@DpimechApp)
-                Shortcuts.publish(this@DpimechApp, it)
-            }
+            combine(profiles.saved, EngineState.flow.map { it.isActive() }.distinctUntilChanged(), ::Pair)
+                .collect { (saved, running) -> Shortcuts.publish(this@DpimechApp, saved, running) }
         }
         // The automatic strategy runs in the VPN service; keep what it learns with the profile.
         scope.launch {
@@ -54,6 +57,6 @@ class DpimechApp : Application() {
     /** Starts the bypass with the current settings (VPN permission must already be granted). */
     fun startBypass(context: Context, profile: Profile) {
         val s = settings.settings.value
-        BypassVpnService.start(context, profile, s.dns, s.autoStrategy, s.notifyStrategy, s.notifyErrors)
+        BypassVpnService.start(context, profile, s.dns, s.autoStrategy, s.notifyStrategy, s.notifyErrors, s.encryptedDns, s.blockQuic)
     }
 }

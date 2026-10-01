@@ -89,6 +89,7 @@ class StoreScreenshotTest(private val locale: String) {
             HomeScreen(
                 profiles(), EngineState.Running("1", "", "TLS record split"), {}, {}, {}, {}, {}, p,
                 network = io.github.halilkhrmn.dpimech.core.NetworkInfo(io.github.halilkhrmn.dpimech.core.Transport.WIFI, isp = IspInfo("Turk Telekom", 9121, "TR", Isp.match(9121, ""))),
+                stats = sampleStats(),
             )
         }
     }

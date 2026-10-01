@@ -83,8 +83,10 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 - **Per-network strategy memory:** remembers the working strategy per network (each Wi-Fi, mobile
   data per operator) and switches automatically when the network changes.
 - **Watchdog:** health probe through the local SOCKS5; restarts the engine within a second if it hangs.
-- **DNS:** DoH/DoT inside the tunnel + a check that compares the system DNS with DoH to spot DNS blocking.
-- **QUIC block switch:** drop UDP/443 for bypassed apps so browsers and YouTube fall back to TCP.
+- **DNS:** DoH inside the tunnel (packet filter in front of hev, DECISIONS #23) + a check that
+  compares the system DNS with DoH to spot DNS blocking.
+- **QUIC block switch:** drop UDP/443 for bypassed apps so browsers and YouTube fall back to TCP
+  (same packet filter).
 
 ### Android integration
 - **Quick Settings tile:** on/off from the notification shade.
@@ -95,6 +97,8 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 
 ### Interface
 - Compose + Material 3 Expressive, dynamic colour, light/dark.
+- **Home:** power button in one card with state, uptime, profile and network/DoH/QUIC chips; live
+  traffic chart of the last minute (download area, upload dashed line) with totals, DNS and restarts.
 - **Easy mode:** "Just make it work" wizard (pick sites → test → turn the best strategy on), as on desktop.
 - **Advanced mode:** strategies, Strategy Lab, logs.
 - Connection check with average ping per profile.
@@ -113,6 +117,16 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 2. **Smarts** — Strategy Lab, ISP detection, per-network memory, DNS (DoH/DoT + check), watchdog,
    QUIC switch, Easy-mode wizard.
 3. **Extras** — widget, shortcuts. (QR profile sharing dropped, DECISIONS #22.)
+3b. **Live status and more shortcuts** (owner's list, 2026-10-01; done, see PROGRESS):
+   - Strategy Lab and the automatic test in a foreground service with a progress notification, so
+     they keep running when the user switches to another app; Android 16 Live Updates
+     (promoted ongoing notification, `ProgressStyle`) where available.
+   - Richer ongoing notification while on: state, strategy, restarts, average ping of the
+     profile's sites (as on desktop), traffic (first part done: traffic, DNS, QUIC, restarts).
+   - Per-profile widgets: each widget instance bound to a profile, with a configure screen
+     (profile, look: compact / with traffic).
+   - More long-press items on the app icon: static shortcuts for "Strategy test", "Logs",
+     "Turn off", next to the profile shortcuts.
 4. **Release** — GitHub Releases (signed APK, per-ABI + universal), IzzyOnDroid, then F-Droid.
 
 ## Build, CI and testing

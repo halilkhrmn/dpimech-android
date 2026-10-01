@@ -9,4 +9,13 @@
     <string name="event_channel">Olaylar</string>
     <string name="event_strategy">Otomatik strateji: bu ağ için “%1$s” stratejisine geçildi.</string>
     <string name="event_revoked">DPIMech kapatıldı: başka bir VPN başladı ya da VPN izni geri alındı.</string>
+    <string name="engine_stats_line">↓ %1$s/sn  ↑ %2$s/sn</string>
+    <string name="engine_stats_total">Toplam ↓ %1$s  ↑ %2$s</string>
+    <string name="engine_stats_strategy">Strateji: %1$s</string>
+    <string name="engine_stats_dns">DNS over HTTPS: %2$d sorgunun %1$d tanesi</string>
+    <string name="engine_stats_quic">Engellenen QUIC: %1$d paket</string>
+    <string name="engine_stats_restarts">Motor yeniden başlatma: %1$d</string>
+    <string name="engine_stats_ping">Ortalama ping: %1$d ms · %3$d sitenin %2$d tanesi açılıyor</string>
+    <string name="engine_stats_ping_none">Şu an hiçbir site açılmıyor (%1$d denendi)</string>
+    <string name="engine_auto_progress">En iyi strateji aranıyor: %2$d testten %1$d</string>
 </resources>

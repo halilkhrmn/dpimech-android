@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import io.github.halilkhrmn.dpimech.DpimechApp
+import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
 import io.github.halilkhrmn.dpimech.ui.MainActivity
@@ -22,6 +23,13 @@ class ShortcutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val app = application as DpimechApp
+        Shortcuts.reportUsed(this, intent)
+        if (intent.action == Shortcuts.ACTION_STOP) {
+            EngineLog.add("shortcut: turning off")
+            BypassVpnService.stop(this)
+            finish()
+            return
+        }
         val profile = app.profiles.saved.value.profiles.find { it.id == intent.getStringExtra(Shortcuts.EXTRA_PROFILE) }
         val open = intent.getStringExtra(Shortcuts.EXTRA_OPEN)
         if (profile == null || VpnService.prepare(this) != null) {
