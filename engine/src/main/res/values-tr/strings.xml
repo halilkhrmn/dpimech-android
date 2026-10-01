@@ -18,4 +18,5 @@
     <string name="engine_stats_ping">Ortalama ping: %1$d ms · %3$d sitenin %2$d tanesi açılıyor</string>
     <string name="engine_stats_ping_none">Şu an hiçbir site açılmıyor (%1$d denendi)</string>
     <string name="engine_auto_progress">En iyi strateji aranıyor: %2$d testten %1$d</string>
+    <string name="engine_next_profile">Sonraki profil</string>
 </resources>

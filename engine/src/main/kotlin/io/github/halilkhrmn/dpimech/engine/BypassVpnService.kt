@@ -99,7 +99,20 @@ class BypassVpnService : VpnService() {
         when (intent?.action) {
             ACTION_STOP -> worker.execute { stopEngine(EngineState.Stopped) }
             ACTION_PING -> if (engine != null) pingNow()
+            // Android's always-on VPN (or a restart by the system) starts the service without
+            // our extras: turn on the last profile with the last settings.
+            SERVICE_INTERFACE, null -> {
+                val last = StartMemory.load(this)
+                if (last == null) {
+                    EngineLog.add("started by the system, but no profile was ever turned on")
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
+                EngineLog.add("started by the system (always-on VPN): last profile")
+                return onStartCommand(last, flags, startId)
+            }
             ACTION_START -> {
+                StartMemory.save(this, intent)
                 val json = intent.getStringExtra(EXTRA_PROFILE) ?: return START_NOT_STICKY
                 val p = runCatching { Json.decodeFromString(Profile.serializer(), json) }.getOrElse {
                     EngineState.set(EngineState.Failed(null, it.message ?: "bad profile"))
@@ -528,6 +541,7 @@ class BypassVpnService : VpnService() {
             }
             .setContentIntent(open)
             .addAction(0, getString(R.string.engine_stop), stop)
+            .apply { nextProfileAction?.invoke(this@BypassVpnService)?.let { addAction(0, getString(R.string.engine_next_profile), it) } }
             .build()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, 0)
@@ -604,6 +618,13 @@ class BypassVpnService : VpnService() {
                 .putExtra(EXTRA_BLOCK_QUIC, blockQuic)
             ContextCompat.startForegroundService(context, intent)
         }
+
+        /**
+         * Set by the app: the "next profile" button of the ongoing notification, or null when
+         * there is no other profile to switch to.
+         */
+        @Volatile
+        var nextProfileAction: ((Context) -> PendingIntent?)? = null
 
         /** Measures the average ping again (home screen refresh button). */
         fun ping(context: Context) {

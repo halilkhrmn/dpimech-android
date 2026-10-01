@@ -199,4 +199,8 @@
     <string name="widget_config_title">Профиль виджета</string>
     <string name="widget_config_follow">Выбранный профиль</string>
     <string name="widget_config_follow_hint">Следует за профилем, выбранным в приложении; стрелка переключает на следующий.</string>
+    <string name="settings_start_on_boot">Запускать при включении телефона</string>
+    <string name="settings_start_on_boot_hint">Включает выбранный профиль после перезагрузки. Постоянная VPN Android ниже делает то же через системные настройки.</string>
+    <string name="settings_auto_update">Обновлять списки стратегий автоматически</string>
+    <string name="settings_auto_update_hint">При запуске приложения, если спискам больше недели.</string>
 </resources>

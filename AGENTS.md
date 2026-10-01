@@ -75,12 +75,12 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
           (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
-          notifications), Ciadpi (process),
+          notifications), StartMemory (last start, for always-on VPN), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
           AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
           profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
-          WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); lab/ (LabService:
+          WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:
           Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
 fastlane/ store listing (en-US, tr, ru) for IzzyOnDroid / F-Droid; images from tools/fastlane-images.py

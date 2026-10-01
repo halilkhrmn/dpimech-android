@@ -19,4 +19,5 @@
     <string name="engine_stats_ping">Average ping: %1$d ms · %2$d of %3$d sites open</string>
     <string name="engine_stats_ping_none">No site opens right now (%1$d tried)</string>
     <string name="engine_auto_progress">Finding the best strategy: %1$d of %2$d tests</string>
+    <string name="engine_next_profile">Next profile</string>
 </resources>

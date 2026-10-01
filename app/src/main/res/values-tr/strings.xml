@@ -199,4 +199,8 @@
     <string name="widget_config_title">Widget profili</string>
     <string name="widget_config_follow">Seçili profil</string>
     <string name="widget_config_follow_hint">Uygulamada seçili profili izler; ok düğmesi sonrakine geçer.</string>
+    <string name="settings_start_on_boot">Telefon açılınca başlat</string>
+    <string name="settings_start_on_boot_hint">Telefon yeniden başlayınca seçili profili açar. Aşağıdaki Android "Her zaman açık VPN" ayarı aynısını sistem ayarlarından yapar.</string>
+    <string name="settings_auto_update">Strateji listelerini otomatik güncelle</string>
+    <string name="settings_auto_update_hint">Uygulama açılırken, listeler bir haftadan eskiyse.</string>
 </resources>

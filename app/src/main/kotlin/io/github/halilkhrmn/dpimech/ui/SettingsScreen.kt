@@ -123,6 +123,12 @@ fun SettingsScreen(
                 modifier = Modifier.clickable { onChange { it.copy(blockQuic = !it.blockQuic) } },
             )
             ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_auto_update)) },
+                supportingContent = { Text(stringResource(R.string.settings_auto_update_hint)) },
+                trailingContent = { Switch(settings.autoUpdateLists, { on -> onChange { it.copy(autoUpdateLists = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(autoUpdateLists = !it.autoUpdateLists) } },
+            )
+            ListItem(
                 headlineContent = { Text(stringResource(R.string.strategies_update)) },
                 supportingContent = {
                     Text(
@@ -180,6 +186,12 @@ fun SettingsScreen(
                 modifier = Modifier.clickable(onClick = onWizard),
             )
             Section(stringResource(R.string.settings_section_system))
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_start_on_boot)) },
+                supportingContent = { Text(stringResource(R.string.settings_start_on_boot_hint)) },
+                trailingContent = { Switch(settings.startOnBoot, { on -> onChange { it.copy(startOnBoot = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(startOnBoot = !it.startOnBoot) } },
+            )
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_always_on)) },
                 supportingContent = { Text(stringResource(R.string.settings_always_on_hint)) },

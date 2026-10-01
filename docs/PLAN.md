@@ -127,6 +127,14 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
      (profile, look: compact / with traffic).
    - More long-press items on the app icon: static shortcuts for "Strategy test", "Logs",
      "Turn off", next to the profile shortcuts.
+4b. **v0.2.0** (owner's list, 2026-10-01):
+   - Start on boot and Android's always-on VPN (the service restarts the last profile).
+   - Strategy lists updated automatically when older than a week.
+   - "Next profile" button in the bypass notification.
+   - Profile export / import (a file, for a new phone).
+   - Quick site check: does a site open directly, and through the bypass?
+   - More countries for the whole-phone preset, with app and README translations for them.
+   - Later: site packs shared with the desktop app (one JSON next to `default.json`).
 4. **Release** — GitHub Releases (signed APK, per-ABI + universal), IzzyOnDroid, then F-Droid.
 
 ## Build, CI and testing
@@ -152,4 +160,4 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 - Material 3 Expressive: Expressive components are still alpha (material3 1.5); the app uses stable
   material3 from the Compose BOM until they are stable (DECISIONS #11).
 - Which alternative YouTube clients the YouTube pack should include.
-- UDP for Discord voice through ciadpi: verify on a real phone what works without root.
+- ~~UDP for Discord voice through ciadpi~~: works on the owner's phone (2026-10-01).
