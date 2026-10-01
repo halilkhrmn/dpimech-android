@@ -23,7 +23,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          # IzzyOnDroid's reproducible-build verifiers use JDK 17 by default.
+          java-version: 17
       - uses: gradle/actions/setup-gradle@v4
       - name: Check that the tag matches versionName
         run: |
@@ -46,7 +47,8 @@ jobs:
           test -n "$DPIMECH_KEYSTORE_BASE64" || { echo "signing secrets are missing"; exit 1; }
           export DPIMECH_KEYSTORE="$RUNNER_TEMP/release.jks"
           echo "$DPIMECH_KEYSTORE_BASE64" | base64 -d > "$DPIMECH_KEYSTORE"
-          ./gradlew :app:assembleRelease --console=plain
+          # Clean build without caches, from the tagged commit (reproducible builds).
+          ./gradlew clean :app:assembleRelease --no-build-cache --no-configuration-cache --console=plain
           rm -f "$DPIMECH_KEYSTORE"
       - name: Collect and verify
         run: |

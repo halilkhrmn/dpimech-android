@@ -1,6 +1,7 @@
 package io.github.halilkhrmn.dpimech.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.clickable
@@ -48,6 +49,8 @@ fun SettingsScreen(
     onChange: ((AppSettings) -> AppSettings) -> Unit,
     onWizard: () -> Unit,
     onRefreshStrategies: suspend () -> List<String>,
+    onLogs: () -> Unit,
+    onReport: () -> Unit,
     bottomPadding: PaddingValues,
 ) {
     val context = LocalContext.current
@@ -66,11 +69,21 @@ fun SettingsScreen(
             Modifier.padding(top = padding.calculateTopPadding(), bottom = bottomPadding.calculateBottomPadding())
                 .verticalScroll(rememberScrollState()),
         ) {
+            Section(stringResource(R.string.settings_section_look))
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_language)) },
                 supportingContent = { Text(languageName(settings.language)) },
                 modifier = Modifier.clickable { pickLanguage = true },
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_dynamic_color)) },
+                    supportingContent = { Text(stringResource(R.string.settings_dynamic_color_hint)) },
+                    trailingContent = { Switch(settings.dynamicColor, { on -> onChange { it.copy(dynamicColor = on) } }) },
+                    modifier = Modifier.clickable { onChange { it.copy(dynamicColor = !it.dynamicColor) } },
+                )
+            }
+            Section(stringResource(R.string.settings_section_bypass))
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_auto)) },
                 supportingContent = { Text(stringResource(R.string.settings_auto_hint)) },
@@ -94,12 +107,45 @@ fun SettingsScreen(
                     }
                 },
             )
-            HorizontalDivider()
+            Section(stringResource(R.string.settings_section_notifications))
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_notify_strategy)) },
+                trailingContent = { Switch(settings.notifyStrategy, { on -> onChange { it.copy(notifyStrategy = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(notifyStrategy = !it.notifyStrategy) } },
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_notify_errors)) },
+                trailingContent = { Switch(settings.notifyErrors, { on -> onChange { it.copy(notifyErrors = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(notifyErrors = !it.notifyErrors) } },
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_notifications)) },
+                supportingContent = { Text(stringResource(R.string.settings_notifications_hint)) },
+                modifier = Modifier.clickable {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
+                        )
+                    }
+                },
+            )
+            Section(stringResource(R.string.settings_section_help))
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.logs_title)) },
+                supportingContent = { Text(stringResource(R.string.logs_hint)) },
+                modifier = Modifier.clickable(onClick = onLogs),
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.report_title)) },
+                supportingContent = { Text(stringResource(R.string.report_hint)) },
+                modifier = Modifier.clickable(onClick = onReport),
+            )
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_wizard)) },
                 supportingContent = { Text(stringResource(R.string.settings_wizard_hint)) },
                 modifier = Modifier.clickable(onClick = onWizard),
             )
+            Section(stringResource(R.string.settings_section_system))
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_always_on)) },
                 supportingContent = { Text(stringResource(R.string.settings_always_on_hint)) },
@@ -119,16 +165,6 @@ fun SettingsScreen(
                     },
                 )
             }
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_notifications)) },
-                modifier = Modifier.clickable {
-                    runCatching {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
-                        )
-                    }
-                },
-            )
         }
     }
 
@@ -150,6 +186,17 @@ fun SettingsScreen(
             onDismiss = { pickDns = false },
         )
     }
+}
+
+@Composable
+private fun Section(title: String) {
+    HorizontalDivider(Modifier.padding(top = 8.dp))
+    Text(
+        title,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+    )
 }
 
 @Composable

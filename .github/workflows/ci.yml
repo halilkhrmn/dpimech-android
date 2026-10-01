@@ -77,3 +77,14 @@ jobs:
         with:
           name: lint-report
           path: app/build/reports/lint-results-debug.html
+
+  fastlane:
+    name: Store metadata (fastlane)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Checks lengths, image sizes and ratios the way F-Droid / IzzyOnDroid read them.
+      - uses: ashutoshgngwr/validate-fastlane-supply-metadata@v2
+        with:
+          fastlaneDir: ./fastlane/metadata/android
+          usePlayStoreLocales: false

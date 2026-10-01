@@ -52,6 +52,8 @@ class BypassVpnService : VpnService() {
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var dns = TunnelConfig(socksPort = 1).dns
     private var autoStrategy = false
+    private var notifyStrategy = true
+    private var notifyErrors = true
     /** Networks the automatic strategy already tested in this session. */
     private val autoTested = mutableSetOf<String>()
     @Volatile
@@ -73,6 +75,8 @@ class BypassVpnService : VpnService() {
                 }
                 dns = intent.getStringExtra(EXTRA_DNS) ?: dns
                 autoStrategy = intent.getBooleanExtra(EXTRA_AUTO, false)
+                notifyStrategy = intent.getBooleanExtra(EXTRA_NOTIFY_STRATEGY, true)
+                notifyErrors = intent.getBooleanExtra(EXTRA_NOTIFY_ERRORS, true)
                 goForeground(p)
                 worker.execute { startEngine(p) }
             }
@@ -82,6 +86,8 @@ class BypassVpnService : VpnService() {
 
     override fun onRevoke() {
         // Another VPN took over or the user turned us off in system settings.
+        EngineLog.add("VPN permission revoked (another VPN started or turned off in settings)")
+        if (notifyErrors && engine != null) event(getString(R.string.event_revoked))
         worker.execute { stopEngine(EngineState.Stopped) }
     }
 
@@ -165,6 +171,7 @@ class BypassVpnService : VpnService() {
                     Watchdog.Action.NONE -> Unit
                     Watchdog.Action.RESTART -> worker.execute { restartEngine(current, port, reason) }
                     Watchdog.Action.GIVE_UP -> {
+                        if (notifyErrors) event(getString(R.string.engine_error_gave_up))
                         worker.execute {
                             stopEngine(EngineState.Failed(profile?.id, getString(R.string.engine_error_gave_up)))
                         }
@@ -257,6 +264,7 @@ class BypassVpnService : VpnService() {
                 EngineLog.add("automatic strategy: \"${s.name}\" works on $networkKey (${best.ok}/${best.total})")
                 profile = profile?.withStrategy(entry, networkKey)
                 EngineEvents.emit(StrategyLearned(p.id, networkKey, entry))
+                if (notifyStrategy && entry != strategy) event(getString(R.string.event_strategy, s.name))
                 switchStrategyFor(networkKey)
             }
         }
@@ -297,6 +305,26 @@ class BypassVpnService : VpnService() {
             ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
+    }
+
+    /** A one-off notification on the events channel (strategy found, bypass stopped). */
+    private fun event(text: String) {
+        val nm = getSystemService(NotificationManager::class.java)
+        nm.createNotificationChannel(
+            NotificationChannel(EVENTS_CHANNEL, getString(R.string.event_channel), NotificationManager.IMPORTANCE_DEFAULT),
+        )
+        val open = packageManager.getLaunchIntentForPackage(packageName)?.let {
+            PendingIntent.getActivity(this, 2, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+        val n = NotificationCompat.Builder(this, EVENTS_CHANNEL)
+            .setSmallIcon(R.drawable.ic_engine)
+            .setContentTitle(getString(R.string.app_name_engine))
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open)
+            .setAutoCancel(true)
+            .build()
+        runCatching { nm.notify(EVENT_ID, n) } // no POST_NOTIFICATIONS permission: nothing to show
     }
 
     private fun installedPackages(): Set<String> =
@@ -345,15 +373,28 @@ class BypassVpnService : VpnService() {
         const val EXTRA_DNS = "dns"
         const val EXTRA_AUTO = "auto"
         private const val CHANNEL = "engine"
+        private const val EVENTS_CHANNEL = "events"
+        private const val EVENT_ID = 2
+        const val EXTRA_NOTIFY_STRATEGY = "notify_strategy"
+        const val EXTRA_NOTIFY_ERRORS = "notify_errors"
         private const val NOTIFICATION_ID = 1
 
         /** Call only after [VpnService.prepare] returned null (permission granted). */
-        fun start(context: Context, profile: Profile, dns: String, autoStrategy: Boolean) {
+        fun start(
+            context: Context,
+            profile: Profile,
+            dns: String,
+            autoStrategy: Boolean,
+            notifyStrategy: Boolean = true,
+            notifyErrors: Boolean = true,
+        ) {
             val intent = Intent(context, BypassVpnService::class.java)
                 .setAction(ACTION_START)
                 .putExtra(EXTRA_PROFILE, Json.encodeToString(Profile.serializer(), profile))
                 .putExtra(EXTRA_DNS, dns)
                 .putExtra(EXTRA_AUTO, autoStrategy)
+                .putExtra(EXTRA_NOTIFY_STRATEGY, notifyStrategy)
+                .putExtra(EXTRA_NOTIFY_ERRORS, notifyErrors)
             ContextCompat.startForegroundService(context, intent)
         }
 

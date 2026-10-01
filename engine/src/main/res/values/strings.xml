@@ -6,4 +6,8 @@
     <string name="engine_stop">Turn off</string>
     <string name="engine_error_no_permission">Android did not allow DPIMech to start (VPN permission missing or always-on VPN set for another app).</string>
     <string name="engine_error_gave_up">ByeDPI kept stopping, so DPIMech turned the bypass off. Try another strategy.</string>
+    <string name="event_channel">Events</string>
+    <string name="app_name_engine" translatable="false">DPIMech</string>
+    <string name="event_strategy">Automatic strategy: switched to “%1$s” for this network.</string>
+    <string name="event_revoked">DPIMech was turned off: another VPN started or the VPN permission was withdrawn.</string>
 </resources>

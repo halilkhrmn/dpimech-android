@@ -19,6 +19,9 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
 
 ## Rules
 
+- Each release: add `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt` (≤ 500 bytes)
+  before tagging; keep short descriptions ≤ 80 characters.
+
 - Scope is fixed in `docs/PLAN.md`: ByeDPI only, no root mode, no remote tunnels, no Android TV.
 - Keep F-Droid compatible: no Google Play Services, Firebase, analytics or crash reporters; no
   executable downloads at runtime; native code only from pinned submodules.
@@ -40,6 +43,7 @@ Needs JDK 17+ (21 used), Android SDK with platform `android-37.0` and NDK `29.0.
 | Debug APK | `./gradlew :app:assembleDebug` |
 | Lint | `./gradlew :app:lintDebug` |
 | Screen renders (Robolectric) → `app/build/screenshots/` | `./gradlew :app:testDebugUnitTest` |
+| Store images → `fastlane/` (after the renders) | `python3 tools/fastlane-images.py` (needs Pillow) |
 | Release APKs (signed with `DPIMECH_*` env, else unsigned) | `./gradlew :app:assembleRelease` — see `docs/RELEASING.md` |
 
 Tests that need `$CIADPI`/`$HEV`/root are skipped when those are missing; CI runs all of them
@@ -65,6 +69,7 @@ engine/   Android library: BypassVpnService (+ watchdog, network changes), Ciadp
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
           profile editor, app picker; QS tile; repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
+fastlane/ store listing (en-US, tr, ru) for IzzyOnDroid / F-Droid; images from tools/fastlane-images.py
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
 

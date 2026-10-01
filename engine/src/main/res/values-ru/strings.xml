@@ -6,4 +6,7 @@
     <string name="engine_stop">Выключить</string>
     <string name="engine_error_no_permission">Android не разрешил запуск DPIMech (нет разрешения VPN или постоянная VPN задана для другого приложения).</string>
     <string name="engine_error_gave_up">ByeDPI постоянно останавливался, поэтому DPIMech выключил обход. Попробуйте другую стратегию.</string>
+    <string name="event_channel">События</string>
+    <string name="event_strategy">Автоматическая стратегия: для этой сети выбрана «%1$s».</string>
+    <string name="event_revoked">DPIMech выключен: запущена другая VPN или отозвано разрешение VPN.</string>
 </resources>
