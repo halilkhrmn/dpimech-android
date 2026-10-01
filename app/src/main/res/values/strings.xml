@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">DPIMech</string>
+    <string name="status_on">On: %1$s</string>
+    <string name="status_off">Off</string>
+    <string name="status_starting">Starting…</string>
+    <string name="status_failed">Could not start</string>
+    <string name="status_no_profile">Create a profile to begin.</string>
+    <string name="status_profile">Profile: %1$s</string>
+    <string name="turn_on">Turn on</string>
+    <string name="turn_off">Turn off</string>
+    <string name="profiles_empty">No profiles yet. Tap “New profile”, pick the sites (Discord, YouTube…) and the apps that should get the bypass.</string>
+    <string name="profile_new">New profile</string>
+    <string name="profile_edit">Edit profile</string>
+    <string name="profile_delete">Delete profile</string>
+    <string name="profile_summary">%1$s · apps: %2$d</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_sites">Sites</string>
+    <string name="profile_extra_domains">Other domains</string>
+    <string name="profile_extra_domains_hint">One per line, e.g. example.com (subdomains included)</string>
+    <string name="profile_domain_filter">Only these sites</string>
+    <string name="profile_domain_filter_hint">Other connections of the chosen apps are left untouched.</string>
+    <string name="profile_strategy">Strategy</string>
+    <string name="profile_strategy_choose">Choose a strategy</string>
+    <string name="profile_strategy_args">ByeDPI arguments</string>
+    <string name="profile_apps">Apps</string>
+    <string name="mode_only">Only selected</string>
+    <string name="mode_except">All except selected</string>
+    <string name="profile_apps_choose">Choose apps (selected: %1$d)</string>
+    <string name="profile_apps_needed">Choose at least one app.</string>
+    <string name="apps_title">Apps (%1$d)</string>
+    <string name="apps_search">Search</string>
+    <string name="apps_show_system">Show system apps</string>
+    <string name="strategies_update">Update strategy lists</string>
+    <string name="strategies_updated">Strategy lists updated.</string>
+    <string name="strategies_update_failed">Could not update every list; the saved copies are used.</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="back">Back</string>
+    <string name="notice_not_vpn">DPIMech is not a VPN service. Android\'s VPN feature is only used to catch the chosen apps\' traffic on your phone; connections still go straight to the site and nothing passes through anyone else\'s server. Sites blocked by IP address stay blocked. Android allows one VPN at a time.</string>
+</resources>

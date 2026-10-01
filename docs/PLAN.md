@@ -33,9 +33,10 @@ the internet provider blocks with DPI, without root and without sending traffic 
  other apps ─────────────────────────────────────────────────────►  the real site (untouched)
 ```
 
-- `ciadpi` and `hev-socks5-tunnel` are compiled as shared libraries (`.so`) from git submodules and
-  started from Kotlin through a small JNI layer. Both run inside the app's VPN service process.
-- Engine sockets are excluded from the VPN with `VpnService.protect()` so traffic does not loop.
+- `ciadpi` and `hev-socks5-tunnel` are compiled from git submodules with ndk-build. hev-socks5-tunnel
+  is a shared library driven through its JNI inside the VPN service process; ciadpi is an executable
+  shipped as `libciadpi.so` and run as a child process (one per profile / Lab test, see DECISIONS #8).
+- DPIMech's own package is always outside the VPN, so engine sockets do not loop (DECISIONS #9).
 - DNS inside the tunnel is answered by our own resolver (DoH/DoT, see Phase 2), so DNS-based blocking
   does not break the bypass.
 
@@ -45,7 +46,7 @@ the internet provider blocks with DPI, without root and without sending traffic 
 app/            Compose UI, navigation, settings, Quick Settings tile, widget, shortcuts
 core/           models, strategy file parser, domain packs, ISP table, Lab scoring (pure Kotlin, unit-tested)
 engine/         VpnService, JNI bindings, engine lifecycle + watchdog, DNS resolver
-native/         CMake project: byedpi/ and hev-socks5-tunnel/ submodules + JNI glue
+native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev brings its own JNI)
 ```
 
 ## Shared with the desktop app
@@ -118,7 +119,7 @@ native/         CMake project: byedpi/ and hev-socks5-tunnel/ submodules + JNI g
 
 ## Build, CI and testing
 
-- Gradle (Kotlin DSL) + version catalog; NDK + CMake for `native/`.
+- Gradle (Kotlin DSL) + version catalog; NDK (ndk-build, run as a Gradle task) for `native/`.
 - GitHub Actions: build debug APK on every push, unit tests for `core/`, lint; release workflow on tags
   builds signed APKs and attaches them to the GitHub release.
 - The C engines can also be built and exercised on Linux (SOCKS5 + strategy arguments) without Android.
@@ -136,7 +137,8 @@ native/         CMake project: byedpi/ and hev-socks5-tunnel/ submodules + JNI g
 
 ## Open items
 
-- Exact Material 3 Expressive library version once the skeleton is set up.
+- Material 3 Expressive: Expressive components are still alpha (material3 1.5); the app uses stable
+  material3 from the Compose BOM until they are stable (DECISIONS #11).
 - QR profile format (to agree with the desktop app).
 - Which alternative YouTube clients the YouTube pack should include.
 - UDP for Discord voice through ciadpi: verify on a real phone what works without root.

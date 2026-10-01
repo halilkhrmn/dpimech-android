@@ -1,0 +1,192 @@
+{
+  "format": 1,
+  "note": "DPIMech standard strategies. The app ships this file and fetches the newest one from main, so a change here reaches every user without a release. zapret_winws is also used for nfqws on Linux (its --wf-* filters are dropped). Every strategy still goes through the engine's argument policy.",
+  "engines": {
+    "bye_dpi": [
+      {
+        "name": "TLS record split",
+        "args": "-r 1+s"
+      },
+      {
+        "name": "Disorder SNI",
+        "args": "-d1 -s1+s"
+      },
+      {
+        "name": "OOB + disorder",
+        "args": "-o1 -d1"
+      },
+      {
+        "name": "Split + TLS record",
+        "args": "-s1 -r1+s"
+      },
+      {
+        "name": "Split SNI + OOB",
+        "args": "-s1+s -o1+s"
+      },
+      {
+        "name": "Fake + TTL",
+        "args": "-f1 -t6 -n {sni}"
+      },
+      {
+        "name": "Fake modified CH",
+        "args": "-f-1 -Qr -n {sni} -t8"
+      },
+      {
+        "name": "Disorder multi",
+        "args": "-d1 -d3+s -s6+s -d9+s -s12+s"
+      },
+      {
+        "name": "Auto: disorder → split",
+        "args": "-d1 -a1 -At,r,s -s1+s -r1+s"
+      },
+      {
+        "name": "Auto: TLS rec → fake",
+        "args": "-r1+s -a1 -At,r,s -f-1 -n {sni} -t6"
+      },
+      {
+        "name": "HTTP host mixcase + split",
+        "args": "-Mh,d,r -s1 -r1+s"
+      },
+      {
+        "name": "OOB SNI + TLS rec",
+        "args": "-q1+s -r1+s"
+      }
+    ],
+    "zapret_winws": [
+      {
+        "name": "multisplit seqovl (Google CH) + QUIC fake",
+        "args": "--wf-tcp=80,443 --wf-udp=443 --filter-udp=443 --hostlist={hostlist} --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic={fake}/quic_initial_www_google_com.bin --new --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern={fake}/tls_clienthello_www_google_com.bin"
+      },
+      {
+        "name": "fake + multidisorder (badseq)",
+        "args": "--wf-tcp=80,443 --wf-udp=443 --filter-udp=443 --hostlist={hostlist} --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic={fake}/quic_initial_www_google_com.bin --new --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=8 --dpi-desync-fooling=badseq --dpi-desync-fake-tls={fake}/tls_clienthello_www_google_com.bin"
+      },
+      {
+        "name": "fake + multisplit (md5sig)",
+        "args": "--wf-tcp=80,443 --wf-udp=443 --filter-udp=443 --hostlist={hostlist} --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic={fake}/quic_initial_www_google_com.bin --new --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=fake,multisplit --dpi-desync-split-pos=1 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls={fake}/tls_clienthello_www_google_com.bin"
+      },
+      {
+        "name": "fakedsplit (autottl)",
+        "args": "--wf-tcp=80,443 --wf-udp=443 --filter-udp=443 --hostlist={hostlist} --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic={fake}/quic_initial_www_google_com.bin --new --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-autottl --dpi-desync-fooling=badseq --dpi-desync-repeats=8"
+      },
+      {
+        "name": "multisplit sniext",
+        "args": "--wf-tcp=80,443 --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=multisplit --dpi-desync-split-pos=1,sniext+1"
+      },
+      {
+        "name": "multidisorder midsld",
+        "args": "--wf-tcp=80,443 --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=multidisorder --dpi-desync-split-pos=1,midsld"
+      },
+      {
+        "name": "fake (ttl 4) + split",
+        "args": "--wf-tcp=80,443 --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=fake,split2 --dpi-desync-ttl=4 --dpi-desync-fake-tls={fake}/tls_clienthello_iana_org.bin"
+      },
+      {
+        "name": "hostfakesplit",
+        "args": "--wf-tcp=80,443 --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=hostfakesplit --dpi-desync-fooling=badseq --dpi-desync-repeats=4"
+      },
+      {
+        "name": "Discord voice (UDP) + TLS multisplit",
+        "args": "--wf-tcp=80,443 --wf-udp=443,50000-50100 --filter-udp=50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-repeats=6 --new --filter-udp=443 --hostlist={hostlist} --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic={fake}/quic_initial_www_google_com.bin --new --filter-tcp=80,443 --hostlist={hostlist} --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern={fake}/tls_clienthello_www_google_com.bin"
+      }
+    ],
+    "zapret_tpws": [
+      {
+        "name": "split SNI (midsld) + disorder",
+        "args": "--split-pos=1,midsld --disorder"
+      },
+      {
+        "name": "TLS record split at SNI",
+        "args": "--tlsrec=sniext"
+      },
+      {
+        "name": "TLS record + split",
+        "args": "--tlsrec=sniext --split-pos=1,midsld"
+      },
+      {
+        "name": "split + OOB",
+        "args": "--split-pos=1 --oob"
+      },
+      {
+        "name": "disorder only",
+        "args": "--split-pos=2 --disorder"
+      },
+      {
+        "name": "HTTP host case + split",
+        "args": "--hostcase --split-pos=method+2,midsld"
+      },
+      {
+        "name": "small MSS (split by the network)",
+        "args": "--mss=88"
+      },
+      {
+        "name": "TLS record + disorder + OOB",
+        "args": "--tlsrec=sniext --split-pos=1,midsld --disorder --oob"
+      }
+    ],
+    "goodbye_dpi": [
+      {
+        "name": "-9 (recommended)",
+        "args": "-9 --blacklist {hostlist}"
+      },
+      {
+        "name": "-9 + DNS redirect",
+        "args": "-9 --blacklist {hostlist} --dns-addr 77.88.8.8 --dns-port 1253 --dnsv6-addr 2a02:6b8::feed:0ff --dnsv6-port 1253"
+      },
+      {
+        "name": "-5 (auto TTL)",
+        "args": "-5 --blacklist {hostlist}"
+      },
+      {
+        "name": "-6 (wrong seq)",
+        "args": "-6 --blacklist {hostlist}"
+      },
+      {
+        "name": "-7 (wrong checksum)",
+        "args": "-7 --blacklist {hostlist}"
+      },
+      {
+        "name": "fragment by SNI + TTL 5",
+        "args": "-e2 --frag-by-sni --set-ttl 5 --blacklist {hostlist}"
+      },
+      {
+        "name": "native frag + wrong seq",
+        "args": "-e1 -q --native-frag --wrong-seq --blacklist {hostlist}"
+      }
+    ],
+    "spoof_dpi": [
+      {
+        "name": "split at SNI + DoH",
+        "args": "--dns-mode https"
+      },
+      {
+        "name": "split at SNI + disorder + DoH",
+        "args": "--dns-mode https --https-disorder"
+      },
+      {
+        "name": "first byte + DoH",
+        "args": "--dns-mode https --https-split-mode first-byte"
+      },
+      {
+        "name": "1-byte chunks + DoH",
+        "args": "--dns-mode https --https-split-mode chunk --https-chunk-size 1"
+      },
+      {
+        "name": "random split + disorder + DoH",
+        "args": "--dns-mode https --https-split-mode random --https-disorder"
+      },
+      {
+        "name": "fake packets + DoH",
+        "args": "--dns-mode https --https-fake-count 3"
+      },
+      {
+        "name": "split at SNI (system DNS)",
+        "args": "--dns-mode system"
+      },
+      {
+        "name": "split at SNI + disorder (system DNS)",
+        "args": "--dns-mode system --https-disorder"
+      }
+    ]
+  }
+}

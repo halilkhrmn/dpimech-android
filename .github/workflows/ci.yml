@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  NDK_VERSION: 29.0.14206865
+
+jobs:
+  test:
+    name: Core tests + engines on Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build ciadpi and hev-socks5-tunnel for Linux
+        run: ./native/build-host.sh
+      - name: Unit and ciadpi integration tests
+        run: |
+          export CIADPI=$PWD/build/host/ciadpi
+          ./gradlew :core:test --console=plain
+      - name: End-to-end test (TUN -> hev -> ciadpi, needs root)
+        # Stop the runner user's daemon first: with -E the root client would otherwise reuse it
+        # and the test would run without root (and be skipped).
+        run: |
+          ./gradlew --stop
+          sudo -E env "PATH=$PATH" "JAVA_HOME=$JAVA_HOME" \
+            CIADPI=$PWD/build/host/ciadpi HEV=$PWD/build/host/hev/bin/hev-socks5-tunnel \
+            ./gradlew --no-daemon :core:test --tests '*TunnelEndToEndTest' --rerun --console=plain
+      - name: Fail if the end-to-end test was skipped
+        run: |
+          f=core/build/test-results/test/TEST-io.github.halilkhrmn.dpimech.core.TunnelEndToEndTest.xml
+          grep -q 'skipped="0"' "$f" && grep -q 'failures="0"' "$f"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: core-test-results
+          path: core/build/test-results/
+
+  android:
+    name: Android build + lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install NDK and platform
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
+      - name: Build debug APK and lint
+        run: ./gradlew :app:assembleDebug :app:lintDebug --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dpimech-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-debug.html
