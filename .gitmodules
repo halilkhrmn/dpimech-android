@@ -1,0 +1,6 @@
+[submodule "native/byedpi"]
+	path = native/byedpi
+	url = https://github.com/hufrea/byedpi.git
+[submodule "native/hev-socks5-tunnel"]
+	path = native/hev-socks5-tunnel
+	url = https://github.com/heiher/hev-socks5-tunnel.git
