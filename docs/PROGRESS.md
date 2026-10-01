@@ -43,6 +43,16 @@
 
 ## Work log
 
+### 2026-10-01 — Release preparation for v0.1.0
+- Done: store descriptions (en/tr/ru) list DoH, QUIC block, live traffic and ping, widgets and
+  shortcuts; changelog 1.txt in all three languages (≤ 500 bytes); store screenshots re-rendered
+  with the new home; Windows (PowerShell) steps for the release key in RELEASING.md.
+- Verified: unsigned `assembleRelease` with R8 builds; dexdump shows `TProxy` natives and the new
+  services/activities kept; four ABIs carry libciadpi and libhev-socks5-tunnel.
+- Next (owner): release key + four secrets, then tag `v0.1.0`; then the certificate hash goes
+  into `docs/fdroid/…yml` and the fdroiddata merge request (docs/FDROID.md). The minified release
+  build has not been run on a phone yet: install the release APK and try it before the MR.
+
 ### 2026-10-01 — Phase 3b: ping, Live Updates, per-profile widgets, more shortcuts
 - Done: average ping (connect + TLS handshake through ciadpi to the profile's sites, `Ping` +
   `SiteCheck.measure`) 3 s after start, every 5 min, after a strategy switch and from the refresh

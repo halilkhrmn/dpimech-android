@@ -6,8 +6,11 @@
 <li>Whole phone for the sites commonly blocked in your country, or only the apps you pick. Other connections are left untouched.</li>
 <li>Strategy Lab: tests strategies against real sites with confirmation rounds and shows which one works on your provider.</li>
 <li>Automatic strategy: on a new network it finds and remembers what works there.</li>
+<li>Encrypted DNS (DNS over HTTPS) for the bypassed apps, and an optional QUIC block so browsers and YouTube use TCP.</li>
+<li>Home screen with live traffic, average ping of your sites and DNS counts; the notification shows the same.</li>
+<li>Widgets (one per profile if you like), launcher shortcuts that turn a profile on and open its app, Quick Settings tile.</li>
 <li>Strategies shared with the desktop app (Windows, Linux, macOS), updated without a new release, plus a community list.</li>
-<li>DNS blocking check, watchdog that restarts the engine, Quick Settings tile, logs and problem report.</li>
+<li>DNS blocking check, watchdog that restarts the engine, logs and problem report.</li>
 <li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский.</li>
 </ul>
 <p>Android allows one VPN at a time, so another VPN or a VPN-based ad blocker cannot run together with DPIMech.</p>

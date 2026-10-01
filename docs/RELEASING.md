@@ -12,6 +12,18 @@ keytool -genkeypair -v -keystore dpimech-release.jks -storetype PKCS12 \
 base64 -w0 dpimech-release.jks   # → DPIMECH_KEYSTORE_BASE64
 ```
 
+On Windows (PowerShell). `keytool` comes with any JDK; Android Studio has one in
+`C:\Program Files\Android\Android Studio\jbr\bin`:
+
+```powershell
+& "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe" -genkeypair -v `
+  -keystore dpimech-release.jks -storetype PKCS12 -alias dpimech -keyalg RSA -keysize 4096 `
+  -validity 10000 -dname "CN=Halil Kahraman, O=DPIMech"
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$PWD\dpimech-release.jks")) | Set-Clipboard
+```
+
+The second line copies the `DPIMECH_KEYSTORE_BASE64` value to the clipboard.
+
 Repository → Settings → Secrets and variables → Actions → New repository secret:
 
 | Secret | Value |
