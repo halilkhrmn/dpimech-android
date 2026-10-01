@@ -149,7 +149,6 @@
     <string name="net_looking_up">sağlayıcı bulunuyor…</string>
     <string name="net_remembered">Bu ağ için strateji: %1$s</string>
     <string name="net_auto">Bu ağ için kayıtlı strateji yok; otomatik strateji bulacak.</string>
-    <string name="net_default">Bu ağda profil stratejisi kullanılıyor: %1$s</string>
     <string name="settings_last_update">Son güncelleme: %1$s</string>
     <string name="settings_never_updated">Henüz güncellenmedi; uygulamadaki liste kullanılıyor.</string>
     <string name="settings_battery_ok">İzin verildi: Android DPIMech\'i durdurmaz.</string>
@@ -179,4 +178,25 @@
     <string name="home_quic">Engellenen QUIC</string>
     <string name="home_restarts">Yeniden başlatma</string>
     <string name="home_chart">Atlatılan uygulamaların son bir dakikadaki trafiği</string>
+    <string name="home_ping">Ortalama ping</string>
+    <string name="home_ping_value">%1$d ms</string>
+    <string name="home_ping_measuring">Ölçülüyor…</string>
+    <string name="home_ping_none">Siteler açılmıyor</string>
+    <string name="home_ping_sites">%2$d sitenin %1$d tanesi açılıyor</string>
+    <string name="home_ping_just_now">şimdi</string>
+    <string name="home_ping_ago">%1$d dk önce</string>
+    <string name="home_ping_refresh">Yeniden ölç</string>
+    <string name="lab_channel">Strateji testi</string>
+    <string name="lab_preparing">Hazırlanıyor…</string>
+    <string name="lab_done_title">Strateji testi bitti</string>
+    <string name="shortcut_off">Kapat</string>
+    <string name="shortcut_off_long">Atlatmayı kapat</string>
+    <string name="shortcut_test">Strateji testi</string>
+    <string name="shortcut_test_long">En iyi stratejiyi bul</string>
+    <string name="shortcut_logs">Loglar</string>
+    <string name="shortcut_logs_long">Logları göster</string>
+    <string name="widget_profile_gone">Profil silindi</string>
+    <string name="widget_config_title">Widget profili</string>
+    <string name="widget_config_follow">Seçili profil</string>
+    <string name="widget_config_follow_hint">Uygulamada seçili profili izler; ok düğmesi sonrakine geçer.</string>
 </resources>

@@ -16,4 +16,7 @@
     <string name="engine_stats_dns">DNS over HTTPS: %1$d of %2$d queries</string>
     <string name="engine_stats_quic">QUIC blocked: %1$d packets</string>
     <string name="engine_stats_restarts">Engine restarts: %1$d</string>
+    <string name="engine_stats_ping">Average ping: %1$d ms · %2$d of %3$d sites open</string>
+    <string name="engine_stats_ping_none">No site opens right now (%1$d tried)</string>
+    <string name="engine_auto_progress">Finding the best strategy: %1$d of %2$d tests</string>
 </resources>

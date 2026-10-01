@@ -150,7 +150,6 @@
     <string name="net_looking_up">finding the provider…</string>
     <string name="net_remembered">Strategy for this network: %1$s</string>
     <string name="net_auto">No strategy saved for this network yet; the automatic strategy will find one.</string>
-    <string name="net_default">This network uses the profile strategy: %1$s</string>
     <string name="settings_last_update">Last updated: %1$s</string>
     <string name="settings_never_updated">Not updated yet; the built-in list is used.</string>
     <string name="settings_battery_ok">Allowed: Android will not stop DPIMech.</string>
@@ -180,4 +179,25 @@
     <string name="home_quic">QUIC blocked</string>
     <string name="home_restarts">Restarts</string>
     <string name="home_chart">Traffic of the bypassed apps in the last minute</string>
+    <string name="home_ping">Average ping</string>
+    <string name="home_ping_value">%1$d ms</string>
+    <string name="home_ping_measuring">Measuring…</string>
+    <string name="home_ping_none">Sites do not open</string>
+    <string name="home_ping_sites">%1$d of %2$d sites open</string>
+    <string name="home_ping_just_now">just now</string>
+    <string name="home_ping_ago">%1$d min ago</string>
+    <string name="home_ping_refresh">Measure again</string>
+    <string name="lab_channel">Strategy test</string>
+    <string name="lab_preparing">Preparing…</string>
+    <string name="lab_done_title">Strategy test finished</string>
+    <string name="shortcut_off">Turn off</string>
+    <string name="shortcut_off_long">Turn the bypass off</string>
+    <string name="shortcut_test">Strategy test</string>
+    <string name="shortcut_test_long">Find the best strategy</string>
+    <string name="shortcut_logs">Logs</string>
+    <string name="shortcut_logs_long">Show the logs</string>
+    <string name="widget_profile_gone">Profile deleted</string>
+    <string name="widget_config_title">Widget profile</string>
+    <string name="widget_config_follow">Selected profile</string>
+    <string name="widget_config_follow_hint">Follows the profile chosen in the app; the arrow switches to the next one.</string>
 </resources>

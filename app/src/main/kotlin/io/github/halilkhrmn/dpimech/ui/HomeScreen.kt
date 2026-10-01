@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +33,8 @@ import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lan
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.NetworkPing
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.SignalCellularAlt
@@ -106,6 +110,7 @@ fun HomeScreen(
     stats: TrafficStats = TrafficStats(),
     encryptedDns: Boolean = true,
     blockQuic: Boolean = false,
+    onPing: () -> Unit = {},
 ) {
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name), fontWeight = FontWeight.SemiBold) }) }) { padding ->
         LazyColumn(
@@ -132,7 +137,7 @@ fun HomeScreen(
                     onEdit = onEdit,
                 )
             }
-            if (engine is EngineState.Running) item { TrafficCard(stats) }
+            if (engine is EngineState.Running) item { TrafficCard(stats, onPing) }
             item { ProfilesCard(saved, onSelect, onEdit, onNew) }
             item {
                 Text(
@@ -341,7 +346,7 @@ private fun InfoChip(icon: ImageVector, text: String) {
  * dashed line (so the two differ without colour too). Touch the chart to read a second.
  */
 @Composable
-private fun TrafficCard(stats: TrafficStats) {
+private fun TrafficCard(stats: TrafficStats, onPing: () -> Unit) {
     val downColor = MaterialTheme.colorScheme.primary
     val upColor = MaterialTheme.colorScheme.tertiary
     var picked by remember { mutableIntStateOf(-1) }
@@ -349,6 +354,8 @@ private fun TrafficCard(stats: TrafficStats) {
     val index = if (picked in 0 until n) picked else n - 1
     Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp)) {
+            PingRow(stats, onPing)
+            HorizontalDivider(Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
             Text(stringResource(R.string.home_traffic), style = MaterialTheme.typography.titleMedium)
             Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                 Legend(downColor, dashed = false, stringResource(R.string.home_download), TrafficStats.bytes(stats.down.getOrElse(index) { 0 }) + "/s")
@@ -366,7 +373,8 @@ private fun TrafficCard(stats: TrafficStats) {
                 onPick = { picked = it },
                 modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 12.dp),
             )
-            Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Same height for all three, whatever their text.
+            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatTile(stringResource(R.string.home_total), "↓ ${TrafficStats.bytes(stats.downTotal)}\n↑ ${TrafficStats.bytes(stats.upTotal)}", Modifier.weight(1f))
                 StatTile(
                     stringResource(R.string.home_dns),
@@ -471,9 +479,52 @@ private fun TrafficChart(
     }
 }
 
+/** "Average ping 84 ms · 4 of 4 sites open · 2 min ago" with a refresh button. */
+@Composable
+private fun PingRow(stats: TrafficStats, onPing: () -> Unit) {
+    val ping = stats.ping
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(ping?.at) {
+        while (true) {
+            now = System.currentTimeMillis()
+            delay(15_000)
+        }
+    }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Icon(Icons.Default.NetworkPing, null, tint = MaterialTheme.colorScheme.primary)
+        Column(Modifier.weight(1f).padding(start = 12.dp)) {
+            Text(stringResource(R.string.home_ping), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                when (val ms = ping?.averageMs) {
+                    null -> stringResource(if (ping == null) R.string.home_ping_measuring else R.string.home_ping_none)
+                    else -> stringResource(R.string.home_ping_value, ms)
+                },
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+            if (ping != null && ping.total > 0) {
+                val minutes = ((now - ping.at) / 60_000).coerceAtLeast(0)
+                Text(
+                    stringResource(R.string.home_ping_sites, ping.ok, ping.total) + " · " +
+                        if (minutes < 1) stringResource(R.string.home_ping_just_now) else stringResource(R.string.home_ping_ago, minutes),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (ping.ok < ping.total) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+            if (stats.pinging) {
+                CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+            } else {
+                IconButton(onClick = onPing) { Icon(Icons.Default.Refresh, stringResource(R.string.home_ping_refresh)) }
+            }
+        }
+    }
+}
+
 @Composable
 private fun StatTile(label: String, value: String, modifier: Modifier) {
-    Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = modifier) {
+    Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = modifier.fillMaxHeight()) {
         Column(Modifier.padding(12.dp)) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
             Text(value, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)

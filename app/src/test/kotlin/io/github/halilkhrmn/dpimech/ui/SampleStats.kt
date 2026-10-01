@@ -16,5 +16,8 @@ fun sampleStats(): TrafficStats {
         up += 35_000 + (i % 5) * 9_000
         s = s.sample(down, up, start + i * 1000L)
     }
-    return s.copy(downTotal = 184_300_000, upTotal = 9_800_000)
+    return s.copy(
+        downTotal = 184_300_000, upTotal = 9_800_000,
+        ping = io.github.halilkhrmn.dpimech.core.PingResult(84, 4, 4, System.currentTimeMillis() - 120_000),
+    )
 }

@@ -18,6 +18,9 @@ data class TrafficStats(
     val restarts: Int = 0,
     val encryptedDns: Boolean = false,
     val blockQuic: Boolean = false,
+    /** Last average ping of the profile's sites through the bypass, null before the first one. */
+    val ping: PingResult? = null,
+    val pinging: Boolean = false,
     /** Raw counters of the last sample, to turn the next one into a rate. */
     val lastDown: Long = 0,
     val lastUp: Long = 0,

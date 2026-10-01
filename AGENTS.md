@@ -69,14 +69,17 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   AppSettings       language, DNS server, DoH, QUIC switch, automatic strategy, wizard flag
   IpPacket, TunnelDns  UDP packet parse/build; TunnelFilter verdicts, DnsMessage, DohClient
   TrafficStats      traffic samples for the home chart and the notification
+  Ping              average connect+TLS time of the profile's sites through ciadpi
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
-          (TUN ↔ hev with DoH / QUIC switch), EngineStats, Ciadpi (process),
+          (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
+          notifications), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
           AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
-          profile editor, app picker; QS tile; widget/ (home-screen widget); shortcut/ (launcher
-          shortcuts, ShortcutActivity); repositories (profiles, settings, strategies, Lab)
+          profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
+          WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); lab/ (LabService:
+          Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
 fastlane/ store listing (en-US, tr, ru) for IzzyOnDroid / F-Droid; images from tools/fastlane-images.py
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)

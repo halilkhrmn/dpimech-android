@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity() {
     /** App to open once a shortcut's profile runs (after the VPN permission was granted). */
     private var openAfterStart: String? = null
     private val app get() = application as DpimechApp
+    /** Screen asked for by a notification or a launcher shortcut (Test, Logs). */
+    private val requestedScreen = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
 
     private val vpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val p = pending
@@ -95,8 +97,16 @@ class MainActivity : AppCompatActivity() {
                 var report by remember { mutableStateOf<ProblemReport?>(null) }
                 val logLines by EngineLog.flow.collectAsStateWithLifecycle()
                 val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
-        val stats by EngineStats.flow.collectAsStateWithLifecycle()
+                val stats by EngineStats.flow.collectAsStateWithLifecycle()
                 val openReport = { report = buildReport() }
+                val screen by requestedScreen.collectAsStateWithLifecycle()
+                androidx.compose.runtime.LaunchedEffect(screen) {
+                    when (screen) {
+                        SCREEN_TEST -> { editing = null; logs = false; tab = Tab.TEST }
+                        SCREEN_LOGS -> { editing = null; logs = true }
+                    }
+                    requestedScreen.value = null
+                }
 
                 BackHandler(enabled = editing != null || logs || tab != Tab.HOME) {
                     when {
@@ -187,7 +197,7 @@ class MainActivity : AppCompatActivity() {
         val lab by app.lab.flow.collectAsStateWithLifecycle()
         val settings by app.settings.settings.collectAsStateWithLifecycle()
         val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
-        val stats by EngineStats.flow.collectAsStateWithLifecycle()
+                val stats by EngineStats.flow.collectAsStateWithLifecycle()
         val lastUpdated by app.strategies.lastUpdated.collectAsStateWithLifecycle()
         when (tab) {
             Tab.HOME -> HomeScreen(
@@ -208,6 +218,7 @@ class MainActivity : AppCompatActivity() {
                 stats = stats,
                 encryptedDns = settings.encryptedDns,
                 blockQuic = settings.blockQuic,
+                onPing = { BypassVpnService.ping(this) },
             )
             Tab.TEST -> LabScreen(
                 state = lab,
@@ -312,6 +323,10 @@ class MainActivity : AppCompatActivity() {
 
     /** A shortcut needed the VPN permission: ask for it here, then turn on (and open the app). */
     private fun handleShortcut(intent: Intent?) {
+        intent?.getStringExtra(EXTRA_SCREEN)?.let {
+            intent.removeExtra(EXTRA_SCREEN)
+            requestedScreen.value = it
+        }
         val id = intent?.getStringExtra(EXTRA_START_PROFILE) ?: return
         intent.removeExtra(EXTRA_START_PROFILE)
         val p = app.profiles.saved.value.profiles.find { it.id == id } ?: return
@@ -344,6 +359,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_START_PROFILE = "start_profile"
         const val EXTRA_OPEN_APP = "open_app"
+        const val EXTRA_SCREEN = "screen"
+        const val SCREEN_TEST = "test"
+        const val SCREEN_LOGS = "logs"
     }
 
     private fun turnOn(profile: Profile) {

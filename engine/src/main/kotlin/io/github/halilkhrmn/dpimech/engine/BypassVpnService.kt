@@ -15,7 +15,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
+import io.github.halilkhrmn.dpimech.core.Connector
 import io.github.halilkhrmn.dpimech.core.DohClient
+import io.github.halilkhrmn.dpimech.core.Ping
+import io.github.halilkhrmn.dpimech.core.SiteCheck
 import io.github.halilkhrmn.dpimech.core.TrafficStats
 import io.github.halilkhrmn.dpimech.core.TunnelFilter
 import io.github.halilkhrmn.dpimech.core.IspLookup
@@ -59,7 +62,12 @@ class BypassVpnService : VpnService() {
     private var encryptDns = true
     private var blockQuic = false
     private var statsJob: Job? = null
+    private var pingJob: Job? = null
+    private val pingBusy = java.util.concurrent.atomic.AtomicBoolean(false)
     private var restarts = 0
+    /** Progress of the automatic strategy test (done, total), shown in the notification. */
+    @Volatile
+    private var autoProgress: Pair<Int, Int>? = null
     private var engine: Ciadpi? = null
     private var profile: Profile? = null
     private var engineArgs: List<String> = emptyList()
@@ -90,6 +98,7 @@ class BypassVpnService : VpnService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_STOP -> worker.execute { stopEngine(EngineState.Stopped) }
+            ACTION_PING -> if (engine != null) pingNow()
             ACTION_START -> {
                 val json = intent.getStringExtra(EXTRA_PROFILE) ?: return START_NOT_STICKY
                 val p = runCatching { Json.decodeFromString(Profile.serializer(), json) }.getOrElse {
@@ -306,6 +315,10 @@ class BypassVpnService : VpnService() {
         engineArgs = args
         strategy = entry
         restartEngine(old, enginePort, "network changed")
+        scope.launch {
+            delay(PING_FIRST_MS)
+            pingNow()
+        }
         (EngineState.flow.value as? EngineState.Running)?.let { EngineState.set(it.copy(strategyName = entry.name)) }
     }
 
@@ -326,10 +339,15 @@ class BypassVpnService : VpnService() {
         autoRun = thread(name = "auto-strategy", isDaemon = true) {
             val results = runCatching {
                 LabRunner(AndroidEngineLauncher(this), File(filesDir, "lists"))
-                    .run(LabRequest(strategies, probes, repeats = 1), { _, _, _ -> }, cancelled = { stopping })
+                    .run(LabRequest(strategies, probes, repeats = 1), { done, total, _ ->
+                        autoProgress = done to total
+                        profile?.let { runCatching { goForeground(it, EngineStats.flow.value) } }
+                    }, cancelled = { stopping })
             }.onFailure { EngineLog.add("automatic strategy failed: $it") }.getOrNull()
+            autoProgress = null
             worker.execute {
                 setAutoTesting(false)
+                profile?.let { runCatching { goForeground(it, EngineStats.flow.value) } }
                 val best = results?.let(LabResult::best)?.takeIf { it.confirmed } ?: run {
                     EngineLog.add("automatic strategy: nothing reliable found for $networkKey")
                     return@execute
@@ -375,6 +393,8 @@ class BypassVpnService : VpnService() {
         tunnelIpv6 = null
         statsJob?.cancel()
         statsJob = null
+        pingJob?.cancel()
+        pingJob = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         filter?.stop()
         filter = null
@@ -417,6 +437,39 @@ class BypassVpnService : VpnService() {
                 }
                 if (tick++ % NOTIFY_EVERY == 0 && !stopping) runCatching { goForeground(p, EngineStats.flow.value) }
                 delay(1000)
+            }
+        }
+        pingJob?.cancel()
+        pingJob = scope.launch {
+            delay(PING_FIRST_MS)
+            while (isActive) {
+                pingNow()
+                delay(PING_EVERY_MS)
+            }
+        }
+    }
+
+    /**
+     * Average ping of the profile's sites through ciadpi (connect + TLS handshake), like the
+     * desktop app's profile card; also shows whether the sites open right now.
+     */
+    private fun pingNow() {
+        val p = profile ?: return
+        val port = enginePort
+        val hosts = p.probes
+        if (hosts.isEmpty() || port == 0 || !pingBusy.compareAndSet(false, true)) return
+        EngineStats.update { it.copy(pinging = true) }
+        thread(name = "ping", isDaemon = true) {
+            try {
+                val check = SiteCheck()
+                val r = Ping.run(hosts, { check.measure(Connector.socks(port), it) })
+                if (!stopping && profile?.id == p.id) {
+                    EngineLog.add("ping: ${r.averageMs?.let { "$it ms" } ?: "-"}, ${r.ok}/${r.total} sites open")
+                    EngineStats.update { it.copy(ping = r, pinging = false) }
+                }
+            } finally {
+                pingBusy.set(false)
+                if (stopping) EngineStats.update { it.copy(pinging = false) }
             }
         }
     }
@@ -467,6 +520,12 @@ class BypassVpnService : VpnService() {
             .setShowWhen(stats != null)
             .apply { stats?.since?.takeIf { it > 0 }?.let { setWhen(it).setUsesChronometer(true) } }
             .setOngoing(true)
+            .apply {
+                autoProgress?.let { (done, total) ->
+                    setContentText(getString(R.string.engine_auto_progress, done, total))
+                    LiveProgress.apply(this, done, total, "$done/$total")
+                }
+            }
             .setContentIntent(open)
             .addAction(0, getString(R.string.engine_stop), stop)
             .build()
@@ -494,12 +553,21 @@ class BypassVpnService : VpnService() {
             append('\n').append(getString(R.string.engine_stats_strategy, it))
         }
         if (s.encryptedDns) append('\n').append(getString(R.string.engine_stats_dns, s.dnsEncrypted, s.dnsQueries))
+        s.ping?.let {
+            append('\n').append(
+                if (it.averageMs != null) getString(R.string.engine_stats_ping, it.averageMs, it.ok, it.total)
+                else getString(R.string.engine_stats_ping_none, it.total),
+            )
+        }
         if (s.blockQuic) append('\n').append(getString(R.string.engine_stats_quic, s.quicBlocked))
         append('\n').append(getString(R.string.engine_stats_restarts, s.restarts))
     }
 
     companion object {
         private const val NOTIFY_EVERY = 5
+        private const val PING_FIRST_MS = 3000L
+        private const val PING_EVERY_MS = 5 * 60_000L
+        const val ACTION_PING = "io.github.halilkhrmn.dpimech.PING"
         const val EXTRA_DOH = "doh"
         const val EXTRA_BLOCK_QUIC = "block_quic"
         const val ACTION_START = "io.github.halilkhrmn.dpimech.START"
@@ -535,6 +603,11 @@ class BypassVpnService : VpnService() {
                 .putExtra(EXTRA_DOH, encryptDns)
                 .putExtra(EXTRA_BLOCK_QUIC, blockQuic)
             ContextCompat.startForegroundService(context, intent)
+        }
+
+        /** Measures the average ping again (home screen refresh button). */
+        fun ping(context: Context) {
+            context.startService(Intent(context, BypassVpnService::class.java).setAction(ACTION_PING))
         }
 
         fun stop(context: Context) {

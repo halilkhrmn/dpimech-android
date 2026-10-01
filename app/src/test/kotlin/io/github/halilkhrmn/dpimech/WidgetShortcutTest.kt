@@ -42,9 +42,9 @@ class WidgetShortcutTest {
     }
 
     /** Renders the widget's RemoteViews like a launcher would, and saves a picture of it. */
-    private fun widget(name: String): View {
+    private fun widget(name: String, widgetId: Int = android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID): View {
         val parent = FrameLayout(app)
-        val view = BypassWidget.views(app).apply(app, parent)
+        val view = BypassWidget.views(app, widgetId).apply(app, parent)
         view.measure(View.MeasureSpec.makeMeasureSpec(1050, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(220, View.MeasureSpec.EXACTLY))
         view.layout(0, 0, 1050, 220)
         val bmp = Bitmap.createBitmap(1050, 220, Bitmap.Config.ARGB_8888)
@@ -72,7 +72,8 @@ class WidgetShortcutTest {
     fun longPressShortcutsFollowProfiles() {
         Shortcuts.publish(app, app.profiles.saved.value)
         val list = app.getSystemService(ShortcutManager::class.java).dynamicShortcuts
-        assertEquals(listOf("profile-d", "profile-y"), list.sortedBy { it.rank }.map { it.id })
+        // Off: profiles first, then the strategy test and logs, at most four.
+        assertEquals(listOf("profile-d", "profile-y", "action-test", "action-logs"), list.sortedBy { it.rank }.map { it.id })
         assertEquals("DPI · Discord", list.first { it.id == "profile-d" }.shortLabel.toString())
         assertTrue(list.first { it.id == "profile-d" }.longLabel.toString().startsWith("Start DPI with Discord"))
     }
@@ -100,5 +101,53 @@ class WidgetShortcutTest {
         assertEquals("d", next.getStringExtra(io.github.halilkhrmn.dpimech.ui.MainActivity.EXTRA_START_PROFILE))
         assertEquals("com.discord", next.getStringExtra(io.github.halilkhrmn.dpimech.ui.MainActivity.EXTRA_OPEN_APP))
         assertEquals(null, shadowOf(app).nextStartedService)
+    }
+
+    @Test
+    fun runningAddsTurnOffFirst() {
+        Shortcuts.publish(app, app.profiles.saved.value, running = true)
+        val ids = app.getSystemService(ShortcutManager::class.java).dynamicShortcuts.sortedBy { it.rank }.map { it.id }
+        assertEquals(listOf("action-off", "profile-d", "profile-y", "action-test"), ids)
+    }
+
+    @Test
+    fun turnOffShortcutStopsTheBypass() {
+        val intent = Intent(app, ShortcutActivity::class.java).setAction(Shortcuts.ACTION_STOP)
+        Robolectric.buildActivity(ShortcutActivity::class.java, intent).create()
+        assertEquals(BypassVpnService.ACTION_STOP, shadowOf(app).nextStartedService?.action)
+    }
+
+    @Test
+    fun boundWidgetShowsAndStartsItsOwnProfile() {
+        ShadowVpnService.setPrepareResult(null)
+        io.github.halilkhrmn.dpimech.widget.WidgetPrefs.bind(app, 7, "y")
+        val v = widget("widget_bound", 7)
+        assertEquals("YouTube", v.findViewById<TextView>(R.id.widget_profile).text.toString())
+        assertEquals(View.GONE, v.findViewById<View>(R.id.widget_next).visibility)
+
+        BypassWidget().onReceive(
+            app,
+            Intent(app, BypassWidget::class.java).setAction(BypassWidget.ACTION_TOGGLE)
+                .putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID, 7),
+        )
+        val started = shadowOf(app).nextStartedService
+        assertEquals(BypassVpnService.ACTION_START, started?.action)
+        assertTrue(started!!.getStringExtra(BypassVpnService.EXTRA_PROFILE)!!.contains("\"id\":\"y\""))
+        assertEquals("y", app.profiles.saved.value.selectedId)
+
+        BypassWidget().onDeleted(app, intArrayOf(7))
+        assertEquals(null, io.github.halilkhrmn.dpimech.widget.WidgetPrefs.boundProfile(app, 7))
+    }
+
+    @Test
+    fun configScreenBindsTheWidget() {
+        val intent = Intent(app, io.github.halilkhrmn.dpimech.widget.WidgetConfigActivity::class.java)
+            .putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID, 9)
+        val activity = Robolectric.buildActivity(io.github.halilkhrmn.dpimech.widget.WidgetConfigActivity::class.java, intent).setup().get()
+        val pick = activity.javaClass.getDeclaredMethod("pick", String::class.java).apply { isAccessible = true }
+        pick.invoke(activity, "d")
+        assertEquals("d", io.github.halilkhrmn.dpimech.widget.WidgetPrefs.boundProfile(app, 9))
+        assertEquals(android.app.Activity.RESULT_OK, shadowOf(activity).resultCode)
+        assertTrue(activity.isFinishing)
     }
 }

@@ -61,6 +61,8 @@ class LabController(private val context: Context) {
         )
         val probes = packs.flatMap { it.probes }.distinct()
         state.update { LabState(running = true, isp = it.isp) }
+        // Keeps the process (and the test) alive while the user is in another app.
+        io.github.halilkhrmn.dpimech.lab.LabService.start(context)
         thread(name = "lab", isDaemon = true) {
             val lists = File(context.filesDir, "lists").apply { mkdirs() }
             val runner = LabRunner(AndroidEngineLauncher(context), lists)

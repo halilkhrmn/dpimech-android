@@ -27,13 +27,13 @@
 - [x] **Phase 3 — Extras:** widget, shortcuts (QR sharing dropped)
   - [x] Home-screen widget: ON/OFF at a glance, active profile, next-profile button
   - [x] Launcher shortcuts per profile ("turn on and open the app"), pin from the profile editor
-- [ ] **Phase 3b — Live status and more shortcuts** (PLAN.md)
+- [x] **Phase 3b — Live status and more shortcuts** (PLAN.md) — check on a phone
   - [x] Modern home: one hero card, live traffic chart, stat tiles
   - [x] Ongoing notification with traffic, DNS, QUIC, restarts and uptime
-  - [ ] Lab and automatic test in a foreground service with a progress (Live Update) notification
-  - [ ] Average ping of the profile's sites in the notification and on home
-  - [ ] Per-profile widgets with a configure screen
-  - [ ] Static long-press shortcuts: Strategy test, Logs, Turn off
+  - [x] Lab and automatic test in a foreground service with a progress (Live Update) notification
+  - [x] Average ping of the profile's sites in the notification and on home (refresh button)
+  - [x] Per-profile widgets with a configure screen
+  - [x] Long-press shortcuts: Turn off (while on), profiles, Strategy test, Logs
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [ ] First signed release (owner: key and secrets)
@@ -42,6 +42,21 @@
   - [ ] F-Droid merge request (after the first signed release, docs/FDROID.md)
 
 ## Work log
+
+### 2026-10-01 — Phase 3b: ping, Live Updates, per-profile widgets, more shortcuts
+- Done: average ping (connect + TLS handshake through ciadpi to the profile's sites, `Ping` +
+  `SiteCheck.measure`) 3 s after start, every 5 min, after a strategy switch and from the refresh
+  button on home; shown on home and in the notification. Home tiles under the chart have equal
+  height. `LabService` keeps the Strategy Lab running in other apps with a progress notification
+  (Android 16 Live Update via `LiveProgress`, plain progress bar before) and a result
+  notification; the automatic test shows its progress in the bypass notification. Widgets can be
+  bound to a profile (`WidgetConfigActivity`, reconfigurable). Long-press menu: Turn off (while
+  on), profiles, Strategy test, Logs.
+- Verified: `PingTest`; app tests for the shortcut list (off/on), the Turn off shortcut, a bound
+  widget starting its own profile, the config screen binding; renders (`home_traffic`,
+  `widget_config`, `widget_bound`); lint.
+- Next: phone test (Live Update chip needs Android 16 and the user's permission for promoted
+  notifications).
 
 ### 2026-10-01 — DoH and QUIC in the tunnel, new home with live traffic
 - Done: `PacketFilter` (engine) sits between the TUN and hev when DoH or the QUIC switch is on:

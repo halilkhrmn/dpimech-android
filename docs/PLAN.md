@@ -117,7 +117,7 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 2. **Smarts** — Strategy Lab, ISP detection, per-network memory, DNS (DoH/DoT + check), watchdog,
    QUIC switch, Easy-mode wizard.
 3. **Extras** — widget, shortcuts. (QR profile sharing dropped, DECISIONS #22.)
-3b. **Live status and more shortcuts** (owner's list, 2026-10-01):
+3b. **Live status and more shortcuts** (owner's list, 2026-10-01; done, see PROGRESS):
    - Strategy Lab and the automatic test in a foreground service with a progress notification, so
      they keep running when the user switches to another app; Android 16 Live Updates
      (promoted ongoing notification, `ProgressStyle`) where available.

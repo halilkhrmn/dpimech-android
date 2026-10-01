@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher shortcut icon: a glyph on a light purple circle, like the app icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#E8DEF8"
+        android:pathData="M24,0A24,24 0,1 1,23.99 0Z" />
+    <group
+        android:translateX="12"
+        android:translateY="12">
+        <path
+            android:fillColor="#4F378B"
+            android:pathData="M19.8,18.4L14,10.67V6.5l1.35,-1.69C15.61,4.48 15.38,4 14.96,4H9.04C8.62,4 8.39,4.48 8.65,4.81L10,6.5v4.17L4.2,18.4C3.71,19.06 4.18,20 5,20h14C19.82,20 20.29,19.06 19.8,18.4z" />
+    </group>
+</vector>

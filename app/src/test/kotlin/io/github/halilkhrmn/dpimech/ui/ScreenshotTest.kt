@@ -66,6 +66,10 @@ class ScreenshotTest {
             stats = stats.copy(blockQuic = true, quicBlocked = 214),
         )
     }
+    /** Tall screen, so the traffic card's tiles are in the picture. */
+    @Test @Config(qualifiers = "w411dp-h1400dp-xxhdpi") fun homeTraffic() = shot("home_traffic") {
+        HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
+    }
     @Test fun homeMobile() = shot("home_mobile") {
         HomeScreen(
             saved, EngineState.Stopped, {}, {}, {}, {}, {}, PaddingValues(),
@@ -90,6 +94,10 @@ class ScreenshotTest {
 
     @Test fun profileEditor() = shot("profile_editor") {
         ProfileEditor(discord.copy(extraDomains = listOf("example.com", "cdn.example.net", "wattpad.com")), emptyList(), {}, {}, {})
+    }
+
+    @Test fun widgetConfig() = shot("widget_config") {
+        io.github.halilkhrmn.dpimech.widget.WidgetConfig(saved, "2") {}
     }
 
     @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }
