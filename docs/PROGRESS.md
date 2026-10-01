@@ -38,7 +38,9 @@
 - Verified how: 25 core tests pass locally (+1 skipped: TUN end-to-end); ciadpi integration test against the real binary (listed hosts and
   subdomains desynced, others untouched, also with `-A` auto groups); `assembleDebug`,
   `assembleRelease` (2 MB, R8 keeps the JNI class) and `lintDebug` clean locally. The TUN end-to-end
-  test could not run in the dev container (kernel without IPv6, hev opens AF_INET6 sockets): CI runs it.
+  test could not run in the dev container (kernel without IPv6, hev opens AF_INET6 sockets); it passes
+  in CI (run 3: TCP and UDP of a uid routed into a TUN reach the target through hev and ciadpi).
+  CI also builds the debug APK and runs lint.
 - Open/next: install the CI APK on a phone and try Discord/YouTube profiles; DNS is plain UDP to
   1.1.1.1 through ciadpi until DoH/DoT (Phase 2); engine restart/watchdog (Phase 2); release signing.
 
