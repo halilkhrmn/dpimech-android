@@ -9,6 +9,7 @@ import io.github.halilkhrmn.dpimech.data.SettingsRepository
 import io.github.halilkhrmn.dpimech.data.StrategyRepository
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineEvents
+import io.github.halilkhrmn.dpimech.engine.NetworkIdentity
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,7 @@ class DpimechApp : Application() {
         strategies = StrategyRepository(filesDir)
         settings = SettingsRepository(filesDir)
         lab = LabController(this)
+        NetworkIdentity.start(this)
         // The automatic strategy runs in the VPN service; keep what it learns with the profile.
         MainScope().launch {
             EngineEvents.strategyLearned.collect { e ->

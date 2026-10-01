@@ -48,7 +48,7 @@ class LabController(private val context: Context) {
     fun detectIsp() {
         if (state.value.isp != null) return
         thread(name = "isp", isDaemon = true) {
-            NetworkIdentity.lookup()?.let { info -> state.update { it.copy(isp = info) } }
+            (NetworkIdentity.flow.value?.isp ?: NetworkIdentity.refresh())?.let { info -> state.update { it.copy(isp = info) } }
         }
     }
 

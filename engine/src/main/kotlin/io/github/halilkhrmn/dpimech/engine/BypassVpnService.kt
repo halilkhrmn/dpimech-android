@@ -8,9 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -34,6 +31,14 @@ import io.github.halilkhrmn.dpimech.core.Watchdog
 import java.io.File
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 /**
@@ -49,7 +54,8 @@ class BypassVpnService : VpnService() {
     private var enginePort = 0
     private var strategy: StrategyEntry? = null
     private var hostlist: File? = null
-    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var networkJob: Job? = null
     private var dns = TunnelConfig(socksPort = 1).dns
     private var autoStrategy = false
     private var notifyStrategy = true
@@ -92,6 +98,7 @@ class BypassVpnService : VpnService() {
     }
 
     override fun onDestroy() {
+        scope.cancel()
         worker.execute { stopEngine(EngineState.Stopped, stopService = false) }
         worker.shutdown()
         super.onDestroy()
@@ -198,23 +205,22 @@ class BypassVpnService : VpnService() {
      * DPIMech's default network is the real one, since DPIMech itself is outside the VPN.
      */
     private fun watchNetwork() {
-        val cm = getSystemService(ConnectivityManager::class.java)
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                thread(name = "isp-lookup", isDaemon = true) {
-                    val caps = cm.getNetworkCapabilities(network)
-                    if (caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) return@thread
-                    val isp = NetworkIdentity.lookup(network) ?: return@thread
-                    worker.execute {
-                        switchStrategyFor(isp.networkKey)
-                        maybeAutoStrategy(isp.networkKey, isp.known)
+        // NetworkIdentity follows the real network for the whole app; act on each new provider.
+        NetworkIdentity.start(this)
+        networkJob?.cancel()
+        networkJob = scope.launch {
+            NetworkIdentity.flow
+                .map { it?.networkKey to it?.known }
+                .distinctUntilChanged()
+                .collect { (key, known) ->
+                    if (key != null) {
+                        worker.execute {
+                            switchStrategyFor(key)
+                            maybeAutoStrategy(key, known)
+                        }
                     }
                 }
-            }
         }
-        runCatching { cm.registerDefaultNetworkCallback(callback) }
-            .onSuccess { networkCallback = callback }
-            .onFailure { EngineLog.add("network callback failed: $it") }
     }
 
     /** Must run on [worker]. */
@@ -292,8 +298,8 @@ class BypassVpnService : VpnService() {
         stopping = true
         watchdog?.interrupt()
         watchdog = null
-        networkCallback?.let { cb -> runCatching { getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(cb) } }
-        networkCallback = null
+        networkJob?.cancel()
+        networkJob = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         runCatching { tun?.close() }
         tun = null
