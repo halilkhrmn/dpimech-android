@@ -5,5 +5,5 @@
     <string name="engine_running_text">Yalnızca seçtiğin uygulamalar etkilenir. Hiçbir şey başka bir sunucuya gitmez.</string>
     <string name="engine_stop">Kapat</string>
     <string name="engine_error_no_permission">Android, DPIMech\'in başlamasına izin vermedi (VPN izni yok ya da her zaman açık VPN başka bir uygulamada).</string>
-    <string name="engine_error_died">ByeDPI beklenmedik şekilde durdu (kod %1$d).</string>
+    <string name="engine_error_gave_up">ByeDPI sürekli durdu, bu yüzden DPIMech atlatmayı kapattı. Başka bir strateji dene.</string>
 </resources>

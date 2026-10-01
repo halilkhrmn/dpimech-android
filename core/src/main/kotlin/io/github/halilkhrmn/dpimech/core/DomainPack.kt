@@ -80,6 +80,41 @@ data class DomainPack(
                 probes = listOf("www.wattpad.com", "wattpad.com"),
                 packages = listOf("wp.wattpad"),
             ),
+            DomainPack(
+                id = "imgur",
+                name = "Imgur",
+                domains = listOf("imgur.com", "i.imgur.com", "i.stack.imgur.com"),
+                probes = listOf("imgur.com", "i.imgur.com"),
+                packages = listOf("com.imgur.mobile"),
+            ),
+            DomainPack(
+                id = "facebook",
+                name = "Facebook",
+                domains = listOf("facebook.com", "www.facebook.com", "fbcdn.net", "messenger.com", "fb.com"),
+                probes = listOf("www.facebook.com", "facebook.com"),
+                packages = listOf("com.facebook.katana", "com.facebook.orca", "com.facebook.lite"),
+            ),
+            DomainPack(
+                id = "linkedin",
+                name = "LinkedIn",
+                domains = listOf("linkedin.com", "www.linkedin.com", "licdn.com"),
+                probes = listOf("www.linkedin.com"),
+                packages = listOf("com.linkedin.android"),
+            ),
+            DomainPack(
+                id = "signal",
+                name = "Signal",
+                domains = listOf("signal.org", "whispersystems.org", "signal.art", "updates.signal.org"),
+                probes = listOf("signal.org"),
+                packages = listOf("org.thoughtcrime.securesms"),
+            ),
+            DomainPack(
+                id = "viber",
+                name = "Viber",
+                domains = listOf("viber.com", "www.viber.com"),
+                probes = listOf("www.viber.com", "viber.com"),
+                packages = listOf("com.viber.voip"),
+            ),
         )
 
         fun byId(id: String): DomainPack? = ALL.find { it.id == id }

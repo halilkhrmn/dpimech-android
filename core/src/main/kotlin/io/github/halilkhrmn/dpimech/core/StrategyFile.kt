@@ -59,6 +59,10 @@ class StrategyFile private constructor(private val engines: Map<String, List<Str
             StrategyFile(raw.engines)
         }
 
+        /** The newest downloaded copy in [cache] if it is readable, else the built-in one. */
+        fun load(cache: java.io.File): StrategyFile =
+            cache.takeIf { it.exists() }?.let { parse(it.readText()).getOrNull() } ?: embedded
+
         /** The copy built into this app (a resource of this module). */
         val embedded: StrategyFile by lazy {
             val text = StrategyFile::class.java.getResourceAsStream("/strategies/default.json")

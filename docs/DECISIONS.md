@@ -63,3 +63,41 @@ Real-world testing needs a phone, but the data path can be checked on Linux: cor
 ciadpi with `ByeDpiCommand` output (domain filter, groups), and an end-to-end test routes one uid
 through a TUN → hev-socks5-tunnel → ciadpi, the same chain as on Android. CI runs both (root and
 IPv6 needed for the second).
+
+## 13. DNS: check and advise now, own DoH resolver later (2026-10-01)
+Bypassed apps send DNS as plain UDP to 1.1.1.1 through hev-socks5-tunnel and ciadpi. Some providers
+answer every port-53 query themselves, and a VPN app cannot point Android's resolver at a local DoH
+server (port 53 cannot be bound, the system resolver only talks to addresses on the VPN). hev's
+`mapdns` only moves resolution into ciadpi, which uses the network's DNS. A real DoH path needs a
+SOCKS5 front in the app or a ciadpi patch; both were left for later. For now the Strategy Lab checks
+the phone's DNS and UDP 53 to the tunnel's server against DNS over HTTPS (1.1.1.1, as on desktop)
+and, on a mismatch, advises Android's Private DNS, which encrypts DNS for the VPN network as well.
+
+## 14. Per-network memory is per provider (AS number), not per Wi-Fi name (2026-10-01)
+Reading the Wi-Fi name (SSID) needs the location permission on Android 10+ and location turned on.
+What decides which strategy works is the provider's DPI, so the memory is keyed by the provider's AS
+number from the same ipwho.is lookup the Lab uses. Two Wi-Fi networks of the same provider share a
+strategy, which is what the user wants anyway.
+
+## 15. QUIC switch postponed: needs a ciadpi change (2026-10-01)
+Dropping UDP/443 for bypassed apps cannot be expressed with ciadpi 0.17 groups: when every group is
+limited, ciadpi appends a catch-all group, so a datagram always finds one; `--no-udp` drops all UDP
+(DNS, Discord voice). A small patch in ciadpi (or upstream option) is needed; apps fall back to TCP
+on their own when QUIC is blocked, so this is not urgent.
+
+## 16. Whole phone with the country's blocked sites is the default setup (2026-10-01)
+Most users want "blocked sites open", not a per-app setup. The wizard therefore suggests a profile
+for every app (`ALL_EXCEPT` with no exceptions) that is limited to the sites commonly blocked in the
+user's country (`CountryPreset`, country from the ISP lookup or the phone's locale). Because the
+domain filter scopes every ciadpi group, other traffic passes through untouched. Per-app profiles
+stay available. Country lists are kept short and only name widely reported blocks.
+
+## 17. AppCompat for the in-app language (2026-10-01)
+Android 13+ has per-app languages built in; older versions need AppCompat's
+`setApplicationLocales` and its locale holder service. That is the one reason for the AppCompat
+dependency (no Google services involved, F-Droid compatible).
+
+## 18. Screens checked with Robolectric screenshots (2026-10-01)
+The dev container has no emulator (no KVM). Robolectric with native graphics and Roborazzi renders
+the Compose screens on the JVM; the images are looked at by hand and uploaded by CI. They are not
+compared against references yet, so they catch crashes and let a reviewer see layout changes.

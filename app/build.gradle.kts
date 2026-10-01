@@ -11,12 +11,38 @@ android {
         applicationId = "io.github.halilkhrmn.dpimech"
         minSdk = 26
         targetSdk = 36
+        // Release tags are vX.Y.Z and versionName must match (checked by the release workflow).
         versionCode = 1
         versionName = "0.1.0"
     }
 
+    // Release signing comes from the environment (CI secrets, see docs/RELEASING.md); without it
+    // release APKs are built unsigned.
+    val keystore = System.getenv("DPIMECH_KEYSTORE")?.let(::file)?.takeIf { it.exists() }
+    signingConfigs {
+        if (keystore != null) {
+            create("release") {
+                storeFile = keystore
+                storePassword = System.getenv("DPIMECH_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("DPIMECH_KEY_ALIAS")
+                keyPassword = System.getenv("DPIMECH_KEY_PASSWORD")
+            }
+        }
+    }
+
+    // One APK per ABI plus a universal one (the website and IzzyOnDroid offer the universal APK).
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = true
+        }
+    }
+
     buildTypes {
         release {
+            if (keystore != null) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -36,6 +62,19 @@ android {
         // ciadpi is executed from nativeLibraryDir, so native libraries must be extracted.
         jniLibs.useLegacyPackaging = true
     }
+    testOptions {
+        unitTests {
+            // Robolectric renders the Compose screens for the screenshot tests.
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("robolectric.graphicsMode", "NATIVE")
+                // Screenshots go to build/screenshots/ (looked at by hand, not compared yet).
+                it.systemProperty("roborazzi.test.record", "true")
+                it.systemProperty("roborazzi.output.dir", layout.buildDirectory.dir("screenshots").get().asFile.path)
+                System.getenv("ROBOLECTRIC_REPO")?.let { url -> it.systemProperty("robolectric.dependency.repo.url", url) }
+            }
+        }
+    }
     dependenciesInfo {
         // F-Droid / IzzyOnDroid: no Google-encrypted dependency blob in the APK.
         includeInApk = false
@@ -47,6 +86,7 @@ dependencies {
     implementation(project(":engine"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -56,4 +96,11 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
+    testImplementation(libs.junit4)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
 }

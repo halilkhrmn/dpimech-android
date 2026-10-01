@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -15,10 +18,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
+import io.github.halilkhrmn.dpimech.core.IspLookup
+import io.github.halilkhrmn.dpimech.core.LabRequest
+import io.github.halilkhrmn.dpimech.core.LabResult
+import io.github.halilkhrmn.dpimech.core.LabRunner
+import io.github.halilkhrmn.dpimech.core.LabStrategy
+import io.github.halilkhrmn.dpimech.core.StrategyFile
 import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.TunnelConfig
+import io.github.halilkhrmn.dpimech.core.Socks5
+import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.core.VpnApps
+import io.github.halilkhrmn.dpimech.core.Watchdog
 import java.io.File
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
@@ -33,6 +45,18 @@ class BypassVpnService : VpnService() {
     private var tun: ParcelFileDescriptor? = null
     private var engine: Ciadpi? = null
     private var profile: Profile? = null
+    private var engineArgs: List<String> = emptyList()
+    private var enginePort = 0
+    private var strategy: StrategyEntry? = null
+    private var hostlist: File? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var dns = TunnelConfig(socksPort = 1).dns
+    private var autoStrategy = false
+    /** Networks the automatic strategy already tested in this session. */
+    private val autoTested = mutableSetOf<String>()
+    @Volatile
+    private var autoRun: Thread? = null
+    private var watchdog: Thread? = null
 
     /** Set while a stop is intended, so the engine watcher does not report a crash. */
     @Volatile
@@ -47,6 +71,8 @@ class BypassVpnService : VpnService() {
                     EngineState.set(EngineState.Failed(null, it.message ?: "bad profile"))
                     return START_NOT_STICKY
                 }
+                dns = intent.getStringExtra(EXTRA_DNS) ?: dns
+                autoStrategy = intent.getBooleanExtra(EXTRA_AUTO, false)
                 goForeground(p)
                 worker.execute { startEngine(p) }
             }
@@ -66,6 +92,7 @@ class BypassVpnService : VpnService() {
     }
 
     private fun startEngine(p: Profile) {
+        if (profile?.id != p.id) autoTested.clear()
         stopEngine(null, stopService = false)
         stopping = false
         EngineState.set(EngineState.Starting(p.id))
@@ -79,18 +106,15 @@ class BypassVpnService : VpnService() {
                 File(lists, "profile-${p.id.filter { it.isLetterOrDigit() }}.txt").apply { writeText(Hostlist.body(domains)) }
             }
             val port = Ciadpi.freePort()
-            val args = ByeDpiCommand.build(
-                ByeDpiCommand.Request(
-                    strategyArgs = p.strategy.args,
-                    port = port,
-                    listsDir = lists,
-                    hostlist = hostlist,
-                    domainFilter = p.domainFilter && hostlist != null,
-                ),
-            ).getOrThrow()
-            val ciadpi = Ciadpi.start(this, args, port, p.name).also { engine = it }
+            val entry = p.strategyFor(NetworkIdentity.flow.value?.networkKey)
+            val args = buildArgs(p, entry, port, hostlist).getOrThrow()
+            engine = Ciadpi.start(this, args, port, p.name)
+            engineArgs = args
+            enginePort = port
+            strategy = entry
+            this.hostlist = hostlist
 
-            val config = TunnelConfig(socksPort = port)
+            val config = TunnelConfig(socksPort = port, dns = dns)
             val builder = Builder()
                 .setSession(p.name)
                 .setMtu(config.mtu)
@@ -110,8 +134,9 @@ class BypassVpnService : VpnService() {
             check(TProxy.TProxyStartService(yaml.path, fd.fd)) { "tunnel did not start" }
 
             profile = p
-            watch(ciadpi)
-            EngineState.set(EngineState.Running(p.id, p.name))
+            startWatchdog(port)
+            watchNetwork()
+            EngineState.set(EngineState.Running(p.id, p.name, entry.name))
             EngineLog.add("started profile ${p.name} on port $port")
         } catch (e: Exception) {
             EngineLog.add("start failed: $e")
@@ -119,21 +144,148 @@ class BypassVpnService : VpnService() {
         }
     }
 
-    /** Reports an engine that exits on its own (Phase 2 adds restart and health probes). */
-    private fun watch(ciadpi: Ciadpi) {
-        thread(name = "ciadpi-watch", isDaemon = true) {
-            val code = ciadpi.waitFor()
-            if (!stopping && engine === ciadpi) {
-                worker.execute {
-                    stopEngine(EngineState.Failed(profile?.id, getString(R.string.engine_error_died, code)))
+    /**
+     * Restarts ciadpi on the same port when it exits or stops answering, so hev-socks5-tunnel
+     * keeps working without a new VPN interface. Gives up after a restart loop (see [Watchdog]).
+     */
+    private fun startWatchdog(port: Int) {
+        val policy = Watchdog()
+        watchdog = thread(name = "ciadpi-watchdog", isDaemon = true) {
+            val started = System.nanoTime()
+            while (!stopping) {
+                try {
+                    Thread.sleep(1000)
+                } catch (_: InterruptedException) {
+                    return@thread
+                }
+                val current = engine ?: return@thread
+                val now = (System.nanoTime() - started) / 1_000_000_000
+                val (action, reason) = policy.tick(now, current.isAlive) { Socks5.greets(port) }
+                when (action) {
+                    Watchdog.Action.NONE -> Unit
+                    Watchdog.Action.RESTART -> worker.execute { restartEngine(current, port, reason) }
+                    Watchdog.Action.GIVE_UP -> {
+                        worker.execute {
+                            stopEngine(EngineState.Failed(profile?.id, getString(R.string.engine_error_gave_up)))
+                        }
+                        return@thread
+                    }
                 }
             }
+        }
+    }
+
+    private fun buildArgs(p: Profile, entry: StrategyEntry, port: Int, hostlist: File?) = ByeDpiCommand.build(
+        ByeDpiCommand.Request(
+            strategyArgs = entry.args,
+            port = port,
+            listsDir = File(filesDir, "lists"),
+            hostlist = hostlist,
+            domainFilter = p.domainFilter && hostlist != null,
+        ),
+    )
+
+    /**
+     * Per-network memory: when the phone moves to another provider (Wi-Fi ↔ mobile data, another
+     * Wi-Fi), look the provider up and switch to the strategy that worked there, if one is known.
+     * DPIMech's default network is the real one, since DPIMech itself is outside the VPN.
+     */
+    private fun watchNetwork() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                thread(name = "isp-lookup", isDaemon = true) {
+                    val caps = cm.getNetworkCapabilities(network)
+                    if (caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) return@thread
+                    val isp = NetworkIdentity.lookup(network) ?: return@thread
+                    worker.execute {
+                        switchStrategyFor(isp.networkKey)
+                        maybeAutoStrategy(isp.networkKey, isp.known)
+                    }
+                }
+            }
+        }
+        runCatching { cm.registerDefaultNetworkCallback(callback) }
+            .onSuccess { networkCallback = callback }
+            .onFailure { EngineLog.add("network callback failed: $it") }
+    }
+
+    /** Must run on [worker]. */
+    private fun switchStrategyFor(networkKey: String) {
+        val p = profile ?: return
+        val old = engine ?: return
+        val entry = p.strategyFor(networkKey)
+        if (stopping || entry == strategy) return
+        val args = buildArgs(p, entry, enginePort, hostlist).getOrElse {
+            EngineLog.add("remembered strategy for $networkKey is invalid: ${it.message}")
+            return
+        }
+        EngineLog.add("network $networkKey: switching to \"${entry.name}\"")
+        engineArgs = args
+        strategy = entry
+        restartEngine(old, enginePort, "network changed")
+        (EngineState.flow.value as? EngineState.Running)?.let { EngineState.set(it.copy(strategyName = entry.name)) }
+    }
+
+    /**
+     * Automatic strategy: on a provider with no remembered strategy, test the standard set
+     * against the profile's sites in the background (the bypass stays on meanwhile) and switch
+     * to the best confirmed one. Must run on [worker].
+     */
+    private fun maybeAutoStrategy(networkKey: String, isp: io.github.halilkhrmn.dpimech.core.Isp?) {
+        val p = profile ?: return
+        if (!autoStrategy || stopping || networkKey in p.perNetwork || !autoTested.add(networkKey)) return
+        val probes = p.probes.take(6)
+        if (probes.isEmpty() || autoRun?.isAlive == true) return
+        val standard = StrategyFile.load(File(filesDir, "strategies.json")).byeDpi
+        val strategies = IspLookup.markRecommended(standard.map { LabStrategy(it.name, it.args, LabResult.STANDARD_SET) }, isp)
+        setAutoTesting(true)
+        EngineLog.add("automatic strategy: testing ${strategies.size} strategies for $networkKey")
+        autoRun = thread(name = "auto-strategy", isDaemon = true) {
+            val results = runCatching {
+                LabRunner(AndroidEngineLauncher(this), File(filesDir, "lists"))
+                    .run(LabRequest(strategies, probes, repeats = 1), { _, _, _ -> }, cancelled = { stopping })
+            }.onFailure { EngineLog.add("automatic strategy failed: $it") }.getOrNull()
+            worker.execute {
+                setAutoTesting(false)
+                val best = results?.let(LabResult::best)?.takeIf { it.confirmed } ?: run {
+                    EngineLog.add("automatic strategy: nothing reliable found for $networkKey")
+                    return@execute
+                }
+                val s = best.strategy!!
+                val entry = StrategyEntry(s.name, s.args)
+                EngineLog.add("automatic strategy: \"${s.name}\" works on $networkKey (${best.ok}/${best.total})")
+                profile = profile?.withStrategy(entry, networkKey)
+                EngineEvents.emit(StrategyLearned(p.id, networkKey, entry))
+                switchStrategyFor(networkKey)
+            }
+        }
+    }
+
+    private fun setAutoTesting(on: Boolean) {
+        (EngineState.flow.value as? EngineState.Running)?.let { EngineState.set(it.copy(autoTesting = on)) }
+    }
+
+    /** Must run on [worker]. */
+    private fun restartEngine(old: Ciadpi, port: Int, reason: String?) {
+        if (stopping || engine !== old) return
+        EngineLog.add("restarting ByeDPI: $reason")
+        old.stop()
+        try {
+            engine = Ciadpi.start(this, engineArgs, port, profile?.name ?: "engine")
+        } catch (e: Exception) {
+            // The next watchdog tick sees a dead engine and tries again (or gives up).
+            EngineLog.add("restart failed: $e")
         }
     }
 
     /** Must run on [worker]. A null [final] keeps the current state (used before a restart). */
     private fun stopEngine(final: EngineState?, stopService: Boolean = true) {
         stopping = true
+        watchdog?.interrupt()
+        watchdog = null
+        networkCallback?.let { cb -> runCatching { getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(cb) } }
+        networkCallback = null
         runCatching { if (TProxy.TProxyIsRunning()) TProxy.TProxyStopService() }
         runCatching { tun?.close() }
         tun = null
@@ -172,26 +324,36 @@ class BypassVpnService : VpnService() {
             .setContentIntent(open)
             .addAction(0, getString(R.string.engine_stop), stop)
             .build()
-        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
-        } else {
-            0
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, 0)
+            return
         }
-        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, type)
+        // systemExempted is meant for VPN apps; if this Android does not grant it, specialUse
+        // keeps the service in the foreground instead of crashing it.
+        try {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED)
+        } catch (e: RuntimeException) {
+            EngineLog.add("foreground type systemExempted refused ($e), using specialUse")
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        }
     }
 
     companion object {
         const val ACTION_START = "io.github.halilkhrmn.dpimech.START"
         const val ACTION_STOP = "io.github.halilkhrmn.dpimech.STOP"
         const val EXTRA_PROFILE = "profile"
+        const val EXTRA_DNS = "dns"
+        const val EXTRA_AUTO = "auto"
         private const val CHANNEL = "engine"
         private const val NOTIFICATION_ID = 1
 
         /** Call only after [VpnService.prepare] returned null (permission granted). */
-        fun start(context: Context, profile: Profile) {
+        fun start(context: Context, profile: Profile, dns: String, autoStrategy: Boolean) {
             val intent = Intent(context, BypassVpnService::class.java)
                 .setAction(ACTION_START)
                 .putExtra(EXTRA_PROFILE, Json.encodeToString(Profile.serializer(), profile))
+                .putExtra(EXTRA_DNS, dns)
+                .putExtra(EXTRA_AUTO, autoStrategy)
             ContextCompat.startForegroundService(context, intent)
         }
 

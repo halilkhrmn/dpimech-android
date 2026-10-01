@@ -30,3 +30,27 @@ class SavedProfilesTest {
         assertEquals("x", SavedProfiles.decode("""{"profiles":[],"selectedId":"x","future":1}""").selectedId)
     }
 }
+
+class PerNetworkTest {
+    private val a = StrategyEntry("A", "-s1")
+    private val b = StrategyEntry("B", "-r 1+s")
+
+    @Test
+    fun remembersPerProvider() {
+        val p = Profile("1", "Discord", strategy = a)
+        val tt = IspInfo("Turk Telekom", 9121, "TR", null).networkKey
+        val turkcell = IspInfo("Turkcell", 16135, "TR", null).networkKey
+        val q = p.withStrategy(b, tt)
+        assertEquals(b, q.strategyFor(tt))
+        assertEquals(b, q.strategyFor(turkcell), "the last used one is the default elsewhere")
+        val r = q.withStrategy(a, turkcell)
+        assertEquals(b, r.strategyFor(tt))
+        assertEquals(a, r.strategyFor(turkcell))
+        assertEquals(a, r.strategyFor(null))
+        assertEquals("name:x net", IspInfo("X Net", null, "", null).networkKey)
+        // Old files without the field still load.
+        val old = SavedProfiles.decode("""{"profiles":[{"id":"1","name":"n","strategy":{"name":"A","args":"-s1"}}]}""")
+        assertEquals(emptyMap(), old.profiles.single().perNetwork)
+        assertEquals(r, SavedProfiles.decode(SavedProfiles().upsert(r).encode()).profiles.single())
+    }
+}

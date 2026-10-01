@@ -61,8 +61,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Install NDK and platform
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
-      - name: Build debug APK and lint
-        run: ./gradlew :app:assembleDebug :app:lintDebug --console=plain
+      - name: Build debug APK, lint, screen tests
+        run: ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest --console=plain
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: app/build/screenshots/
       - uses: actions/upload-artifact@v4
         with:
           name: dpimech-debug-apk
