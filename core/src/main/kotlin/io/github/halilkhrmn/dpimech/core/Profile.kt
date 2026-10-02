@@ -89,10 +89,38 @@ object Hostlist {
      * entries are dropped.
      */
     fun parseInput(text: String): List<String> =
-        text.split('\n', ',', ' ', '\t', ';')
-            .map { it.substringAfter("://").substringBefore('/').substringBefore('?').substringBefore(':') }
-            .mapNotNull(::normalize)
-            .distinct()
+        text.split(*SEPARATORS).mapNotNull(::fromTyped).distinct()
+
+    /**
+     * What a domain field does with text as it is typed: entries that are finished and followed
+     * by a separator become pills, the rest stays in the field. Some keyboards put a space after
+     * every "." (Samsung's address keyboard), so "example. " is not finished: it stays in the
+     * field as "example." and the user goes on typing.
+     */
+    fun splitTyped(text: String): Pair<List<String>, String> {
+        if (text.none { it in SEPARATOR_CHARS }) return emptyList<String>() to text
+        val parts = text.split(*SEPARATORS)
+        val done = mutableListOf<String>()
+        val pending = StringBuilder()
+        for (part in parts.dropLast(1)) {
+            val host = fromTyped(part)
+            when {
+                part.trimEnd().endsWith('.') -> pending.append(part.trim())
+                host != null -> done += host
+                part.isNotBlank() -> pending.append(part.trim()).append(' ')
+            }
+        }
+        return done.distinct() to pending.append(parts.last()).toString()
+    }
+
+    /** A typed or pasted entry (a domain or an address like `https://host:443/path`) as a hostname. */
+    private fun fromTyped(entry: String): String? =
+        normalize(entry.trim().substringAfter("://").substringBefore('/').substringBefore('?').substringBefore(':'))
+            // A typed name needs a dot: "example" alone is a typo, not a site.
+            ?.takeIf { '.' in it }
+
+    private const val SEPARATOR_CHARS = "\n, \t;"
+    private val SEPARATORS = SEPARATOR_CHARS.map { it.toString() }.toTypedArray()
 
     /** File body for ciadpi `--hosts <file>`: one hostname per line. */
     fun body(domains: List<String>): String =

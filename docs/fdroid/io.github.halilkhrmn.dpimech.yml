@@ -22,7 +22,19 @@ Binaries:
 Builds:
   - versionName: 0.1.0
     versionCode: 1
-    commit: v0.1.0
+    commit: aeb82d0285e995618e40f37f9e77c6f139dfc5ec
+    subdir: app
+    submodules: true
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-universal-release-unsigned.apk
+    rm:
+      - native/hev-socks5-tunnel/third-part/wintun
+    ndk: 29.0.14206865
+
+  - versionName: 0.2.0
+    versionCode: 2
+    commit: e9040874e57bcace7b9ea4ffb163ad649629a172
     subdir: app
     submodules: true
     gradle:
@@ -36,5 +48,5 @@ AllowedAPKSigningKeys: dd5e5e13f10e026a494c95c7e23a0b8fca475af71c710d690069a3249
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
-CurrentVersion: 0.1.0
-CurrentVersionCode: 1
+CurrentVersion: 0.2.0
+CurrentVersionCode: 2

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.DnsCheck
 import io.github.halilkhrmn.dpimech.core.DomainPack
+import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.data.LabState
 import io.github.halilkhrmn.dpimech.data.QuickState
@@ -57,16 +58,24 @@ fun LabScreen(
     initialPacks: List<String>,
     targetProfile: String?,
     onDetectIsp: () -> Unit,
-    onStart: (List<DomainPack>, List<StrategyOption>) -> Unit,
+    onStart: (packs: List<DomainPack>, domains: List<String>, strategies: List<StrategyOption>) -> Unit,
     onCancel: () -> Unit,
-    onUse: (result: LabResult, packs: List<String>, turnOn: Boolean) -> Unit,
+    onUse: (result: LabResult, packs: List<String>, domains: List<String>, turnOn: Boolean) -> Unit,
     onBack: (() -> Unit)?,
     bottomPadding: PaddingValues = PaddingValues(),
     quick: QuickState = QuickState(),
     onQuickCheck: ((String) -> Unit)? = null,
+    /** Sites typed in by hand (the profile's extra domains), tested with the chosen packs. */
+    initialDomains: List<String> = emptyList(),
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
-    var packs by rememberSaveable { mutableStateOf(initialPacks.ifEmpty { listOf("discord") }) }
+    // Packs are optional: sites typed in by hand can be tested alone.
+    var packs by rememberSaveable {
+        mutableStateOf(initialPacks.ifEmpty { if (initialDomains.isEmpty()) listOf("discord") else emptyList() })
+    }
+    var domains by rememberSaveable { mutableStateOf(initialDomains) }
+    var domainInput by rememberSaveable { mutableStateOf("") }
+    val allDomains = (domains + Hostlist.parseInput(domainInput)).distinct()
     var community by rememberSaveable { mutableStateOf(false) }
     val chosen = options.filter { community || it.source == LabResult.STANDARD_SET }
 
@@ -110,6 +119,22 @@ fun LabScreen(
                         )
                     }
                 }
+                if (!state.running) {
+                    DomainPills(
+                        domains = domains,
+                        input = domainInput,
+                        onInput = { text ->
+                            val (done, left) = Hostlist.splitTyped(text)
+                            domains = (domains + done).distinct()
+                            domainInput = left
+                        },
+                        onAdd = {
+                            domains = allDomains
+                            domainInput = ""
+                        },
+                        onRemove = { d -> domains = domains - d },
+                    )
+                }
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -130,8 +155,12 @@ fun LabScreen(
                     Text(stringResource(R.string.lab_progress, state.done, state.total), style = MaterialTheme.typography.bodySmall)
                 } else {
                     Button(
-                        enabled = packs.isNotEmpty() && chosen.isNotEmpty(),
-                        onClick = { onStart(DomainPack.ALL.filter { it.id in packs }, chosen) },
+                        enabled = (packs.isNotEmpty() || allDomains.isNotEmpty()) && chosen.isNotEmpty(),
+                        onClick = {
+                            domains = allDomains
+                            domainInput = ""
+                            onStart(DomainPack.ALL.filter { it.id in packs }, allDomains, chosen)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text(stringResource(R.string.lab_start)) }
                 }
@@ -177,14 +206,14 @@ fun LabScreen(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     if (best != null) {
-                        Button(onClick = { onUse(best, packs, true) }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                        Button(onClick = { onUse(best, packs, domains, true) }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
                             Text(stringResource(R.string.lab_use_and_turn_on))
                         }
                     }
                 }
             }
             items(state.results, key = { r -> r.strategy!!.let { it.name + it.args } }) { r ->
-                ResultCard(r, targetProfile, enabled = !state.running, onUse = { onUse(r, packs, false) })
+                ResultCard(r, targetProfile, enabled = !state.running, onUse = { onUse(r, packs, domains, false) })
             }
         }
     }

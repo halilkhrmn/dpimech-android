@@ -51,6 +51,19 @@
 
 ## Work log
 
+### 2026-10-02 — Typed sites: no early pills, testable in the Lab
+- Done: the domain field made a pill as soon as a dot was typed, because some keyboards (Samsung's
+  address keyboard) put a space after "."; now only finished names (a dot inside, not at the end)
+  become pills, a name without a dot is not a site, and autocorrect is off (`Hostlist.splitTyped`).
+  The pill field (`DomainInput.kt`) is also in the Strategy Lab and the wizard: packs are optional,
+  sites typed by hand are tested alone or with packs, and join the profile the result is used for
+  (new profiles are named after them when no pack was chosen).
+- F-Droid review (fdroiddata!50840): builds must name the full commit hash, not the tag; the draft
+  in `docs/fdroid/` now does, and has the 0.2.0 build (commit e904087, the `v0.2.0` tag).
+- Verified: `HostlistInputTest` (space after a dot, URLs, words without a dot); app tests, lint
+  unchanged; Lab and wizard renders checked.
+- Next: phone test of typing domains on the Samsung keyboard.
+
 ### 2026-10-02 — v0.2.0 prepared
 - Done: versionCode 2, versionName 0.2.0; `changelogs/2.txt` in all five store languages (start on
   boot / always-on VPN, quick check, profile backup, next profile from the notification, weekly
