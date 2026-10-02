@@ -1,0 +1,1 @@
+Starts on boot and works as always-on VPN. Quick check of one site in the Test tab. Back up and restore profiles. Next profile from the notification. Lists update weekly; the site list is shared with the desktop app and updated online (new: Telegram, WhatsApp, TikTok, SoundCloud). Lists for Iran, Belarus and Egypt. Persian and Arabic.

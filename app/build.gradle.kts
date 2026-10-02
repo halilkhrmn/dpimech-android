@@ -12,8 +12,8 @@ android {
         minSdk = 26
         targetSdk = 36
         // Release tags are vX.Y.Z and versionName must match (checked by the release workflow).
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     // Release signing comes from the environment (CI secrets, see docs/RELEASING.md); without it

@@ -1,0 +1,1 @@
+Telefon açılınca başlar, her zaman açık VPN ile çalışır. Test sekmesinde tek siteyi hızlı deneme. Profil yedekleme ve geri yükleme. Bildirimden sonraki profile geçiş. Listeler haftalık güncellenir; site listesi masaüstüyle ortak (yeni: Telegram, WhatsApp, TikTok, SoundCloud). İran, Belarus, Mısır listeleri. Farsça ve Arapça.

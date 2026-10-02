@@ -43,12 +43,22 @@
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
+  - [ ] v0.2.0 (versionCode 2): release PR merged, then the owner creates the `v0.2.0` release
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-02 — v0.2.0 prepared
+- Done: versionCode 2, versionName 0.2.0; `changelogs/2.txt` in all five store languages (start on
+  boot / always-on VPN, quick check, profile backup, next profile from the notification, weekly
+  list update, site list shared with desktop, Iran/Belarus/Egypt, Persian and Arabic).
+- Verified: changelogs ≤ 500 bytes (337–463); tests, lint; store images rendered again (About shows
+  0.2.0).
+- Next: the owner creates the `v0.2.0` release on GitHub; F-Droid picks up new `v*` tags itself
+  (`AutoUpdateMode: Version`) once fdroiddata!50840 is merged. Phone test of the new features.
 
 ### 2026-10-02 — Site packs from the desktop's domains.json
 - Done: the desktop app had meanwhile moved its packs to `strategies/domains.json` (with translated
