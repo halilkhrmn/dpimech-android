@@ -57,6 +57,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
+import androidx.compose.ui.platform.LocalConfiguration
 import io.github.halilkhrmn.dpimech.core.AppMode
 import io.github.halilkhrmn.dpimech.core.ArgPolicy
 import io.github.halilkhrmn.dpimech.core.DomainPack
@@ -127,6 +128,7 @@ fun ProfileEditor(
             )
 
             Section(stringResource(R.string.profile_sites))
+            val language = LocalConfiguration.current.locales[0].language
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DomainPack.ALL.forEach { pack ->
                     val on = pack.id in packs
@@ -137,10 +139,10 @@ fun ProfileEditor(
                             if (!on) {
                                 // Ticking a pack also ticks its installed apps.
                                 apps = (apps + pack.packages.filter { it in installed }).distinct()
-                                if (name.isBlank()) name = pack.name
+                                if (name.isBlank()) name = pack.displayName(language)
                             }
                         },
-                        label = { Text(pack.name) },
+                        label = { Text(pack.label()) },
                     )
                 }
             }

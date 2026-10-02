@@ -117,7 +117,7 @@ fun WizardScreen(
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         DomainPack.ALL.forEach { p ->
                             val on = p.id in packs
-                            FilterChip(selected = on, onClick = { packs = if (on) packs - p.id else packs + p.id }, label = { Text(p.name) })
+                            FilterChip(selected = on, onClick = { packs = if (on) packs - p.id else packs + p.id }, label = { Text(p.label()) })
                         }
                     }
                     Button(

@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "note": "DPIMech site packs, shared by the desktop and Android apps. domains go into the engine's host list; probes are hosts the Strategy Lab requests, each answering HTTPS on /; android_packages are Android apps that use these sites (ignored on desktop). The apps ship this file and Android fetches the newest one from main. Plain data: hosts are checked before use.",
+  "_comment": "Sites the setup wizard, the Strategy Lab and the profile editor offer. The service fetches this file from main, so a change here reaches every user without a release. domains: everything the engine acts on (goes into the hostlist). probes: hosts the Lab and the connection check request; each must answer HTTPS on / (an apex domain without an A record fails whatever the strategy). countries: ISO codes of the countries where the site is widely reported blocked; the wizard picks these first for users there (\"*\": offered first everywhere). android_packages: Android apps that use the site; the Android app routes them through the tunnel when the pack is chosen (the desktop app ignores the field).",
   "packs": [
     {
       "id": "discord",
@@ -27,6 +27,12 @@
         "media.discordapp.net",
         "updates.discord.com",
         "dis.gd"
+      ],
+      "countries": [
+        "*",
+        "TR",
+        "RU",
+        "IR"
       ],
       "android_packages": [
         "com.discord"
@@ -55,6 +61,11 @@
         "youtubei.googleapis.com",
         "redirector.googlevideo.com"
       ],
+      "countries": [
+        "*",
+        "RU",
+        "IR"
+      ],
       "android_packages": [
         "com.google.android.youtube",
         "com.google.android.apps.youtube.music",
@@ -78,6 +89,9 @@
         "roblox.com",
         "apis.roblox.com"
       ],
+      "countries": [
+        "TR"
+      ],
       "android_packages": [
         "com.roblox.client"
       ]
@@ -96,6 +110,10 @@
         "twitter.com",
         "pbs.twimg.com"
       ],
+      "countries": [
+        "RU",
+        "IR"
+      ],
       "android_packages": [
         "com.twitter.android"
       ]
@@ -112,6 +130,10 @@
         "www.instagram.com",
         "instagram.com"
       ],
+      "countries": [
+        "RU",
+        "IR"
+      ],
       "android_packages": [
         "com.instagram.android"
       ]
@@ -126,6 +148,9 @@
       "probes": [
         "www.wattpad.com",
         "wattpad.com"
+      ],
+      "countries": [
+        "TR"
       ],
       "android_packages": [
         "wp.wattpad"
@@ -142,6 +167,9 @@
       "probes": [
         "imgur.com",
         "i.imgur.com"
+      ],
+      "countries": [
+        "TR"
       ],
       "android_packages": [
         "com.imgur.mobile"
@@ -161,6 +189,10 @@
         "www.facebook.com",
         "facebook.com"
       ],
+      "countries": [
+        "RU",
+        "IR"
+      ],
       "android_packages": [
         "com.facebook.katana",
         "com.facebook.orca",
@@ -178,8 +210,53 @@
       "probes": [
         "www.linkedin.com"
       ],
+      "countries": [
+        "RU"
+      ],
       "android_packages": [
         "com.linkedin.android"
+      ]
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "domains": [
+        "telegram.org",
+        "t.me",
+        "telegram.me",
+        "web.telegram.org",
+        "core.telegram.org"
+      ],
+      "probes": [
+        "telegram.org",
+        "t.me",
+        "web.telegram.org"
+      ],
+      "countries": [
+        "IR"
+      ],
+      "android_packages": [
+        "org.telegram.messenger",
+        "org.telegram.messenger.web",
+        "org.thunderdog.challegram"
+      ]
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "domains": [
+        "whatsapp.com",
+        "www.whatsapp.com",
+        "web.whatsapp.com",
+        "whatsapp.net"
+      ],
+      "probes": [
+        "www.whatsapp.com",
+        "web.whatsapp.com"
+      ],
+      "android_packages": [
+        "com.whatsapp",
+        "com.whatsapp.w4b"
       ]
     },
     {
@@ -193,6 +270,10 @@
       ],
       "probes": [
         "signal.org"
+      ],
+      "countries": [
+        "RU",
+        "IR"
       ],
       "android_packages": [
         "org.thoughtcrime.securesms"
@@ -209,9 +290,105 @@
         "www.viber.com",
         "viber.com"
       ],
+      "countries": [
+        "RU"
+      ],
       "android_packages": [
         "com.viber.voip"
       ]
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "domains": [
+        "tiktok.com",
+        "www.tiktok.com",
+        "tiktokcdn.com",
+        "tiktokv.com",
+        "ttwstatic.com"
+      ],
+      "probes": [
+        "www.tiktok.com",
+        "tiktok.com"
+      ],
+      "countries": [
+        "BY"
+      ],
+      "android_packages": [
+        "com.zhiliaoapp.musically",
+        "com.ss.android.ugc.trill"
+      ]
+    },
+    {
+      "id": "soundcloud",
+      "name": "SoundCloud",
+      "domains": [
+        "soundcloud.com",
+        "sndcdn.com",
+        "api-v2.soundcloud.com"
+      ],
+      "probes": [
+        "soundcloud.com"
+      ],
+      "countries": [
+        "KZ"
+      ],
+      "android_packages": [
+        "com.soundcloud.android"
+      ]
+    },
+    {
+      "id": "news-by",
+      "name": "Belarusian independent media",
+      "domains": [
+        "zerkalo.io",
+        "www.zerkalo.io",
+        "nashaniva.com",
+        "charter97.org",
+        "euroradio.fm",
+        "svaboda.org",
+        "www.svaboda.org",
+        "belsat.eu"
+      ],
+      "probes": [
+        "www.zerkalo.io",
+        "nashaniva.com",
+        "www.svaboda.org",
+        "belsat.eu"
+      ],
+      "countries": [
+        "BY"
+      ],
+      "names": {
+        "tr": "Belarus bağımsız medyası",
+        "ru": "Независимые СМИ Беларуси",
+        "fa": "رسانه‌های مستقل بلاروس",
+        "ar": "وسائل الإعلام المستقلة في بيلاروس"
+      }
+    },
+    {
+      "id": "news-eg",
+      "name": "Egyptian independent media",
+      "domains": [
+        "madamasr.com",
+        "www.madamasr.com",
+        "zawia3.com",
+        "cairo24.com",
+        "www.cairo24.com"
+      ],
+      "probes": [
+        "zawia3.com",
+        "www.cairo24.com"
+      ],
+      "countries": [
+        "EG"
+      ],
+      "names": {
+        "tr": "Mısır bağımsız medyası",
+        "ru": "Независимые СМИ Египта",
+        "fa": "رسانه‌های مستقل مصر",
+        "ar": "وسائل الإعلام المصرية المستقلة"
+      }
     }
   ]
 }

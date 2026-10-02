@@ -289,7 +289,7 @@ class MainActivity : AppCompatActivity() {
         val chosen = DomainPack.ALL.filter { it.id in packs }
         val p = Profile(
             id = UUID.randomUUID().toString(),
-            name = chosen.joinToString(" + ") { it.name },
+            name = chosen.joinToString(" + ") { it.displayName(packLanguage()) },
             packs = chosen.map { it.id },
             strategy = entry,
             perNetwork = networkKey?.let { mapOf(it to entry) }.orEmpty(),
@@ -311,7 +311,7 @@ class MainActivity : AppCompatActivity() {
             val chosen = DomainPack.ALL.filter { it.id in choice.packs }
             Profile(
                 id = id,
-                name = chosen.joinToString(" + ") { it.name },
+                name = chosen.joinToString(" + ") { it.displayName(packLanguage()) },
                 packs = choice.packs,
                 strategy = entry,
                 apps = chosen.flatMap { it.packages }.filter { it in installed },
@@ -321,6 +321,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** The SIM's country when nothing better is known (no permission needed). */
+    /** The app's language, for the site pack names in new profiles. */
+    private fun packLanguage(): String = resources.configuration.locales[0].language
+
     private fun simCountry(): String? = runCatching {
         getSystemService(android.telephony.TelephonyManager::class.java)?.simCountryIso?.uppercase()?.ifEmpty { null }
     }.getOrNull()

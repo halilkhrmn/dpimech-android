@@ -1,5 +1,7 @@
 package io.github.halilkhrmn.dpimech.ui
 
+import io.github.halilkhrmn.dpimech.core.DomainPack
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -571,6 +573,10 @@ private fun ProfilesCard(saved: SavedProfiles, onSelect: (String) -> Unit, onEdi
 }
 
 private val OnGreen = Color(0xFF1E8E3E)
+
+/** A site pack's name in the app's language (the shared file has a few translated names). */
+@Composable
+fun DomainPack.label(): String = displayName(LocalConfiguration.current.locales[0].language)
 
 /** "All apps · 4 sites" or "2 apps · 1 site". */
 @Composable

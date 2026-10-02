@@ -106,7 +106,7 @@ fun LabScreen(
                             selected = on,
                             enabled = !state.running,
                             onClick = { packs = if (on) packs - p.id else packs + p.id },
-                            label = { Text(p.name) },
+                            label = { Text(p.label()) },
                         )
                     }
                 }
