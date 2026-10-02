@@ -1,5 +1,6 @@
 package io.github.halilkhrmn.dpimech.data
 
+import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.core.OnlineSource
 import io.github.halilkhrmn.dpimech.core.StrategyEntry
@@ -19,11 +20,13 @@ data class StrategyOption(val entry: StrategyEntry, val source: String, val orig
 
 /**
  * The standard set from the desktop repository's `default.json` (newest copy cached, the
- * built-in one as fallback) plus the community list. Downloads are plain data, never code.
+ * built-in one as fallback) plus the community list, and the site packs from the same
+ * repository's `packs.json`. Downloads are plain data, never code.
  */
 class StrategyRepository(dir: File) {
     private val standardCache = File(dir, "strategies.json")
     private val communityCache = File(dir, "community.txt")
+    private val packsCache = File(dir, "packs.json")
     private val state = MutableStateFlow(load())
     val options: StateFlow<List<StrategyOption>> = state.asStateFlow()
     private val updated = MutableStateFlow(lastDownload())
@@ -32,9 +35,10 @@ class StrategyRepository(dir: File) {
     val lastUpdated: StateFlow<Long?> = updated.asStateFlow()
 
     private fun lastDownload(): Long? =
-        listOf(standardCache, communityCache).filter { it.exists() }.maxOfOrNull { it.lastModified() }
+        listOf(standardCache, communityCache, packsCache).filter { it.exists() }.maxOfOrNull { it.lastModified() }
 
     private fun load(): List<StrategyOption> {
+        packsCache.takeIf { it.exists() }?.let { DomainPack.parse(it.readText()).getOrNull() }?.let(DomainPack::use)
         val standard = standardCache.takeIf { it.exists() }
             ?.let { StrategyFile.parse(it.readText()).getOrNull() }
             ?: StrategyFile.embedded
@@ -45,7 +49,7 @@ class StrategyRepository(dir: File) {
             community.map { StrategyOption(it, src.label, src.origin) }
     }
 
-    /** Fetches both lists; keeps the old copies when a download fails. Returns failures. */
+    /** Fetches the lists and the site packs; keeps the old copies when a download fails. Returns failures. */
     suspend fun refresh(): List<String> = withContext(Dispatchers.IO) {
         val errors = mutableListOf<String>()
         runCatching {
@@ -58,6 +62,11 @@ class StrategyRepository(dir: File) {
             require(OnlineSource.parseArgsPerLine(text).isNotEmpty()) { "empty list" }
             communityCache.writeText(text)
         }.onFailure { errors += "${OnlineSource.COMMUNITY.label}: ${it.message}" }
+        runCatching {
+            val text = download(DomainPack.URL)
+            DomainPack.parse(text).getOrThrow()
+            packsCache.writeText(text)
+        }.onFailure { errors += "site packs: ${it.message}" }
         state.value = load()
         updated.value = lastDownload()
         errors

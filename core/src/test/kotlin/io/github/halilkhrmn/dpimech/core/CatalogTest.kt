@@ -30,6 +30,26 @@ class CatalogTest {
     }
 
     @Test
+    fun packFileIsSharedWithDesktopAndChecked() {
+        // The built-in copy is the desktop repository's file; Discord stays first.
+        assertEquals("discord", DomainPack.embedded.first().id)
+        assertEquals(listOf("com.discord"), DomainPack.byId("discord")!!.packages)
+        val ok = """{"format":1,"packs":[{"id":"a","name":"A","domains":["a.com"],"probes":["a.com"]}]}"""
+        assertEquals(emptyList(), DomainPack.parse(ok).getOrThrow().single().packages)
+        for (bad in listOf(
+            ok.replace("\"format\":1", "\"format\":2"),
+            ok.replace("[\"a.com\"],\"probes", "[\"a.com/x\"],\"probes"),
+            ok.replace("[\"a.com\"],\"probes", "[\"A.com\"],\"probes"),
+            ok.replace("\"probes\":[\"a.com\"]", "\"probes\":[]"),
+            ok.replace("}]}", ",\"android_packages\":[\"no package\"]}]}"),
+            ok.replace("}]}", "},{\"id\":\"a\",\"name\":\"B\",\"domains\":[\"b.com\"],\"probes\":[\"b.com\"]}]}"),
+            "not json",
+        )) {
+            assertTrue(DomainPack.parse(bad).isFailure, bad)
+        }
+    }
+
+    @Test
     fun profileCollectsDomainsAndApps() {
         val s = StrategyEntry("x", "-s1")
         val p = Profile.fromPack("1", DomainPack.byId("youtube")!!, s, setOf("org.schabi.newpipe", "com.other"))

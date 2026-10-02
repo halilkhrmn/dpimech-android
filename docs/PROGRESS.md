@@ -39,7 +39,7 @@
   - [x] Profile export / import
   - [x] Quick site check
   - [x] More countries (Iran, Belarus, Egypt; not Kazakhstan, DECISIONS #25) + Persian and Arabic (app, README, store)
-  - [ ] Site packs shared with the desktop app
+  - [x] Site packs shared with the desktop app (`packs.json`, DECISIONS #26)
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
@@ -49,6 +49,16 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-02 — Site packs shared with the desktop app
+- Done: the packs live in the desktop repo's `strategies/packs.json` (desktop branch
+  `site-packs-json`, its DECISIONS #43). `DomainPack` reads the embedded copy, checks every host and
+  package name, and the strategy list update also downloads the newest file, which is used from
+  then on (cached like `default.json`). Desktop gets the five packs only Android had.
+- Verified: `CatalogTest` (embedded file, bad hosts, package names, repeated ids, wrong format);
+  desktop `cargo fmt/clippy/test`; app tests and lint unchanged.
+- Next: merge the desktop PR first (until then the download answers 404 and the built-in list stays
+  in use); then v0.2.0.
 
 ### 2026-10-02 — Countries and Persian / Arabic
 - Done: presets for Iran, Belarus and Egypt; Kazakhstan has no widely reported blocks of these

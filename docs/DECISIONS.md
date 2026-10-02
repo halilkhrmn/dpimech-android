@@ -159,3 +159,12 @@ No Telegram pack: its apps talk to IP addresses where DPI tricks rarely help. Pe
 were translated by the AI assistant; the READMEs ask native speakers for corrections. Both are
 right-to-left; the Compose UI mirrors itself (checked with store renders).
 
+## 26. Site packs from the desktop repository (2026-10-02)
+The packs moved from code in both apps to `strategies/packs.json` in the desktop repository
+(its DECISIONS #43): domains, probe hosts and `android_packages`, which desktop ignores. The APK
+ships a copy and downloads the newest file together with the strategy lists, so a new site or a
+changed domain reaches phones without a release. The file is plain data: every host must be a
+lower-case DNS name (it goes into ciadpi's host list), package names are checked, ids are unique;
+a file that fails, or has another `format`, is ignored and the previous list stays. Profiles store
+pack ids, so a pack removed upstream simply adds no domains; its extra domains are kept.
+

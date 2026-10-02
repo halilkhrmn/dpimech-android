@@ -28,7 +28,9 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
 - Scope is fixed in `docs/PLAN.md`: ByeDPI only, no root mode, no remote tunnels, no Android TV.
 - Keep F-Droid compatible: no Google Play Services, Firebase, analytics or crash reporters; no
   executable downloads at runtime; native code only from pinned submodules.
-- Strategy data comes from the desktop repo's `strategies/default.json`; do not fork the format.
+- Strategy data comes from the desktop repo's `strategies/default.json`, site packs from its
+  `strategies/packs.json`; do not fork the formats. Change packs there, then copy the file into
+  `core/src/main/resources/strategies/`.
   If Android needs a change, change it there.
 - User-visible strings go through Android resources (`values/`, `values-tr/`, `values-ru/`,
   `values-fa/`, `values-ar/`). Persian and Arabic are right-to-left: use start/end, not left/right.
@@ -62,7 +64,9 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   StrategyFile      shared default.json (format 1); embedded copy in resources/strategies/
   ArgPolicy         ciadpi option allowlist (port of desktop argpolicy.rs, ByeDPI table)
   ByeDpiCommand     strategy → ciadpi argv: placeholders, managed options, domain filter
-  DomainPack, Isp   packs (+ Android package names) and ISP table from desktop catalog.rs
+  DomainPack        shared packs.json (format 1, + Android package names); embedded copy, newest
+                    download in use
+  Isp               ISP table from desktop catalog.rs
   Lab, LabRunner    Strategy Lab: scoring (same order as desktop) and the runner
   Socks5, SiteCheck SOCKS5 client for ciadpi; "does the site open" HTTPS check
   Watchdog          when to restart ciadpi (exit / failed health probes / give up)
