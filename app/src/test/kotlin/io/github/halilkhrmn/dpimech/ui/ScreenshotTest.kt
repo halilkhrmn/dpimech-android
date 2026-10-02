@@ -100,6 +100,20 @@ class ScreenshotTest {
         io.github.halilkhrmn.dpimech.widget.WidgetConfig(saved, "2") {}
     }
 
+    @Test fun labQuickCheck() = shot("lab_quick") {
+        LabScreen(
+            LabState(), emptyList(), listOf("discord"), "Blocked sites", {}, { _, _ -> }, {}, { _, _, _ -> }, null,
+            quick = io.github.halilkhrmn.dpimech.data.QuickState(
+                result = io.github.halilkhrmn.dpimech.core.QuickCheck.Result("discord.com", "TLS record split", null, 142),
+            ),
+            onQuickCheck = {},
+        )
+    }
+
+    @Test @Config(qualifiers = "w411dp-h2200dp-xxhdpi") fun settingsFull() = shot("settings_full") {
+        SettingsScreen(AppSettings(), {}, {}, {}, onRefreshStrategies = { emptyList() }, lastUpdated = null, onLogs = {}, onReport = {}, bottomPadding = PaddingValues())
+    }
+
     @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }
 
     @Test fun wizardWelcome() = shot("wizard_welcome") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }

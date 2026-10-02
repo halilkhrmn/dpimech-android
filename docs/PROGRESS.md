@@ -36,9 +36,9 @@
   - [x] Long-press shortcuts: Turn off (while on), profiles, Strategy test, Logs
 - [ ] **v0.2.0** (PLAN.md 4b)
   - [x] Start on boot, always-on VPN, automatic list update, "next profile" in the notification
-  - [ ] Profile export / import
-  - [ ] Quick site check
-  - [ ] More countries + translations (app, README)
+  - [x] Profile export / import
+  - [x] Quick site check
+  - [ ] More countries (Iran, Kazakhstan, Belarus, Egypt) + Persian and Arabic (app, README)
   - [ ] Site packs shared with the desktop app
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
@@ -49,6 +49,19 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-01 — Profile backup and quick site check
+- Done: Settings → Backup saves all profiles to a file (`ProfileBackup`, format
+  `dpimech-profiles` v1, includes per-network strategies) and restores them (same id replaced,
+  others added) through Android's file picker, no storage permission. The Test tab starts with
+  "Quick check": one address, checked directly and through a short-lived ciadpi limited to that
+  host with the selected profile's strategy for this network (`QuickCheck`), answered in plain
+  words (opens / blocked but opens with the bypass / does not open).
+- Verified: `QuickCheckBackupTest` (verdicts, engine limited to the host and list removed, bad
+  strategy, pasted address, backup round trip and merge, foreign/newer files rejected); renders
+  `lab_quick`, `settings_full`; lint unchanged. The first test run caught the missing domain
+  filter in the quick check.
+- Next: countries Iran, Kazakhstan, Belarus, Egypt with Persian and Arabic (owner's choice).
 
 ### 2026-10-01 — v0.2.0 plan; start on boot, always-on VPN, list auto-update
 - Plan for v0.2.0 agreed with the owner (PLAN.md 4b). Discord voice works on the owner's phone,

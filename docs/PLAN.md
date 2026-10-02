@@ -133,7 +133,8 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
    - "Next profile" button in the bypass notification.
    - Profile export / import (a file, for a new phone).
    - Quick site check: does a site open directly, and through the bypass?
-   - More countries for the whole-phone preset, with app and README translations for them.
+   - More countries for the whole-phone preset: Iran, Kazakhstan, Belarus, Egypt (owner's choice);
+     new languages Persian and Arabic for the app and the README (Russian covers KZ and BY).
    - Later: site packs shared with the desktop app (one JSON next to `default.json`).
 4. **Release** — GitHub Releases (signed APK, per-ABI + universal), IzzyOnDroid, then F-Droid.
 

@@ -37,6 +37,14 @@ data class LabState(
     val dns: List<DnsCheck.Finding> = emptyList(),
 )
 
+/** The quick site check under the Test tab: one address, directly and through the bypass. */
+data class QuickState(
+    val running: Boolean = false,
+    val result: io.github.halilkhrmn.dpimech.core.QuickCheck.Result? = null,
+    /** The input was not a site address. */
+    val badInput: Boolean = false,
+)
+
 /** Runs the Strategy Lab in the background and keeps its progress for the UI (app-wide). */
 class LabController(private val context: Context) {
     private val state = MutableStateFlow(LabState())
@@ -44,6 +52,28 @@ class LabController(private val context: Context) {
 
     @Volatile
     private var cancelled = false
+
+    private val quickState = MutableStateFlow(QuickState())
+    val quick: StateFlow<QuickState> = quickState.asStateFlow()
+
+    /** Checks one site with [strategy] (the selected profile's strategy for this network). */
+    fun quickCheck(input: String, strategy: io.github.halilkhrmn.dpimech.core.StrategyEntry) {
+        if (quickState.value.running) return
+        val lists = File(context.filesDir, "lists")
+        val check = io.github.halilkhrmn.dpimech.core.QuickCheck(AndroidEngineLauncher(context), lists)
+        val host = check.hostOf(input) ?: run {
+            quickState.value = QuickState(badInput = true)
+            return
+        }
+        quickState.value = QuickState(running = true)
+        thread(name = "quick-check", isDaemon = true) {
+            val r = runCatching { check.run(host, strategy) }.getOrElse {
+                io.github.halilkhrmn.dpimech.core.QuickCheck.Result(host, strategy.name, null, null, it.message ?: it.toString())
+            }
+            EngineLog.add("quick check $host: direct ${r.directMs ?: "-"} ms, bypass (${r.strategy}) ${r.bypassMs ?: "-"} ms${r.error?.let { " ($it)" } ?: ""}")
+            quickState.value = QuickState(result = r)
+        }
+    }
 
     fun detectIsp() {
         if (state.value.isp != null) return

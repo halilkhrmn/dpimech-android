@@ -45,6 +45,7 @@ import io.github.halilkhrmn.dpimech.core.DnsCheck
 import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.data.LabState
+import io.github.halilkhrmn.dpimech.data.QuickState
 import io.github.halilkhrmn.dpimech.data.StrategyOption
 
 /** Strategy Lab: test strategies against the chosen sites and use the winner. */
@@ -61,6 +62,8 @@ fun LabScreen(
     onUse: (result: LabResult, packs: List<String>, turnOn: Boolean) -> Unit,
     onBack: (() -> Unit)?,
     bottomPadding: PaddingValues = PaddingValues(),
+    quick: QuickState = QuickState(),
+    onQuickCheck: ((String) -> Unit)? = null,
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
     var packs by rememberSaveable { mutableStateOf(initialPacks.ifEmpty { listOf("discord") }) }
@@ -86,6 +89,7 @@ fun LabScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            onQuickCheck?.let { check -> item { QuickCheckCard(quick, check) } }
             item {
                 Text(
                     state.isp?.let { stringResource(R.string.lab_isp, it.known?.name ?: it.provider) }
@@ -231,4 +235,53 @@ fun sourceLabel(source: String): String = when (source) {
     LabResult.STANDARD_SET -> stringResource(R.string.source_standard)
     io.github.halilkhrmn.dpimech.core.OnlineSource.COMMUNITY.label -> stringResource(R.string.source_community)
     else -> source
+}
+
+/** One address, checked directly and through the bypass, with a plain-language answer. */
+@Composable
+private fun QuickCheckCard(quick: QuickState, onCheck: (String) -> Unit) {
+    var input by rememberSaveable { mutableStateOf("") }
+    androidx.compose.material3.Card(Modifier.fillMaxWidth()) {
+        androidx.compose.foundation.layout.Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.quick_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.quick_hint), style = MaterialTheme.typography.bodySmall)
+            androidx.compose.material3.OutlinedTextField(
+                value = input, onValueChange = { input = it },
+                label = { Text(stringResource(R.string.quick_address)) },
+                singleLine = true,
+                isError = quick.badInput,
+                supportingText = if (quick.badInput) ({ Text(stringResource(R.string.quick_bad_input)) }) else null,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Uri,
+                    imeAction = androidx.compose.ui.text.input.ImeAction.Go,
+                ),
+                keyboardActions = androidx.compose.foundation.text.KeyboardActions(onGo = { if (!quick.running) onCheck(input) }),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            androidx.compose.material3.Button(onClick = { onCheck(input) }, enabled = !quick.running && input.isNotBlank()) {
+                Text(stringResource(R.string.quick_check))
+            }
+            if (quick.running) androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth())
+            quick.result?.let { r ->
+                val (text, color) = when (r.verdict) {
+                    io.github.halilkhrmn.dpimech.core.QuickCheck.Verdict.OPEN ->
+                        stringResource(R.string.quick_open, r.host) to MaterialTheme.colorScheme.primary
+                    io.github.halilkhrmn.dpimech.core.QuickCheck.Verdict.BYPASSED ->
+                        stringResource(R.string.quick_bypassed, r.host, r.strategy) to MaterialTheme.colorScheme.primary
+                    io.github.halilkhrmn.dpimech.core.QuickCheck.Verdict.BLOCKED ->
+                        stringResource(R.string.quick_blocked, r.host, r.strategy) to MaterialTheme.colorScheme.error
+                }
+                Text(text, color = color, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    stringResource(
+                        R.string.quick_times,
+                        r.directMs?.let { "$it ms" } ?: "✕",
+                        r.bypassMs?.let { "$it ms" } ?: "✕",
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                r.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+            }
+        }
+    }
 }

@@ -203,4 +203,27 @@
     <string name="settings_start_on_boot_hint">Включает выбранный профиль после перезагрузки. Постоянная VPN Android ниже делает то же через системные настройки.</string>
     <string name="settings_auto_update">Обновлять списки стратегий автоматически</string>
     <string name="settings_auto_update_hint">При запуске приложения, если спискам больше недели.</string>
+    <string name="quick_title">Быстрая проверка</string>
+    <string name="quick_hint">Открывается ли сайт? Проверка напрямую и через обход со стратегией выбранного профиля.</string>
+    <string name="quick_address">Адрес сайта</string>
+    <string name="quick_bad_input">Введите адрес сайта, например discord.com</string>
+    <string name="quick_check">Проверить</string>
+    <string name="quick_open">%1$s открывается без обхода.</string>
+    <string name="quick_bypassed">%1$s заблокирован, но открывается с обходом (%2$s).</string>
+    <string name="quick_blocked">%1$s не открывается даже с %2$s. Попробуйте лабораторию стратегий ниже; если ничего не помогает, сайт может быть заблокирован по IP.</string>
+    <string name="quick_times">Напрямую: %1$s · С обходом: %2$s</string>
+    <string name="settings_section_backup">Резервная копия</string>
+    <string name="backup">Сохранить профили</string>
+    <string name="backup_hint">Сохранить все профили в файл, например для нового телефона.</string>
+    <string name="restore">Восстановить профили</string>
+    <string name="restore_hint">Добавить профили из файла резервной копии. Уже имеющийся профиль заменяется его копией из файла.</string>
+    <string name="backup_done">Профили сохранены.</string>
+    <string name="backup_failed">Не удалось сохранить файл.</string>
+    <plurals name="restore_done">
+        <item quantity="one">Восстановлен %d профиль.</item>
+        <item quantity="few">Восстановлено %d профиля.</item>
+        <item quantity="many">Восстановлено %d профилей.</item>
+        <item quantity="other">Восстановлено %d профиля.</item>
+    </plurals>
+    <string name="restore_failed">Не удалось прочитать резервную копию.</string>
 </resources>

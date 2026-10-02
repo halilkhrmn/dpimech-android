@@ -203,4 +203,25 @@
     <string name="settings_start_on_boot_hint">Telefon yeniden başlayınca seçili profili açar. Aşağıdaki Android "Her zaman açık VPN" ayarı aynısını sistem ayarlarından yapar.</string>
     <string name="settings_auto_update">Strateji listelerini otomatik güncelle</string>
     <string name="settings_auto_update_hint">Uygulama açılırken, listeler bir haftadan eskiyse.</string>
+    <string name="quick_title">Hızlı kontrol</string>
+    <string name="quick_hint">Bir site açılıyor mu? Doğrudan ve seçili profilin stratejisiyle atlatma üzerinden denenir.</string>
+    <string name="quick_address">Site adresi</string>
+    <string name="quick_bad_input">Bir site adresi yazın, ör. discord.com</string>
+    <string name="quick_check">Kontrol et</string>
+    <string name="quick_open">%1$s atlatma olmadan açılıyor.</string>
+    <string name="quick_bypassed">%1$s engelli ama atlatmayla açılıyor (%2$s).</string>
+    <string name="quick_blocked">%1$s, %2$s ile de açılmıyor. Aşağıdaki Strateji Laboratuvarı\'nı deneyin; hiçbiri işe yaramazsa IP adresiyle engellenmiş olabilir.</string>
+    <string name="quick_times">Doğrudan: %1$s · Atlatmayla: %2$s</string>
+    <string name="settings_section_backup">Yedekleme</string>
+    <string name="backup">Profilleri yedekle</string>
+    <string name="backup_hint">Tüm profilleri bir dosyaya kaydet, ör. yeni telefon için.</string>
+    <string name="restore">Profilleri geri yükle</string>
+    <string name="restore_hint">Bir yedek dosyasındaki profilleri ekle. Burada zaten olan bir profil, yedekteki haliyle değiştirilir.</string>
+    <string name="backup_done">Profiller kaydedildi.</string>
+    <string name="backup_failed">Dosya kaydedilemedi.</string>
+    <plurals name="restore_done">
+        <item quantity="one">%d profil geri yüklendi.</item>
+        <item quantity="other">%d profil geri yüklendi.</item>
+    </plurals>
+    <string name="restore_failed">Yedek okunamadı.</string>
 </resources>

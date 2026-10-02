@@ -204,4 +204,25 @@
     <string name="settings_start_on_boot_hint">Turns the selected profile on after a restart. Android\'s always-on VPN below does the same from system settings.</string>
     <string name="settings_auto_update">Update strategy lists automatically</string>
     <string name="settings_auto_update_hint">When the app starts and the lists are older than a week.</string>
+    <string name="quick_title">Quick check</string>
+    <string name="quick_hint">Does one site open? Checked directly and through the bypass with the selected profile\'s strategy.</string>
+    <string name="quick_address">Site address</string>
+    <string name="quick_bad_input">Type a site address, e.g. discord.com</string>
+    <string name="quick_check">Check</string>
+    <string name="quick_open">%1$s opens without the bypass.</string>
+    <string name="quick_bypassed">%1$s is blocked, but opens with the bypass (%2$s).</string>
+    <string name="quick_blocked">%1$s does not open, even with %2$s. Try the Strategy Lab below; if nothing works, it may be blocked by IP address.</string>
+    <string name="quick_times">Direct: %1$s · With the bypass: %2$s</string>
+    <string name="settings_section_backup">Backup</string>
+    <string name="backup">Back up profiles</string>
+    <string name="backup_hint">Save all profiles to a file, e.g. for a new phone.</string>
+    <string name="restore">Restore profiles</string>
+    <string name="restore_hint">Add the profiles from a backup file. A profile that is already here is replaced by its copy from the backup.</string>
+    <string name="backup_done">Profiles saved.</string>
+    <string name="backup_failed">Could not save the file.</string>
+    <plurals name="restore_done">
+        <item quantity="one">%d profile restored.</item>
+        <item quantity="other">%d profiles restored.</item>
+    </plurals>
+    <string name="restore_failed">Could not read the backup.</string>
 </resources>
