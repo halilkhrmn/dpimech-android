@@ -40,7 +40,7 @@ data class AppSettings(
     data class DnsServer(val name: String, val address: String)
 
     companion object {
-        val LANGUAGES = listOf("", "en", "tr", "ru")
+        val LANGUAGES = listOf("", "en", "tr", "ru", "fa", "ar")
 
         val DNS_SERVERS = listOf(
             DnsServer("Cloudflare", "1.1.1.1"),

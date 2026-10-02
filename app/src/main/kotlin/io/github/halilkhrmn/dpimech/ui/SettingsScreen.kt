@@ -298,6 +298,8 @@ private fun languageName(tag: String) = when (tag) {
     "en" -> "English"
     "tr" -> "Türkçe"
     "ru" -> "Русский"
+    "fa" -> "فارسی"
+    "ar" -> "العربية"
     else -> stringResource(R.string.settings_language_system)
 }
 

@@ -74,7 +74,8 @@ fun WizardScreen(
     val locale = LocalConfiguration.current.locales[0]
     val preset = CountryPreset.forCountry(country ?: locale.country)
     var packs by rememberSaveable(preset.country) { mutableStateOf(preset.packs) }
-    val countryName = (country ?: locale.country).takeIf { it.isNotEmpty() }
+    // Named only when the country has its own list; otherwise the text would promise too much.
+    val countryName = preset.country.takeIf { it.isNotEmpty() }
         ?.let { Locale("", it).getDisplayCountry(locale) }
 
     Surface(Modifier.fillMaxSize()) {

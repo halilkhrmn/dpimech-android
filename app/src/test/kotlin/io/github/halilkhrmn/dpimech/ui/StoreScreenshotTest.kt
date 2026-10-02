@@ -47,11 +47,14 @@ class StoreScreenshotTest(private val locale: String) {
     companion object {
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{0}")
-        fun locales() = listOf("en", "tr", "ru")
+        fun locales() = listOf("en", "tr", "ru", "fa", "ar")
     }
 
     @get:Rule
     val compose = createComposeRule()
+
+    /** The wizard and the whole-phone profile show a country that speaks the language. */
+    private val country = mapOf("ru" to "RU", "fa" to "IR", "ar" to "EG").getOrDefault(locale, "TR")
 
     private fun shot(n: Int, content: @Composable () -> Unit) {
         RuntimeEnvironment.setQualifiers("+$locale")
@@ -79,7 +82,7 @@ class StoreScreenshotTest(private val locale: String) {
 
     private fun profiles(): SavedProfiles {
         val s = StrategyEntry("TLS record split", "-r 1+s")
-        val whole = CountryPreset.forCountry("TR").profile("1", str(R.string.wizard_profile_whole_phone), s)
+        val whole = CountryPreset.forCountry(country).profile("1", str(R.string.wizard_profile_whole_phone), s)
         val discord = Profile("2", "Discord", packs = listOf("discord"), strategy = s, apps = listOf("com.discord"), appMode = AppMode.ONLY_SELECTED)
         return SavedProfiles(listOf(whole, discord), "1")
     }
@@ -95,7 +98,7 @@ class StoreScreenshotTest(private val locale: String) {
     }
 
     @Test fun wizard() = shot(2) {
-        WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}, initialStep = 1)
+        WizardScreen(LabState(), country, {}, { _, _ -> }, {}, {}, {}, initialStep = 1)
     }
 
     @Test fun lab() = shot(3) {

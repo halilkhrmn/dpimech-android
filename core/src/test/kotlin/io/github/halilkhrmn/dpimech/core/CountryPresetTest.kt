@@ -13,6 +13,10 @@ class CountryPresetTest {
         }
         assertEquals("TR", CountryPreset.forCountry("tr").country)
         assertEquals(CountryPreset.GENERIC, CountryPreset.forCountry("DE"))
+        assertEquals(listOf("TR", "RU", "IR", "BY", "EG"), CountryPreset.ALL.map { it.country })
+        // No widely reported blocks of these services in Kazakhstan: the generic list.
+        assertEquals(CountryPreset.GENERIC, CountryPreset.forCountry("KZ"))
+        assertTrue("roblox.com" in CountryPreset.forCountry("eg").profile("e", "e", StrategyEntry("s", "-s1")).domains)
         assertEquals(CountryPreset.GENERIC, CountryPreset.forCountry(null))
     }
 

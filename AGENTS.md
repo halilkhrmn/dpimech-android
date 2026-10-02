@@ -30,9 +30,10 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
   executable downloads at runtime; native code only from pinned submodules.
 - Strategy data comes from the desktop repo's `strategies/default.json`; do not fork the format.
   If Android needs a change, change it there.
-- User-visible strings go through Android resources (`values/`, `values-tr/`, `values-ru/`).
-- `README.md` is the main README and stays in English; `README.tr.md` and `README.ru.md` are
-  translations of it. Change all three together.
+- User-visible strings go through Android resources (`values/`, `values-tr/`, `values-ru/`,
+  `values-fa/`, `values-ar/`). Persian and Arabic are right-to-left: use start/end, not left/right.
+- `README.md` is the main README and stays in English; `README.tr.md`, `README.ru.md`,
+  `README.fa.md` and `README.ar.md` are translations of it. Change them together.
 
 ## Commands
 
@@ -85,7 +86,7 @@ app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), f
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:
           Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
-fastlane/ store listing (en-US, tr, ru) for IzzyOnDroid / F-Droid; images from tools/fastlane-images.py
+fastlane/ store listing (en-US, tr, ru, fa, ar) for F-Droid; images from tools/fastlane-images.py
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
 

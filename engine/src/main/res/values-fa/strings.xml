@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_channel">وضعیت دور زدن</string>
+    <string name="engine_running_title">%1$s: دور زدن روشن</string>
+    <string name="engine_running_text">فقط برنامه‌های انتخاب‌شده تأثیر می‌گیرند. چیزی به سرور دیگری نمی‌رود.</string>
+    <string name="engine_stop">خاموش کن</string>
+    <string name="engine_error_no_permission">اندروید اجازهٔ شروع به DPIMech نداد (مجوز VPN نیست یا VPN همیشه روشن برای برنامهٔ دیگری تنظیم شده).</string>
+    <string name="engine_error_gave_up">ByeDPI پیوسته متوقف می‌شد، پس DPIMech دور زدن را خاموش کرد. راهبرد دیگری را امتحان کنید.</string>
+    <string name="event_channel">رویدادها</string>
+    <string name="event_strategy">راهبرد خودکار: برای این شبکه به «%1$s» تغییر کرد.</string>
+    <string name="event_revoked">DPIMech خاموش شد: VPN دیگری شروع شد یا مجوز VPN پس گرفته شد.</string>
+    <string name="engine_stats_line">↓ %1$s/s  ↑ %2$s/s</string>
+    <string name="engine_stats_total">مجموع ↓ %1$s  ↑ %2$s</string>
+    <string name="engine_stats_strategy">راهبرد: %1$s</string>
+    <string name="engine_stats_dns">DNS over HTTPS: %1$d از %2$d درخواست</string>
+    <string name="engine_stats_quic">QUIC مسدود: %1$d بسته</string>
+    <string name="engine_stats_restarts">راه‌اندازی دوبارهٔ موتور: %1$d</string>
+    <string name="engine_stats_ping">میانگین پینگ: %1$d ms · %2$d از %3$d سایت باز می‌شود</string>
+    <string name="engine_stats_ping_none">اکنون هیچ سایتی باز نمی‌شود (%1$d آزموده شد)</string>
+    <string name="engine_auto_progress">یافتن بهترین راهبرد: %1$d از %2$d آزمون</string>
+    <string name="engine_next_profile">نمایهٔ بعدی</string>
+</resources>
