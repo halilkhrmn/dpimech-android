@@ -38,7 +38,7 @@
   - [x] Start on boot, always-on VPN, automatic list update, "next profile" in the notification
   - [x] Profile export / import
   - [x] Quick site check
-  - [ ] More countries (Iran, Kazakhstan, Belarus, Egypt) + Persian and Arabic (app, README)
+  - [x] More countries (Iran, Belarus, Egypt; not Kazakhstan, DECISIONS #25) + Persian and Arabic (app, README, store)
   - [ ] Site packs shared with the desktop app
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
@@ -49,6 +49,18 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-02 — Countries and Persian / Arabic
+- Done: presets for Iran, Belarus and Egypt; Kazakhstan has no widely reported blocks of these
+  services, so it keeps the generic list (DECISIONS #25). The wizard names a country only when it
+  has its own list. App and engine strings in Persian and Arabic (all 239, plurals included),
+  language picker and `locales_config`, store listing (title, short and full description,
+  screenshots rendered in each language with the matching country), README.fa.md and
+  README.ar.md (right-to-left), language links in every README and on the website. READMEs
+  mention start on boot, quick check and profile backup, and the boot permission.
+- Verified: every translated string keeps the English placeholders (script check, 0 problems);
+  `CountryPresetTest`; store renders show the mirrored layout; lint unchanged.
+- Next: v0.2.0 release (versionCode 2, changelog), phone test of always-on and backup.
 
 ### 2026-10-01 — Profile backup and quick site check
 - Done: Settings → Backup saves all profiles to a file (`ProfileBackup`, format

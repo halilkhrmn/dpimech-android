@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<a href="README.md">English</a> · Türkçe · <a href="README.ru.md">Русский</a> ·
+<a href="README.md">English</a> · Türkçe · <a href="README.ru.md">Русский</a> · <a href="README.fa.md">فارسی</a> · <a href="README.ar.md">العربية</a> ·
 <a href="https://halilkhrmn.github.io/dpimech-android/">Web sitesi</a>
 </p>
 
@@ -53,7 +53,10 @@ Android 8.0 ve üstü.
   **Hızlı Ayarlar kutucuğu**.
 - Yeni sürüm gerekmeden güncellenen stratejiler ve topluluk listesi, DNS engeli kontrolü, motoru
   yeniden başlatan bekçi, günlük ve sorun bildirme.
-- Türkçe, English, Русский. Material You, açık ve koyu tema.
+- Tek bir siteyi **hızlı kontrol** (doğrudan ve atlatmayla), profillerin bir dosyaya **yedeği**,
+  **telefon açılınca başlatma** ve Android'in her zaman açık VPN'i.
+- Türkçe, English, Русский, فارسی, العربية (Farsça ve Arapça yeni: düzeltmelere açığız).
+  Material You, açık ve koyu tema.
 
 ## Nasıl çalışır
 
@@ -79,6 +82,7 @@ yakalamak için kullanır. Trafiği [hev-socks5-tunnel](https://github.com/heihe
 | Yüklü uygulamaları görme (`QUERY_ALL_PACKAGES`) | uygulamaya özel profillerdeki uygulama seçici |
 | Bildirimler | durum, strateji testi ilerlemesi, "atlatma durdu" |
 | Pil optimizasyonunu yok sayma (sorulur, isteğe bağlı) | Android atlatmayı arka planda durdurmasın |
+| Açılışta çalışma (`RECEIVE_BOOT_COMPLETED`) | "Telefon açılınca başlat" (siz açmadıkça kapalı) |
 
 ### Uygulamanın kendi yaptığı ağ istekleri
 

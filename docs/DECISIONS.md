@@ -145,3 +145,17 @@ Changes made to a profile while the bypass is off reach the copy the next time t
 bypass on. "Start when the phone starts" is a separate switch in the app for people who do not
 want to change system settings; it uses the app's current profile.
 
+## 25. Country presets only where blocks are widely reported (2026-10-02)
+The owner chose Iran, Kazakhstan, Belarus and Egypt, with Persian and Arabic as new languages.
+Searching for reports (Freedom House, news sites, 2025–2026) gave:
+- **Iran:** YouTube, Instagram, X, Facebook and Signal blocked for years. Iran also filters by IP
+  address and whitelists, so ByeDPI helps only where SNI/DPI is used; the Persian texts say so.
+- **Belarus:** YouTube and Discord (with Telegram, TikTok, Twitch) blocked in January 2025.
+- **Egypt:** Roblox banned officially; Discord blocked with DPI (January 2026).
+- **Kazakhstan:** no widely reported blocks of these services (Roblox was discussed and not
+  blocked). No preset; Kazakhstan gets the generic list, and the wizard no longer names a country
+  without its own list, so it does not promise "the sites blocked in Kazakhstan".
+No Telegram pack: its apps talk to IP addresses where DPI tricks rarely help. Persian and Arabic
+were translated by the AI assistant; the READMEs ask native speakers for corrections. Both are
+right-to-left; the Compose UI mirrors itself (checked with store renders).
+

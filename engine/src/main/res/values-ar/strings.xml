@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="engine_channel">حالة التجاوز</string>
+    <string name="engine_running_title">%1$s: التجاوز يعمل</string>
+    <string name="engine_running_text">تتأثر التطبيقات المختارة فقط. لا يذهب شيء إلى خادم آخر.</string>
+    <string name="engine_stop">إيقاف</string>
+    <string name="engine_error_no_permission">لم يسمح أندرويد لـ DPIMech بالبدء (إذن VPN مفقود أو VPN دائم التشغيل مضبوط لتطبيق آخر).</string>
+    <string name="engine_error_gave_up">ظل ByeDPI يتوقف، لذا أوقف DPIMech التجاوز. جرّب استراتيجية أخرى.</string>
+    <string name="event_channel">الأحداث</string>
+    <string name="event_strategy">الاستراتيجية التلقائية: تم التبديل إلى «%1$s» لهذه الشبكة.</string>
+    <string name="event_revoked">توقّف DPIMech: بدأت شبكة VPN أخرى أو سُحب إذن VPN.</string>
+    <string name="engine_stats_line">↓ %1$s/s  ↑ %2$s/s</string>
+    <string name="engine_stats_total">الإجمالي ↓ %1$s  ↑ %2$s</string>
+    <string name="engine_stats_strategy">الاستراتيجية: %1$s</string>
+    <string name="engine_stats_dns">DNS over HTTPS: %1$d من %2$d استعلام</string>
+    <string name="engine_stats_quic">QUIC محجوب: %1$d حزمة</string>
+    <string name="engine_stats_restarts">إعادات تشغيل المحرك: %1$d</string>
+    <string name="engine_stats_ping">متوسط زمن الاستجابة: %1$d ms · %2$d من %3$d مواقع تفتح</string>
+    <string name="engine_stats_ping_none">لا يفتح أي موقع الآن (جُرّب %1$d)</string>
+    <string name="engine_auto_progress">البحث عن أفضل استراتيجية: %1$d من %2$d اختبار</string>
+    <string name="engine_next_profile">الملف التالي</string>
+</resources>

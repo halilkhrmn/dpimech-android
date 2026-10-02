@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-English · <a href="README.tr.md">Türkçe</a> · <a href="README.ru.md">Русский</a> ·
+English · <a href="README.tr.md">Türkçe</a> · <a href="README.ru.md">Русский</a> · <a href="README.fa.md">فارسی</a> · <a href="README.ar.md">العربية</a> ·
 <a href="https://halilkhrmn.github.io/dpimech-android/">Website</a>
 </p>
 
@@ -54,9 +54,12 @@ Android 8.0 or newer.
   in the notification.
 - **Widgets** (one per profile if you like), **launcher shortcuts** that turn a profile on and open
   its app, **Quick Settings tile**.
+- **Quick check** of one site (directly and through the bypass), **profile backup** to a file,
+  **start on boot** and Android's always-on VPN.
 - Strategies updated without a new release, plus a community list; DNS blocking check; watchdog
   that restarts the engine; logs and problem report.
-- English, Türkçe, Русский. Material You, light and dark.
+- English, Türkçe, Русский, فارسی, العربية (Persian and Arabic are new: corrections welcome).
+  Material You, light and dark.
 
 ## How it works
 
@@ -81,6 +84,7 @@ it to ByeDPI through [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tu
 | See installed apps (`QUERY_ALL_PACKAGES`) | the app picker for per-app profiles |
 | Notifications | status, strategy test progress, "bypass stopped" |
 | Ignore battery optimisation (asked, optional) | so Android does not stop the bypass in the background |
+| Run at startup (`RECEIVE_BOOT_COMPLETED`) | "Start when the phone starts" (off unless you turn it on) |
 
 ### Network requests made by the app itself
 

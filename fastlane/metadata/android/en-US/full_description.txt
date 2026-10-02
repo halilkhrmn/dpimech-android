@@ -11,7 +11,7 @@
 <li>Widgets (one per profile if you like), launcher shortcuts that turn a profile on and open its app, Quick Settings tile.</li>
 <li>Strategies shared with the desktop app (Windows, Linux, macOS), updated without a new release, plus a community list.</li>
 <li>DNS blocking check, watchdog that restarts the engine, logs and problem report.</li>
-<li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский.</li>
+<li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский, فارسی, العربية.</li>
 </ul>
 <p>Android allows one VPN at a time, so another VPN or a VPN-based ad blocker cannot run together with DPIMech.</p>
 <p>The engines are built from source inside the app: <a href="https://github.com/hufrea/byedpi">ByeDPI</a> and <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>. Community strategies from <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>.</p>
