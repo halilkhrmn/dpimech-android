@@ -50,7 +50,7 @@ class ScreenshotTest {
         HomeScreen(saved, EngineState.Running("1", "Engelli siteler", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
     }
 
-    @Test @Config(qualifiers = "+tr") fun wizardTurkish() = shot("wizard_tr") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }
+    @Test @Config(qualifiers = "+tr") fun wizardTurkish() = shot("wizard_tr") { WizardScreen(LabState(), "TR", {}, { _, _, _ -> }, {}, {}, {}) }
 
     @Test @Config(qualifiers = "+night") fun homeDark() = shot("home_dark") {
         HomeScreen(saved, EngineState.Running("1", "Blocked sites", "TLS record split"), {}, {}, {}, {}, {}, PaddingValues(), stats = stats)
@@ -102,7 +102,7 @@ class ScreenshotTest {
 
     @Test fun labQuickCheck() = shot("lab_quick") {
         LabScreen(
-            LabState(), emptyList(), listOf("discord"), "Blocked sites", {}, { _, _ -> }, {}, { _, _, _ -> }, null,
+            LabState(), emptyList(), listOf("discord"), "Blocked sites", {}, { _, _, _ -> }, {}, { _, _, _, _ -> }, null,
             quick = io.github.halilkhrmn.dpimech.data.QuickState(
                 result = io.github.halilkhrmn.dpimech.core.QuickCheck.Result("discord.com", "TLS record split", null, 142),
             ),
@@ -116,7 +116,7 @@ class ScreenshotTest {
 
     @Test fun about() = shot("about") { AboutScreen("0.1.0", {}, {}, PaddingValues()) }
 
-    @Test fun wizardWelcome() = shot("wizard_welcome") { WizardScreen(LabState(), "TR", {}, { _, _ -> }, {}, {}, {}) }
+    @Test fun wizardWelcome() = shot("wizard_welcome") { WizardScreen(LabState(), "TR", {}, { _, _, _ -> }, {}, {}, {}) }
 
     @Test fun logs() = shot("logs") {
         LogsScreen(
@@ -151,6 +151,6 @@ class ScreenshotTest {
                 LabResult(LabStrategy("Fake + TTL", "-f1 -t6 -n {sni}", std), 0, 8, 0, error = "ByeDPI stopped at start (exit 1)"),
             ),
         )
-        shot("lab") { LabScreen(state, emptyList(), listOf("discord"), "Blocked sites", {}, { _, _ -> }, {}, { _, _, _ -> }, null) }
+        shot("lab") { LabScreen(state, emptyList(), listOf("discord"), "Blocked sites", {}, { _, _, _ -> }, {}, { _, _, _, _ -> }, null) }
     }
 }

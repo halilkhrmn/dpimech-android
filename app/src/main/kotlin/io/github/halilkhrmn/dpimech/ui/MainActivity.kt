@@ -123,9 +123,10 @@ class MainActivity : AppCompatActivity() {
                         lab = lab,
                         country = network?.country ?: lab.isp?.country ?: simCountry(),
                         onDetectIsp = app.lab::detectIsp,
-                        onTest = { packs, community ->
+                        onTest = { packs, domains, community ->
                             app.lab.start(
                                 DomainPack.ALL.filter { it.id in packs },
+                                domains,
                                 strategies.filter { community || it.source == LabResult.STANDARD_SET },
                             )
                         },
@@ -225,11 +226,12 @@ class MainActivity : AppCompatActivity() {
                 state = lab,
                 options = strategies,
                 initialPacks = saved.selected?.packs.orEmpty(),
+                initialDomains = saved.selected?.extraDomains.orEmpty(),
                 targetProfile = saved.selected?.name,
                 onDetectIsp = app.lab::detectIsp,
                 onStart = app.lab::start,
                 onCancel = app.lab::cancel,
-                onUse = { result, packs, start -> useLabResult(result, packs, start, network?.networkKey ?: lab.isp?.networkKey, onEdit) },
+                onUse = { result, packs, domains, start -> useLabResult(result, packs, domains, start, network?.networkKey ?: lab.isp?.networkKey, onEdit) },
                 onBack = null,
                 bottomPadding = padding,
                 quick = quick,
@@ -273,12 +275,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun useLabResult(result: LabResult, packs: List<String>, start: Boolean, networkKey: String?, onEdit: (String) -> Unit) {
+    private fun useLabResult(result: LabResult, packs: List<String>, domains: List<String>, start: Boolean, networkKey: String?, onEdit: (String) -> Unit) {
         val s = result.strategy!!
         val entry = StrategyEntry(s.name, s.args)
         val current = app.profiles.saved.value.selected
         if (current != null) {
+            // Sites typed in the Lab join the profile, so it covers what was tested.
             val updated = current.withStrategy(entry, networkKey)
+                .copy(extraDomains = (current.extraDomains + domains).distinct())
             app.profiles.save(updated)
             // A start on a running service replaces its engine, so no stop first.
             if (start || EngineState.flow.value is EngineState.Running) turnOn(updated)
@@ -289,8 +293,9 @@ class MainActivity : AppCompatActivity() {
         val chosen = DomainPack.ALL.filter { it.id in packs }
         val p = Profile(
             id = UUID.randomUUID().toString(),
-            name = chosen.joinToString(" + ") { it.displayName(packLanguage()) },
+            name = profileName(chosen, domains),
             packs = chosen.map { it.id },
+            extraDomains = domains,
             strategy = entry,
             perNetwork = networkKey?.let { mapOf(it to entry) }.orEmpty(),
             apps = chosen.flatMap { it.packages }.filter { it in installed },
@@ -306,13 +311,15 @@ class MainActivity : AppCompatActivity() {
         val id = UUID.randomUUID().toString()
         val base = if (choice.wholePhone) {
             CountryPreset(country.orEmpty(), choice.packs).profile(id, getString(R.string.wizard_profile_whole_phone), entry)
+                .copy(extraDomains = choice.domains)
         } else {
             val installed = InstalledApps.packageNames(packageManager)
             val chosen = DomainPack.ALL.filter { it.id in choice.packs }
             Profile(
                 id = id,
-                name = chosen.joinToString(" + ") { it.displayName(packLanguage()) },
+                name = profileName(chosen, choice.domains),
                 packs = choice.packs,
+                extraDomains = choice.domains,
                 strategy = entry,
                 apps = chosen.flatMap { it.packages }.filter { it in installed },
             )
@@ -320,10 +327,13 @@ class MainActivity : AppCompatActivity() {
         return if (choice.best != null) base.withStrategy(entry, networkKey) else base
     }
 
-    /** The SIM's country when nothing better is known (no permission needed). */
-    /** The app's language, for the site pack names in new profiles. */
-    private fun packLanguage(): String = resources.configuration.locales[0].language
+    /** "Discord + YouTube", or the typed sites when no pack was chosen. */
+    private fun profileName(packs: List<DomainPack>, domains: List<String>): String {
+        val language = resources.configuration.locales[0].language
+        return (packs.map { it.displayName(language) }.ifEmpty { domains.take(2) }).joinToString(" + ")
+    }
 
+    /** The SIM's country when nothing better is known (no permission needed). */
     private fun simCountry(): String? = runCatching {
         getSystemService(android.telephony.TelephonyManager::class.java)?.simCountryIso?.uppercase()?.ifEmpty { null }
     }.getOrNull()

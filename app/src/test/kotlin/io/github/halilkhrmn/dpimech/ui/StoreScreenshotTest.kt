@@ -98,7 +98,7 @@ class StoreScreenshotTest(private val locale: String) {
     }
 
     @Test fun wizard() = shot(2) {
-        WizardScreen(LabState(), country, {}, { _, _ -> }, {}, {}, {}, initialStep = 1)
+        WizardScreen(LabState(), country, {}, { _, _, _ -> }, {}, {}, {}, initialStep = 1)
     }
 
     @Test fun lab() = shot(3) {
@@ -112,7 +112,7 @@ class StoreScreenshotTest(private val locale: String) {
                 LabResult(LabStrategy("Disorder SNI", "-d1 -s1+s", std), 6, 8, 180, listOf("roblox.com")),
             ),
         )
-        WithBar(1) { p -> LabScreen(state, standardOptions(), listOf("discord", "roblox"), str(R.string.wizard_profile_whole_phone), {}, { _, _ -> }, {}, { _, _, _ -> }, null, p) }
+        WithBar(1) { p -> LabScreen(state, standardOptions(), listOf("discord", "roblox"), str(R.string.wizard_profile_whole_phone), {}, { _, _, _ -> }, {}, { _, _, _, _ -> }, null, p) }
     }
 
     @Test fun settings() = shot(4) {

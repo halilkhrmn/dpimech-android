@@ -14,21 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -53,8 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import androidx.compose.ui.platform.LocalConfiguration
@@ -150,13 +142,9 @@ fun ProfileEditor(
                 domains = domains,
                 input = domainInput,
                 onInput = { text ->
-                    // A separator (space, comma, new line) turns what was typed into pills.
-                    if (text.any { it in " ,;\n\t" }) {
-                        domains = (domains + Hostlist.parseInput(text)).distinct()
-                        domainInput = ""
-                    } else {
-                        domainInput = text
-                    }
+                    val (done, left) = Hostlist.splitTyped(text)
+                    domains = (domains + done).distinct()
+                    domainInput = left
                 },
                 onAdd = {
                     domains = (domains + Hostlist.parseInput(domainInput)).distinct()
@@ -238,52 +226,6 @@ fun ProfileEditor(
     }
     if (pickApps) {
         AppPicker(selected = apps.toSet(), onDone = { apps = it.toList(); pickApps = false })
-    }
-}
-
-/** Extra domains as removable pills, with a field that adds what is typed or pasted. */
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun DomainPills(
-    domains: List<String>,
-    input: String,
-    onInput: (String) -> Unit,
-    onAdd: () -> Unit,
-    onRemove: (String) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        OutlinedTextField(
-            value = input, onValueChange = onInput,
-            label = { Text(stringResource(R.string.profile_extra_domains)) },
-            supportingText = { Text(stringResource(R.string.profile_extra_domains_hint)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onAdd() }),
-            trailingIcon = {
-                IconButton(onClick = onAdd, enabled = Hostlist.parseInput(input).isNotEmpty()) {
-                    Icon(Icons.Default.Add, stringResource(R.string.profile_domain_add))
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        if (domains.isNotEmpty()) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                domains.forEach { d ->
-                    InputChip(
-                        selected = true,
-                        onClick = { onRemove(d) },
-                        label = { Text(d) },
-                        trailingIcon = {
-                            Icon(
-                                Icons.Default.Close,
-                                stringResource(R.string.profile_domain_remove, d),
-                                Modifier.size(InputChipDefaults.AvatarSize),
-                            )
-                        },
-                    )
-                }
-            }
-        }
     }
 }
 

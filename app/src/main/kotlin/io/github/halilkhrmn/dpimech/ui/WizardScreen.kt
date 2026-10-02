@@ -44,12 +44,20 @@ import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.CountryPreset
 import io.github.halilkhrmn.dpimech.core.DomainPack
+import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.data.LabState
 import java.util.Locale
 
 /** What the wizard produces; the activity turns it into a profile. */
-data class WizardChoice(val wholePhone: Boolean, val packs: List<String>, val best: LabResult?, val turnOn: Boolean)
+data class WizardChoice(
+    val wholePhone: Boolean,
+    val packs: List<String>,
+    val best: LabResult?,
+    val turnOn: Boolean,
+    /** Sites typed in by hand. */
+    val domains: List<String> = emptyList(),
+)
 
 /**
  * First-start wizard: welcome → where (whole phone with the country's commonly blocked sites,
@@ -61,7 +69,7 @@ fun WizardScreen(
     lab: LabState,
     country: String?,
     onDetectIsp: () -> Unit,
-    onTest: (packs: List<String>, community: Boolean) -> Unit,
+    onTest: (packs: List<String>, domains: List<String>, community: Boolean) -> Unit,
     onCancelTest: () -> Unit,
     onDone: (WizardChoice) -> Unit,
     onSkip: () -> Unit,
@@ -74,6 +82,9 @@ fun WizardScreen(
     val locale = LocalConfiguration.current.locales[0]
     val preset = CountryPreset.forCountry(country ?: locale.country)
     var packs by rememberSaveable(preset.country) { mutableStateOf(preset.packs) }
+    var domains by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    var domainInput by rememberSaveable { mutableStateOf("") }
+    val allDomains = (domains + Hostlist.parseInput(domainInput)).distinct()
     // Named only when the country has its own list; otherwise the text would promise too much.
     val countryName = preset.country.takeIf { it.isNotEmpty() }
         ?.let { Locale("", it).getDisplayCountry(locale) }
@@ -120,18 +131,37 @@ fun WizardScreen(
                             FilterChip(selected = on, onClick = { packs = if (on) packs - p.id else packs + p.id }, label = { Text(p.label()) })
                         }
                     }
+                    DomainPills(
+                        domains = domains,
+                        input = domainInput,
+                        onInput = { text ->
+                            val (done, left) = Hostlist.splitTyped(text)
+                            domains = (domains + done).distinct()
+                            domainInput = left
+                        },
+                        onAdd = {
+                            domains = allDomains
+                            domainInput = ""
+                        },
+                        onRemove = { d -> domains = domains - d },
+                    )
                     Button(
-                        enabled = packs.isNotEmpty(),
-                        onClick = { step = 2; onTest(packs, false) },
+                        enabled = packs.isNotEmpty() || allDomains.isNotEmpty(),
+                        onClick = {
+                            domains = allDomains
+                            domainInput = ""
+                            step = 2
+                            onTest(packs, allDomains, false)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text(stringResource(R.string.wizard_test)) }
                     TextButton(onClick = { step = 0 }) { Text(stringResource(R.string.back)) }
                 }
                 else -> TestStep(
                     lab = lab,
-                    onRetryCommunity = { onTest(packs, true) },
+                    onRetryCommunity = { onTest(packs, domains, true) },
                     onCancel = { onCancelTest(); step = 1 },
-                    onDone = { best, turnOn -> onDone(WizardChoice(wholePhone, packs, best, turnOn)) },
+                    onDone = { best, turnOn -> onDone(WizardChoice(wholePhone, packs, best, turnOn, domains)) },
                 )
             }
         }

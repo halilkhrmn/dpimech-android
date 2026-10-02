@@ -82,14 +82,15 @@ class LabController(private val context: Context) {
         }
     }
 
-    fun start(packs: List<DomainPack>, options: List<StrategyOption>) {
+    /** Tests [options] on the probe hosts of [packs] plus [domains] typed in by hand. */
+    fun start(packs: List<DomainPack>, domains: List<String>, options: List<StrategyOption>) {
         if (state.value.running) return
         cancelled = false
         val strategies = IspLookup.markRecommended(
             options.map { LabStrategy(it.entry.name, it.entry.args, it.source, it.origin) },
             state.value.isp?.known,
         )
-        val probes = packs.flatMap { it.probes }.distinct()
+        val probes = (packs.flatMap { it.probes } + domains).distinct()
         state.update { LabState(running = true, isp = it.isp) }
         // Keeps the process (and the test) alive while the user is in another app.
         io.github.halilkhrmn.dpimech.lab.LabService.start(context)
