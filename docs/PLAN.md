@@ -55,9 +55,9 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
   `https://raw.githubusercontent.com/halilkhrmn/dpimech/main/strategies/default.json` (format 1).
   The APK ships a copy as fallback and fetches the newest one at runtime — a fix on desktop reaches
   Android without a release. It is plain data (argument strings), never code.
-- **Domain packs** (Discord, YouTube, Roblox, X, Instagram, Wattpad) with their probe hosts.
-  Ported from `crates/core/src/catalog.rs`; Android adds the app package names per pack.
-  Later: move packs to a shared JSON next to `default.json` so both apps read one source.
+- **Site packs:** `strategies/packs.json` next to `default.json` (format 1): domains, probe hosts and
+  the Android package names per pack. Both apps embed it; Android also fetches the newest one, so a
+  new site reaches phones without a release (DECISIONS #26).
 - **ISP table** (Türk Telekom, Superonline, Turkcell, Vodafone, TurkNet, …) and ISP preset matching.
 - **Strategy Lab scoring:** confirmed first, then success rate, then speed (`LabResult::score`).
 - **Placeholders:** `{sni}` (harmless SNI for fake packets) and `{hostlist}` behave as on desktop.
@@ -135,7 +135,7 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
    - Quick site check: does a site open directly, and through the bypass?
    - More countries for the whole-phone preset: Iran, Kazakhstan, Belarus, Egypt (owner's choice);
      new languages Persian and Arabic for the app and the README (Russian covers KZ and BY).
-   - Later: site packs shared with the desktop app (one JSON next to `default.json`).
+   - Site packs shared with the desktop app (`packs.json` next to `default.json`).
 4. **Release** — GitHub Releases (signed APK, per-ABI + universal), IzzyOnDroid, then F-Droid.
 
 ## Build, CI and testing

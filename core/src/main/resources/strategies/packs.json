@@ -1,0 +1,217 @@
+{
+  "format": 1,
+  "note": "DPIMech site packs, shared by the desktop and Android apps. domains go into the engine's host list; probes are hosts the Strategy Lab requests, each answering HTTPS on /; android_packages are Android apps that use these sites (ignored on desktop). The apps ship this file and Android fetches the newest one from main. Plain data: hosts are checked before use.",
+  "packs": [
+    {
+      "id": "discord",
+      "name": "Discord",
+      "domains": [
+        "discord.com",
+        "discordapp.com",
+        "discord.gg",
+        "discord.media",
+        "discordapp.net",
+        "gateway.discord.gg",
+        "cdn.discordapp.com",
+        "media.discordapp.net",
+        "images-ext-1.discordapp.net",
+        "updates.discord.com",
+        "dis.gd"
+      ],
+      "probes": [
+        "discord.com",
+        "discordapp.com",
+        "discord.gg",
+        "gateway.discord.gg",
+        "cdn.discordapp.com",
+        "media.discordapp.net",
+        "updates.discord.com",
+        "dis.gd"
+      ],
+      "android_packages": [
+        "com.discord"
+      ]
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "domains": [
+        "youtube.com",
+        "www.youtube.com",
+        "youtu.be",
+        "i.ytimg.com",
+        "yt3.ggpht.com",
+        "youtubei.googleapis.com",
+        "manifest.googlevideo.com",
+        "redirector.googlevideo.com",
+        "googlevideo.com"
+      ],
+      "probes": [
+        "www.youtube.com",
+        "youtube.com",
+        "youtu.be",
+        "i.ytimg.com",
+        "yt3.ggpht.com",
+        "youtubei.googleapis.com",
+        "redirector.googlevideo.com"
+      ],
+      "android_packages": [
+        "com.google.android.youtube",
+        "com.google.android.apps.youtube.music",
+        "app.revanced.android.youtube",
+        "app.revanced.android.apps.youtube.music",
+        "org.schabi.newpipe",
+        "com.github.libretube"
+      ]
+    },
+    {
+      "id": "roblox",
+      "name": "Roblox",
+      "domains": [
+        "roblox.com",
+        "www.roblox.com",
+        "rbxcdn.com",
+        "apis.roblox.com"
+      ],
+      "probes": [
+        "www.roblox.com",
+        "roblox.com",
+        "apis.roblox.com"
+      ],
+      "android_packages": [
+        "com.roblox.client"
+      ]
+    },
+    {
+      "id": "x",
+      "name": "X / Twitter",
+      "domains": [
+        "x.com",
+        "twitter.com",
+        "twimg.com",
+        "pbs.twimg.com"
+      ],
+      "probes": [
+        "x.com",
+        "twitter.com",
+        "pbs.twimg.com"
+      ],
+      "android_packages": [
+        "com.twitter.android"
+      ]
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "domains": [
+        "instagram.com",
+        "www.instagram.com",
+        "cdninstagram.com"
+      ],
+      "probes": [
+        "www.instagram.com",
+        "instagram.com"
+      ],
+      "android_packages": [
+        "com.instagram.android"
+      ]
+    },
+    {
+      "id": "wattpad",
+      "name": "Wattpad",
+      "domains": [
+        "wattpad.com",
+        "www.wattpad.com"
+      ],
+      "probes": [
+        "www.wattpad.com",
+        "wattpad.com"
+      ],
+      "android_packages": [
+        "wp.wattpad"
+      ]
+    },
+    {
+      "id": "imgur",
+      "name": "Imgur",
+      "domains": [
+        "imgur.com",
+        "i.imgur.com",
+        "i.stack.imgur.com"
+      ],
+      "probes": [
+        "imgur.com",
+        "i.imgur.com"
+      ],
+      "android_packages": [
+        "com.imgur.mobile"
+      ]
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "domains": [
+        "facebook.com",
+        "www.facebook.com",
+        "fbcdn.net",
+        "messenger.com",
+        "fb.com"
+      ],
+      "probes": [
+        "www.facebook.com",
+        "facebook.com"
+      ],
+      "android_packages": [
+        "com.facebook.katana",
+        "com.facebook.orca",
+        "com.facebook.lite"
+      ]
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "domains": [
+        "linkedin.com",
+        "www.linkedin.com",
+        "licdn.com"
+      ],
+      "probes": [
+        "www.linkedin.com"
+      ],
+      "android_packages": [
+        "com.linkedin.android"
+      ]
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "domains": [
+        "signal.org",
+        "whispersystems.org",
+        "signal.art",
+        "updates.signal.org"
+      ],
+      "probes": [
+        "signal.org"
+      ],
+      "android_packages": [
+        "org.thoughtcrime.securesms"
+      ]
+    },
+    {
+      "id": "viber",
+      "name": "Viber",
+      "domains": [
+        "viber.com",
+        "www.viber.com"
+      ],
+      "probes": [
+        "www.viber.com",
+        "viber.com"
+      ],
+      "android_packages": [
+        "com.viber.voip"
+      ]
+    }
+  ]
+}

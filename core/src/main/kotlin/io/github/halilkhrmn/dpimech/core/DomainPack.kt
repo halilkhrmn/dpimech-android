@@ -1,9 +1,16 @@
 package io.github.halilkhrmn.dpimech.core
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+
 /**
- * Ready-made site packs, ported from the desktop app (`crates/core/src/catalog.rs`).
- * Android adds [packages]: choosing a pack ticks these apps in the profile when installed.
+ * A ready-made site pack, from `strategies/packs.json` in the desktop repository (format 1,
+ * shared with the desktop app). The APK ships a copy ([embedded]) and fetches the newest one
+ * from [URL]; [ALL] is the list in use.
  */
+@Serializable
 data class DomainPack(
     val id: String,
     val name: String,
@@ -11,111 +18,63 @@ data class DomainPack(
     val domains: List<String>,
     /** Hosts the Strategy Lab requests; each answers HTTPS on `/`. */
     val probes: List<String>,
-    /** Android apps that use these domains. */
-    val packages: List<String>,
+    /** Android apps that use these domains: choosing the pack ticks them when installed. */
+    @SerialName("android_packages") val packages: List<String> = emptyList(),
 ) {
+    @Serializable
+    private data class Raw(val format: Int, val packs: List<DomainPack> = emptyList())
+
     companion object {
-        val ALL: List<DomainPack> = listOf(
-            DomainPack(
-                id = "discord",
-                name = "Discord",
-                domains = listOf(
-                    "discord.com", "discordapp.com", "discord.gg", "discord.media", "discordapp.net",
-                    "gateway.discord.gg", "cdn.discordapp.com", "media.discordapp.net",
-                    "images-ext-1.discordapp.net", "updates.discord.com", "dis.gd",
-                ),
-                probes = listOf(
-                    "discord.com", "discordapp.com", "discord.gg", "gateway.discord.gg",
-                    "cdn.discordapp.com", "media.discordapp.net", "updates.discord.com", "dis.gd",
-                ),
-                packages = listOf("com.discord"),
-            ),
-            DomainPack(
-                id = "youtube",
-                name = "YouTube",
-                domains = listOf(
-                    "youtube.com", "www.youtube.com", "youtu.be", "i.ytimg.com", "yt3.ggpht.com",
-                    "youtubei.googleapis.com", "manifest.googlevideo.com",
-                    "redirector.googlevideo.com", "googlevideo.com",
-                ),
-                probes = listOf(
-                    "www.youtube.com", "youtube.com", "youtu.be", "i.ytimg.com", "yt3.ggpht.com",
-                    "youtubei.googleapis.com", "redirector.googlevideo.com",
-                ),
-                // Official apps plus well-known FLOSS / patched clients (see PLAN.md open items).
-                packages = listOf(
-                    "com.google.android.youtube",
-                    "com.google.android.apps.youtube.music",
-                    "app.revanced.android.youtube",
-                    "app.revanced.android.apps.youtube.music",
-                    "org.schabi.newpipe",
-                    "com.github.libretube",
-                ),
-            ),
-            DomainPack(
-                id = "roblox",
-                name = "Roblox",
-                domains = listOf("roblox.com", "www.roblox.com", "rbxcdn.com", "apis.roblox.com"),
-                probes = listOf("www.roblox.com", "roblox.com", "apis.roblox.com"),
-                packages = listOf("com.roblox.client"),
-            ),
-            DomainPack(
-                id = "x",
-                name = "X / Twitter",
-                domains = listOf("x.com", "twitter.com", "twimg.com", "pbs.twimg.com"),
-                probes = listOf("x.com", "twitter.com", "pbs.twimg.com"),
-                packages = listOf("com.twitter.android"),
-            ),
-            DomainPack(
-                id = "instagram",
-                name = "Instagram",
-                domains = listOf("instagram.com", "www.instagram.com", "cdninstagram.com"),
-                probes = listOf("www.instagram.com", "instagram.com"),
-                packages = listOf("com.instagram.android"),
-            ),
-            DomainPack(
-                id = "wattpad",
-                name = "Wattpad",
-                domains = listOf("wattpad.com", "www.wattpad.com"),
-                probes = listOf("www.wattpad.com", "wattpad.com"),
-                packages = listOf("wp.wattpad"),
-            ),
-            DomainPack(
-                id = "imgur",
-                name = "Imgur",
-                domains = listOf("imgur.com", "i.imgur.com", "i.stack.imgur.com"),
-                probes = listOf("imgur.com", "i.imgur.com"),
-                packages = listOf("com.imgur.mobile"),
-            ),
-            DomainPack(
-                id = "facebook",
-                name = "Facebook",
-                domains = listOf("facebook.com", "www.facebook.com", "fbcdn.net", "messenger.com", "fb.com"),
-                probes = listOf("www.facebook.com", "facebook.com"),
-                packages = listOf("com.facebook.katana", "com.facebook.orca", "com.facebook.lite"),
-            ),
-            DomainPack(
-                id = "linkedin",
-                name = "LinkedIn",
-                domains = listOf("linkedin.com", "www.linkedin.com", "licdn.com"),
-                probes = listOf("www.linkedin.com"),
-                packages = listOf("com.linkedin.android"),
-            ),
-            DomainPack(
-                id = "signal",
-                name = "Signal",
-                domains = listOf("signal.org", "whispersystems.org", "signal.art", "updates.signal.org"),
-                probes = listOf("signal.org"),
-                packages = listOf("org.thoughtcrime.securesms"),
-            ),
-            DomainPack(
-                id = "viber",
-                name = "Viber",
-                domains = listOf("viber.com", "www.viber.com"),
-                probes = listOf("www.viber.com", "viber.com"),
-                packages = listOf("com.viber.voip"),
-            ),
-        )
+        const val URL = "https://raw.githubusercontent.com/halilkhrmn/dpimech/main/strategies/packs.json"
+
+        /** The file format this build understands; a newer one is ignored until the app is updated. */
+        const val FORMAT = 1
+
+        private val json = Json { ignoreUnknownKeys = true }
+        private val HOST = Regex("(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?")
+        private val PACKAGE = Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+")
+
+        /**
+         * Parses and checks a pack file, like the desktop app does: unique ids, plain host names
+         * (they go into ciadpi's host list), at least one probe each, valid package names.
+         */
+        fun parse(text: String): Result<List<DomainPack>> = runCatching {
+            val raw = try {
+                json.decodeFromString(Raw.serializer(), text)
+            } catch (e: SerializationException) {
+                throw IllegalArgumentException("not a pack file: ${e.message}", e)
+            }
+            require(raw.format == FORMAT) { "unsupported pack file format ${raw.format}" }
+            require(raw.packs.isNotEmpty()) { "the pack file has no packs" }
+            val ids = mutableSetOf<String>()
+            for (p in raw.packs) {
+                require(p.id.isNotEmpty() && p.name.isNotBlank() && ids.add(p.id)) { "pack \"${p.id}\": missing or repeated id or name" }
+                require(p.domains.isNotEmpty() && p.probes.isNotEmpty()) { "pack \"${p.id}\": no domains or no probes" }
+                (p.domains + p.probes).firstOrNull { !HOST.matches(it) }
+                    ?.let { throw IllegalArgumentException("pack \"${p.id}\": \"$it\" is not a host name") }
+                p.packages.firstOrNull { !PACKAGE.matches(it) }
+                    ?.let { throw IllegalArgumentException("pack \"${p.id}\": \"$it\" is not a package name") }
+            }
+            raw.packs
+        }
+
+        /** The copy built into this app (a resource of this module). */
+        val embedded: List<DomainPack> by lazy {
+            val text = DomainPack::class.java.getResourceAsStream("/strategies/packs.json")
+                ?.use { it.readBytes().decodeToString() }
+                ?: error("packs.json missing from resources")
+            parse(text).getOrThrow()
+        }
+
+        /** The packs in use: the newest downloaded list, or the built-in one. */
+        @Volatile
+        var ALL: List<DomainPack> = embedded
+            private set
+
+        /** Switches to a downloaded list (already checked by [parse]). */
+        fun use(packs: List<DomainPack>) {
+            ALL = packs
+        }
 
         fun byId(id: String): DomainPack? = ALL.find { it.id == id }
     }
