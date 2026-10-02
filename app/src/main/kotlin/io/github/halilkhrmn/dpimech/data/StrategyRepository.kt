@@ -21,12 +21,12 @@ data class StrategyOption(val entry: StrategyEntry, val source: String, val orig
 /**
  * The standard set from the desktop repository's `default.json` (newest copy cached, the
  * built-in one as fallback) plus the community list, and the site packs from the same
- * repository's `packs.json`. Downloads are plain data, never code.
+ * repository's `domains.json`. Downloads are plain data, never code.
  */
 class StrategyRepository(dir: File) {
     private val standardCache = File(dir, "strategies.json")
     private val communityCache = File(dir, "community.txt")
-    private val packsCache = File(dir, "packs.json")
+    private val packsCache = File(dir, "domains.json")
     private val state = MutableStateFlow(load())
     val options: StateFlow<List<StrategyOption>> = state.asStateFlow()
     private val updated = MutableStateFlow(lastDownload())

@@ -160,8 +160,8 @@ were translated by the AI assistant; the READMEs ask native speakers for correct
 right-to-left; the Compose UI mirrors itself (checked with store renders).
 
 ## 26. Site packs from the desktop repository (2026-10-02)
-The packs moved from code in both apps to `strategies/packs.json` in the desktop repository
-(its DECISIONS #43): domains, probe hosts and `android_packages`, which desktop ignores. The APK
+The packs moved from code in both apps to `strategies/domains.json` in the desktop repository
+(its DECISIONS #43 and #46; a first `packs.json` attempt was dropped for the desktop's file): domains, probe hosts, translated names, countries and `android_packages`, which desktop ignores. The APK
 ships a copy and downloads the newest file together with the strategy lists, so a new site or a
 changed domain reaches phones without a release. The file is plain data: every host must be a
 lower-case DNS name (it goes into ciadpi's host list), package names are checked, ids are unique;

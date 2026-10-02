@@ -39,7 +39,7 @@
   - [x] Profile export / import
   - [x] Quick site check
   - [x] More countries (Iran, Belarus, Egypt; not Kazakhstan, DECISIONS #25) + Persian and Arabic (app, README, store)
-  - [x] Site packs shared with the desktop app (`packs.json`, DECISIONS #26)
+  - [x] Site packs shared with the desktop app (`domains.json`, DECISIONS #26)
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
@@ -49,6 +49,17 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-02 — Site packs from the desktop's domains.json
+- Done: the desktop app had meanwhile moved its packs to `strategies/domains.json` (with translated
+  names and the countries where each site is blocked), so Android reads that file instead of
+  `packs.json`. The desktop PR now only adds `android_packages` to it (desktop DECISIONS #46). New
+  packs on phones: Telegram, WhatsApp, TikTok, SoundCloud and independent news for Belarus and
+  Egypt. Pack chips and new profile names use the translated name when the file has one.
+- Verified: `CatalogTest` (names, countries, ids); app tests, lint unchanged; store images
+  rendered again (the wizard and Lab show the new packs).
+- Next: build the whole-phone country lists from the file's `countries` instead of
+  `CountryPreset`; v0.2.0.
 
 ### 2026-10-02 — Site packs shared with the desktop app
 - Done: the packs live in the desktop repo's `strategies/packs.json` (desktop branch

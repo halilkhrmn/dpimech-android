@@ -10,7 +10,9 @@ class CatalogTest {
     fun packsAreConsistent() {
         assertEquals(DomainPack.ALL.size, DomainPack.ALL.map { it.id }.toSet().size)
         for (p in DomainPack.ALL) {
-            assertTrue(p.probes.isNotEmpty() && p.packages.isNotEmpty(), p.id)
+            assertTrue(p.probes.isNotEmpty(), p.id)
+            // Every pack but the news sites has an Android app.
+            assertTrue(p.packages.isNotEmpty() || p.id.startsWith("news-"), p.id)
             for (d in p.domains + p.probes) assertEquals(d, Hostlist.normalize(d), "${p.id}: $d")
             // Every probe is covered by the hostlist (ciadpi matches subdomains).
             for (probe in p.probes) {
@@ -36,6 +38,8 @@ class CatalogTest {
         assertEquals(listOf("com.discord"), DomainPack.byId("discord")!!.packages)
         val ok = """{"format":1,"packs":[{"id":"a","name":"A","domains":["a.com"],"probes":["a.com"]}]}"""
         assertEquals(emptyList(), DomainPack.parse(ok).getOrThrow().single().packages)
+        val named = DomainPack.parse(ok.replace("}]}", ",\"names\":{\"tr\":\"Bir\"},\"countries\":[\"*\",\"TR\"]}]}")).getOrThrow().single()
+        assertEquals("Bir" to "A", named.displayName("tr") to named.displayName("ru"))
         for (bad in listOf(
             ok.replace("\"format\":1", "\"format\":2"),
             ok.replace("[\"a.com\"],\"probes", "[\"a.com/x\"],\"probes"),
@@ -43,6 +47,8 @@ class CatalogTest {
             ok.replace("\"probes\":[\"a.com\"]", "\"probes\":[]"),
             ok.replace("}]}", ",\"android_packages\":[\"no package\"]}]}"),
             ok.replace("}]}", "},{\"id\":\"a\",\"name\":\"B\",\"domains\":[\"b.com\"],\"probes\":[\"b.com\"]}]}"),
+            ok.replace("}]}", ",\"countries\":[\"tr\"]}]}"),
+            ok.replace("\"id\":\"a\"", "\"id\":\"A b\""),
             "not json",
         )) {
             assertTrue(DomainPack.parse(bad).isFailure, bad)
