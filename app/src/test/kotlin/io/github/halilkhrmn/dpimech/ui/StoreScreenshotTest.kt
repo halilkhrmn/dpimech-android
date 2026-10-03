@@ -119,5 +119,5 @@ class StoreScreenshotTest(private val locale: String) {
         WithBar(2) { p -> SettingsScreen(AppSettings(language = locale), {}, {}, {}, { emptyList() }, 1_790_000_000_000, {}, {}, p) }
     }
 
-    @Test fun about() = shot(5) { WithBar(3) { p -> AboutScreen("0.2.0", {}, {}, p) } }
+    @Test fun about() = shot(5) { WithBar(3) { p -> AboutScreen("0.2.1", {}, {}, p) } }
 }

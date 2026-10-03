@@ -1,0 +1,1 @@
+Network provider lookup (ipwho.is) only runs with the automatic strategy or when you start a test, and can be turned off in Settings. Typed domains no longer turn into pills too early on some keyboards; sites typed by hand can be tested in the Strategy Lab and the wizard without choosing a pack. Site list shared with the desktop app: Telegram, WhatsApp, TikTok, SoundCloud.

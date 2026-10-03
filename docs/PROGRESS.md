@@ -34,7 +34,7 @@
   - [x] Average ping of the profile's sites in the notification and on home (refresh button)
   - [x] Per-profile widgets with a configure screen
   - [x] Long-press shortcuts: Turn off (while on), profiles, Strategy test, Logs
-- [ ] **v0.2.0** (PLAN.md 4b)
+- [x] **v0.2.0** (PLAN.md 4b), released 2026-10-02
   - [x] Start on boot, always-on VPN, automatic list update, "next profile" in the notification
   - [x] Profile export / import
   - [x] Quick site check
@@ -43,7 +43,8 @@
 - [ ] **Phase 4 — Release:** GitHub Releases, IzzyOnDroid, F-Droid
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
-  - [ ] v0.2.0 (versionCode 2): release PR merged, then the owner creates the `v0.2.0` release
+  - [x] v0.2.0 (versionCode 2), 2026-10-02
+  - [ ] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review; owner creates `v0.2.1`
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -51,6 +52,13 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-03 — v0.2.1 prepared
+- Done: versionCode 3, versionName 0.2.1; `changelogs/3.txt` in five languages (provider lookup
+  switch, typed domains, packs optional in the Lab, new shared site packs).
+- Verified: changelogs ≤ 500 bytes; tests, lint; store images (About shows 0.2.1).
+- Next: the owner creates the `v0.2.1` release; then the F-Droid MR's build moves to its commit
+  and the owner answers the static review.
 
 ### 2026-10-03 — ipwho.is only when needed (F-Droid static review)
 - Done: F-Droid's static review found nothing else (VirusTotal 0/68, build matches, VPN scope and
