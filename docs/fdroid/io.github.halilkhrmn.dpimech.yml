@@ -3,8 +3,7 @@ AntiFeatures:
     en-US: Asks ipwho.is (a free-of-charge but not open service) for the network provider's
       name, used for the per-network strategy memory and provider presets.
 Categories:
-  - Connectivity
-  - Internet
+  - VPN & Proxy
 License: GPL-3.0-or-later
 AuthorName: Halil Kahraman
 WebSite: https://halilkhrmn.github.io/dpimech-android/
@@ -20,18 +19,6 @@ Binaries:
   https://github.com/halilkhrmn/dpimech-android/releases/download/v%v/dpimech-%v-universal.apk
 
 Builds:
-  - versionName: 0.1.0
-    versionCode: 1
-    commit: aeb82d0285e995618e40f37f9e77c6f139dfc5ec
-    subdir: app
-    submodules: true
-    gradle:
-      - yes
-    output: build/outputs/apk/release/app-universal-release-unsigned.apk
-    rm:
-      - native/hev-socks5-tunnel/third-part/wintun
-    ndk: 29.0.14206865
-
   - versionName: 0.2.0
     versionCode: 2
     commit: e9040874e57bcace7b9ea4ffb163ad649629a172
