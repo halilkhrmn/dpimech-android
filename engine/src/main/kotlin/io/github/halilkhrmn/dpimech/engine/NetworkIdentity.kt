@@ -20,8 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * Watches DPIMech's default network (the real Wi-Fi or mobile network: DPIMech itself is outside
  * its VPN) for as long as the app process lives. On every new network it publishes the transport
- * and, on mobile data, the operator at once; then it asks ipwho.is for the provider over that
- * network. The VPN service follows [flow] for the per-network strategy memory.
+ * and, on mobile data, the operator at once; then, when [configure] allows it, it asks ipwho.is
+ * for the provider over that network. The VPN service follows [flow] for the per-network
+ * strategy memory.
  */
 object NetworkIdentity {
     private val state = MutableStateFlow<NetworkInfo?>(null)
@@ -30,6 +31,36 @@ object NetworkIdentity {
     @Volatile
     private var current: Network? = null
     private var started = false
+
+    /** Look the provider up on every new network (automatic strategy). Off until [configure]. */
+    @Volatile
+    private var autoLookup = false
+
+    /** Any lookup at all, including [refresh] for a test the user started. */
+    @Volatile
+    private var lookupAllowed = false
+
+    /**
+     * What may go to ipwho.is (it sees the phone's IP address). Turning [auto] on looks the
+     * current network up at once.
+     */
+    fun configure(auto: Boolean, allowed: Boolean) {
+        val wasAuto = autoLookup
+        lookupAllowed = allowed
+        autoLookup = auto && allowed
+        val network = current
+        if (autoLookup && !wasAuto && network != null && state.value?.isp == null) lookupInBackground(network)
+    }
+
+    private fun lookupInBackground(network: Network) {
+        thread(name = "isp-lookup", isDaemon = true) {
+            val isp = lookup(network) ?: return@thread
+            if (current != network) return@thread
+            val info = state.value?.copy(isp = isp) ?: return@thread
+            state.value = info
+            EngineLog.add("network: ${describe(info)} (${isp.networkKey}, ${isp.country})")
+        }
+    }
 
     @Synchronized
     fun start(context: Context) {
@@ -53,13 +84,7 @@ object NetworkIdentity {
                     .copy(hasIpv6 = ipv6(cm, network))
                 state.value = base
                 EngineLog.add("network: ${describe(base)}")
-                thread(name = "isp-lookup", isDaemon = true) {
-                    val isp = lookup(network) ?: return@thread
-                    if (current != network) return@thread
-                    val info = base.copy(isp = isp)
-                    state.value = info
-                    EngineLog.add("network: ${describe(info)} (${isp.networkKey}, ${isp.country})")
-                }
+                if (autoLookup) lookupInBackground(network)
             }
 
             // IPv6 addresses often arrive a moment after the network itself.
@@ -84,8 +109,12 @@ object NetworkIdentity {
             .onFailure { EngineLog.add("network callback failed: $it") }
     }
 
-    /** Looks the provider up again on the current network (Strategy Lab's "provider" line). */
+    /**
+     * Looks the provider up again on the current network (Strategy Lab's "provider" line), when
+     * the user allows lookups at all.
+     */
     fun refresh(): IspInfo? {
+        if (!lookupAllowed) return null
         val network = current
         val isp = lookup(network) ?: return null
         state.value?.takeIf { network == current }?.let { state.value = it.copy(isp = isp) }

@@ -24,6 +24,12 @@ data class AppSettings(
     val blockQuic: Boolean = false,
     /** Turn the selected profile on when the phone starts (needs the VPN permission already). */
     val startOnBoot: Boolean = false,
+    /**
+     * Ask ipwho.is for the network provider (this sends the phone's IP address there). Done on
+     * each new network only when the automatic strategy is on and the wizard is finished, and
+     * when the user runs a test; off means never.
+     */
+    val providerLookup: Boolean = true,
     /** Download the strategy lists when the app starts and the copy is older than a week. */
     val autoUpdateLists: Boolean = true,
     /** Material You: take the colours from the wallpaper (Android 12+). */

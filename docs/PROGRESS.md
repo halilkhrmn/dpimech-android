@@ -46,10 +46,27 @@
   - [ ] v0.2.0 (versionCode 2): release PR merged, then the owner creates the `v0.2.0` release
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
-  - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified
+  - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
+    review done (commit hash, only 0.2.0, category VPN & Proxy), waiting for F-Droid's test
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-10-03 — ipwho.is only when needed (F-Droid static review)
+- Done: F-Droid's static review found nothing else (VirusTotal 0/68, build matches, VPN scope and
+  argument policy checked) but asked about ipwho.is: lookups now run only with the automatic
+  strategy after the wizard, or when the user starts a test, and a new setting turns them off
+  (DECISIONS #27). Store descriptions (5 languages), READMEs and the site say which services the
+  app talks to.
+- Verified: core and app tests, lint unchanged; store images rendered again.
+- Next: the owner answers the review on the MR after this is merged and released (v0.2.1).
+
+### 2026-10-03 — F-Droid review
+- Done: review comments on fdroiddata!50840 answered by the owner: builds name the full commit
+  hash, only the newest version (0.2.0) is listed, category `VPN & Proxy`. The reviewer calls it
+  mostly ready; F-Droid tests it when the queue allows. `docs/fdroid/` copies the MR's file.
+- Verified: MR pipeline green (build, reproducible APK check, checkupdates, lint).
+- Next: a new release before the merge means adding its build to the MR (newest only).
 
 ### 2026-10-02 — Typed sites: no early pills, testable in the Lab
 - Done: the domain field made a pill as soon as a dot was typed, because some keyboards (Samsung's

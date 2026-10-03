@@ -73,7 +73,8 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   IspLookup, DnsCheck  provider detection (per-network memory key), DNS blocking check
   NetworkInfo       transport, mobile operator (MCC+MNC) and provider → per-network key
   CountryPreset     sites commonly blocked per country (whole-phone profile)
-  AppSettings       language, DNS server, DoH, QUIC switch, automatic strategy, wizard flag
+  AppSettings       language, DNS server, DoH, QUIC switch, automatic strategy, provider lookup,
+                    wizard flag
   IpPacket, TunnelDns  UDP packet parse/build; TunnelFilter verdicts, DnsMessage, DohClient
   TrafficStats      traffic samples for the home chart and the notification
   Ping              average connect+TLS time of the profile's sites through ciadpi

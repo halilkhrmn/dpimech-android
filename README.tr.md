@@ -86,7 +86,7 @@ yakalamak için kullanır. Trafiği [hev-socks5-tunnel](https://github.com/heihe
 
 ### Uygulamanın kendi yaptığı ağ istekleri
 
-- [ipwho.is](https://ipwho.is): sağlayıcının adı; ağa göre hafıza ve öneriler için.
+- [ipwho.is](https://ipwho.is): sağlayıcının adı; ağa göre hafıza ve öneriler için (IP adresini görür). Her yeni ağda yalnızca otomatik strateji açıkken, yoksa sadece test başlatınca; Ayarlar → "Ağ sağlayıcısını sorgula" ile kapatılır.
 - GitHub'daki strateji listeleri (masaüstü deposu ve topluluk listesi).
 - Ayarlarda seçilen DNS sunucusuna DNS over HTTPS (varsayılan Cloudflare).
 - Strateji Laboratuvarı sırasında test ettiğin siteler.
