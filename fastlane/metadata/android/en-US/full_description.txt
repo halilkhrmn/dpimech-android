@@ -11,7 +11,8 @@
 <li>Widgets (one per profile if you like), launcher shortcuts that turn a profile on and open its app, Quick Settings tile.</li>
 <li>Strategies shared with the desktop app (Windows, Linux, macOS), updated without a new release, plus a community list.</li>
 <li>DNS blocking check, watchdog that restarts the engine, logs and problem report.</li>
-<li>No root, no Google services, no ads, no tracking. English, Türkçe, Русский, فارسی, العربية.</li>
+<li>No root, no Google services, no ads, no analytics. English, Türkçe, Русский, فارسی, العربية.</li>
 </ul>
+<p><b>Network use:</b> to know which provider a network belongs to (for the per-network strategy), DPIMech asks <a href="https://ipwho.is">ipwho.is</a>, which sees your IP address. This happens on each new network only with the automatic strategy, otherwise only when you run a test, and can be turned off in Settings. Strategy and site lists come from GitHub; encrypted DNS goes to the DNS server you choose.</p>
 <p>Android allows one VPN at a time, so another VPN or a VPN-based ad blocker cannot run together with DPIMech.</p>
 <p>The engines are built from source inside the app: <a href="https://github.com/hufrea/byedpi">ByeDPI</a> and <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>. Community strategies from <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>.</p>

@@ -168,3 +168,13 @@ lower-case DNS name (it goes into ciadpi's host list), package names are checked
 a file that fails, or has another `format`, is ignored and the previous list stays. Profiles store
 pack ids, so a pack removed upstream simply adds no domains; its extra domains are kept.
 
+## 27. Provider lookup only when it is used, and a switch (2026-10-03)
+F-Droid's static review (fdroiddata!50840) noted that the phone's IP address went to ipwho.is on
+first start, before the wizard, even for people who never use the automatic strategy or the Lab,
+with no way to turn it off. Now `NetworkIdentity` looks the provider up on each new network only
+when the automatic strategy is on and the wizard is done; a test the user starts (Lab, wizard's
+"Test") may look it up too; Settings → "Look up the network provider" turns every lookup off.
+Without it the per-network memory still tells mobile operators apart (MCC+MNC); on Wi-Fi the
+profile's own strategy is used. The store texts and READMEs say what goes to ipwho.is, GitHub and the DNS server,
+and "no tracking" became "no analytics".
+

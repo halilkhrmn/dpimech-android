@@ -88,7 +88,7 @@ it to ByeDPI through [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tu
 
 ### Network requests made by the app itself
 
-- [ipwho.is](https://ipwho.is): your provider's name, for the per-network memory and the presets.
+- [ipwho.is](https://ipwho.is): your provider's name, for the per-network memory and the presets (it sees your IP address). On each new network only with the automatic strategy, otherwise only when you run a test; off in Settings → "Look up the network provider".
 - The strategy lists on GitHub (desktop repository and community list).
 - DNS over HTTPS to the DNS server chosen in Settings (Cloudflare by default).
 - The sites you test, during the Strategy Lab.

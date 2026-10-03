@@ -76,7 +76,6 @@ fun WizardScreen(
     /** For screenshots: open at a later step. */
     initialStep: Int = 0,
 ) {
-    LaunchedEffect(Unit) { onDetectIsp() }
     var step by rememberSaveable { mutableStateOf(initialStep) }
     var wholePhone by rememberSaveable { mutableStateOf(true) }
     val locale = LocalConfiguration.current.locales[0]
@@ -151,6 +150,8 @@ fun WizardScreen(
                             domains = allDomains
                             domainInput = ""
                             step = 2
+                            // The provider is looked up only now, when the user asks for a test.
+                            onDetectIsp()
                             onTest(packs, allDomains, false)
                         },
                         modifier = Modifier.fillMaxWidth(),

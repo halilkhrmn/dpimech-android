@@ -202,6 +202,8 @@
     <string name="widget_config_follow_hint">Follows the profile chosen in the app; the arrow switches to the next one.</string>
     <string name="settings_start_on_boot">Start when the phone starts</string>
     <string name="settings_start_on_boot_hint">Turns the selected profile on after a restart. Android\'s always-on VPN below does the same from system settings.</string>
+    <string name="settings_provider_lookup">Look up the network provider</string>
+    <string name="settings_provider_lookup_hint">Asks ipwho.is which provider each network belongs to (it sees your IP address). Used for the per-network strategy and provider presets; automatic only with the automatic strategy, otherwise only when you run a test.</string>
     <string name="settings_auto_update">Update strategy lists automatically</string>
     <string name="settings_auto_update_hint">When the app starts and the lists are older than a week.</string>
     <string name="quick_title">Quick check</string>

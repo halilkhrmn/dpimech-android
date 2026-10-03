@@ -201,6 +201,8 @@
     <string name="widget_config_follow_hint">از نمایهٔ انتخاب‌شده در برنامه پیروی می‌کند؛ پیکان به نمایهٔ بعدی می‌رود.</string>
     <string name="settings_start_on_boot">شروع با روشن شدن گوشی</string>
     <string name="settings_start_on_boot_hint">پس از راه‌اندازی دوباره، نمایهٔ انتخاب‌شده را روشن می‌کند. «VPN همیشه روشن» اندروید در پایین همین کار را از تنظیمات سیستم انجام می‌دهد.</string>
+    <string name="settings_provider_lookup">شناسایی سرویس‌دهندهٔ شبکه</string>
+    <string name="settings_provider_lookup_hint">از ipwho.is می‌پرسد هر شبکه متعلق به کدام سرویس‌دهنده است (نشانی IP شما را می‌بیند). برای راهبرد هر شبکه و پیشنهادها؛ خودکار فقط با راهبرد خودکار، وگرنه فقط هنگام اجرای آزمون.</string>
     <string name="settings_auto_update">به‌روزرسانی خودکار فهرست راهبردها</string>
     <string name="settings_auto_update_hint">هنگام باز شدن برنامه، اگر فهرست‌ها بیش از یک هفته قدیمی باشند.</string>
     <string name="quick_title">بررسی سریع</string>

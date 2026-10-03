@@ -201,6 +201,8 @@
     <string name="widget_config_follow_hint">يتبع الملف المختار في التطبيق؛ ينقل السهم إلى الملف التالي.</string>
     <string name="settings_start_on_boot">البدء عند تشغيل الهاتف</string>
     <string name="settings_start_on_boot_hint">يشغّل الملف المحدد بعد إعادة التشغيل. يقوم «VPN دائم التشغيل» في أندرويد أدناه بالشيء نفسه من إعدادات النظام.</string>
+    <string name="settings_provider_lookup">التعرّف على مزوّد الشبكة</string>
+    <string name="settings_provider_lookup_hint">يسأل ipwho.is عن مزوّد كل شبكة (يرى عنوان IP الخاص بك). يُستخدم لاستراتيجية كل شبكة والإعدادات المقترحة؛ تلقائيًا فقط مع الاستراتيجية التلقائية، وإلا فعند تشغيل اختبار فقط.</string>
     <string name="settings_auto_update">تحديث قوائم الاستراتيجيات تلقائيًا</string>
     <string name="settings_auto_update_hint">عند فتح التطبيق إذا كان عمر القوائم أكثر من أسبوع.</string>
     <string name="quick_title">فحص سريع</string>

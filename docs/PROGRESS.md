@@ -52,6 +52,15 @@
 
 ## Work log
 
+### 2026-10-03 — ipwho.is only when needed (F-Droid static review)
+- Done: F-Droid's static review found nothing else (VirusTotal 0/68, build matches, VPN scope and
+  argument policy checked) but asked about ipwho.is: lookups now run only with the automatic
+  strategy after the wizard, or when the user starts a test, and a new setting turns them off
+  (DECISIONS #27). Store descriptions (5 languages), READMEs and the site say which services the
+  app talks to.
+- Verified: core and app tests, lint unchanged; store images rendered again.
+- Next: the owner answers the review on the MR after this is merged and released (v0.2.1).
+
 ### 2026-10-03 — F-Droid review
 - Done: review comments on fdroiddata!50840 answered by the owner: builds name the full commit
   hash, only the newest version (0.2.0) is listed, category `VPN & Proxy`. The reviewer calls it

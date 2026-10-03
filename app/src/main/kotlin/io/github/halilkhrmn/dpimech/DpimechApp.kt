@@ -45,6 +45,14 @@ class DpimechApp : Application() {
             if (profiles.saved.value.profiles.size > 1) BypassWidget.nextProfileIntent(ctx) else null
         }
         updateListsIfOld(scope)
+        // ipwho.is sees the IP address: automatic lookups only with the automatic strategy, after
+        // the wizard; tests the user starts may look up unless the setting is off.
+        scope.launch {
+            settings.settings
+                .map { (it.providerLookup && it.autoStrategy && it.wizardDone) to it.providerLookup }
+                .distinctUntilChanged()
+                .collect { (auto, allowed) -> NetworkIdentity.configure(auto, allowed) }
+        }
         // Widget and launcher shortcuts follow the engine and the profiles.
         scope.launch { EngineState.flow.collect { BypassWidget.render(this@DpimechApp) } }
         scope.launch { profiles.saved.collect { BypassWidget.render(this@DpimechApp) } }

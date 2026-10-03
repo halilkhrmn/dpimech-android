@@ -201,6 +201,8 @@
     <string name="widget_config_follow_hint">Uygulamada seçili profili izler; ok düğmesi sonrakine geçer.</string>
     <string name="settings_start_on_boot">Telefon açılınca başlat</string>
     <string name="settings_start_on_boot_hint">Telefon yeniden başlayınca seçili profili açar. Aşağıdaki Android "Her zaman açık VPN" ayarı aynısını sistem ayarlarından yapar.</string>
+    <string name="settings_provider_lookup">Ağ sağlayıcısını sorgula</string>
+    <string name="settings_provider_lookup_hint">Her ağın hangi sağlayıcıya ait olduğunu ipwho.is\'e sorar (IP adresini görür). Ağa göre strateji ve sağlayıcı önerileri için kullanılır; otomatik sorgu yalnızca otomatik strateji açıkken, yoksa sadece test başlattığında.</string>
     <string name="settings_auto_update">Strateji listelerini otomatik güncelle</string>
     <string name="settings_auto_update_hint">Uygulama açılırken, listeler bir haftadan eskiyse.</string>
     <string name="quick_title">Hızlı kontrol</string>

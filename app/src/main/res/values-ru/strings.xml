@@ -201,6 +201,8 @@
     <string name="widget_config_follow_hint">Следует за профилем, выбранным в приложении; стрелка переключает на следующий.</string>
     <string name="settings_start_on_boot">Запускать при включении телефона</string>
     <string name="settings_start_on_boot_hint">Включает выбранный профиль после перезагрузки. Постоянная VPN Android ниже делает то же через системные настройки.</string>
+    <string name="settings_provider_lookup">Определять провайдера</string>
+    <string name="settings_provider_lookup_hint">Спрашивает у ipwho.is, какому провайдеру принадлежит сеть (сервис видит ваш IP-адрес). Нужно для стратегии по сетям и пресетов; автоматически — только при автоматической стратегии, иначе только при запуске теста.</string>
     <string name="settings_auto_update">Обновлять списки стратегий автоматически</string>
     <string name="settings_auto_update_hint">При запуске приложения, если спискам больше недели.</string>
     <string name="quick_title">Быстрая проверка</string>

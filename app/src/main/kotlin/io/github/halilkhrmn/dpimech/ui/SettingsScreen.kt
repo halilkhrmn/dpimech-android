@@ -143,6 +143,12 @@ fun SettingsScreen(
                 modifier = Modifier.clickable { onChange { it.copy(blockQuic = !it.blockQuic) } },
             )
             ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_provider_lookup)) },
+                supportingContent = { Text(stringResource(R.string.settings_provider_lookup_hint)) },
+                trailingContent = { Switch(settings.providerLookup, { on -> onChange { it.copy(providerLookup = on) } }) },
+                modifier = Modifier.clickable { onChange { it.copy(providerLookup = !it.providerLookup) } },
+            )
+            ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_auto_update)) },
                 supportingContent = { Text(stringResource(R.string.settings_auto_update_hint)) },
                 trailingContent = { Switch(settings.autoUpdateLists, { on -> onChange { it.copy(autoUpdateLists = on) } }) },

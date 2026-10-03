@@ -11,7 +11,8 @@
 <li>Widget'lar (istersen her profile bir tane), profili açıp uygulamasını başlatan kısayollar, Hızlı Ayarlar kutucuğu.</li>
 <li>Masaüstü uygulamasıyla (Windows, Linux, macOS) ortak stratejiler, yeni sürüm gerekmeden güncellenir; ayrıca topluluk listesi.</li>
 <li>DNS engeli kontrolü, motoru yeniden başlatan bekçi, günlük ve sorun bildirme.</li>
-<li>Root yok, Google servisleri yok, reklam yok, izleme yok. Türkçe, English, Русский, فارسی, العربية.</li>
+<li>Root yok, Google servisleri yok, reklam yok, analitik yok. Türkçe, English, Русский, فارسی, العربية.</li>
 </ul>
+<p><b>İnternet kullanımı:</b> bir ağın hangi sağlayıcıya ait olduğunu öğrenmek için (ağa göre strateji) DPIMech <a href="https://ipwho.is">ipwho.is</a>'e sorar; bu servis IP adresini görür. Her yeni ağda yalnızca otomatik strateji açıkken, yoksa sadece test başlattığında yapılır ve Ayarlar'dan kapatılabilir. Strateji ve site listeleri GitHub'dan gelir; şifreli DNS seçtiğin DNS sunucusuna gider.</p>
 <p>Android aynı anda yalnızca bir VPN'e izin verir; başka bir VPN ya da VPN tabanlı reklam engelleyici DPIMech ile birlikte çalışamaz.</p>
 <p>Motorlar uygulamanın içinde kaynak koddan derlenir: <a href="https://github.com/hufrea/byedpi">ByeDPI</a> ve <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>. Topluluk stratejileri <a href="https://github.com/romanvht/ByeDPIManager">ByeDPIManager</a>'dan.</p>
