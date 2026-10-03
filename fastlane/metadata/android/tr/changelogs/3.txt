@@ -1,0 +1,1 @@
+Ağ sağlayıcısı sorgusu (ipwho.is) yalnızca otomatik stratejiyle veya test başlatınca yapılır, Ayarlar'dan kapatılabilir. Bazı klavyelerde domain yazarken erken etiket oluşması düzeltildi; elle yazılan siteler paket seçmeden Laboratuvar'da ve sihirbazda test edilebilir. Masaüstüyle ortak site listesi: Telegram, WhatsApp, TikTok, SoundCloud.
