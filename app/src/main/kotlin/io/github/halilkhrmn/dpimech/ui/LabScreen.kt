@@ -67,6 +67,8 @@ fun LabScreen(
     onQuickCheck: ((String) -> Unit)? = null,
     /** Sites typed in by hand (the profile's extra domains), tested with the chosen packs. */
     initialDomains: List<String> = emptyList(),
+    /** Settings → "Look up the network provider"; off means the provider stays unknown. */
+    providerLookup: Boolean = true,
 ) {
     LaunchedEffect(Unit) { onDetectIsp() }
     // Packs are optional: sites typed in by hand can be tested alone.
@@ -102,7 +104,7 @@ fun LabScreen(
             item {
                 Text(
                     state.isp?.let { stringResource(R.string.lab_isp, it.known?.name ?: it.provider) }
-                        ?: stringResource(R.string.lab_isp_unknown),
+                        ?: stringResource(if (providerLookup) R.string.lab_isp_unknown else R.string.lab_isp_off),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

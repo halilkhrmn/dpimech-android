@@ -3,7 +3,7 @@
 <p>Features:</p>
 <ul>
 <li>Setup wizard: pick the sites, DPIMech tests your connection and turns on the setting that works.</li>
-<li>Whole phone for the sites commonly blocked in your country, or only the apps you pick. Other connections are left untouched.</li>
+<li>Whole phone for the sites commonly blocked in your country, or only the apps you pick. Other connections are left untouched; in whole-phone mode every app's DNS goes to the DNS server chosen in Settings.</li>
 <li>Strategy Lab: tests strategies against real sites with confirmation rounds and shows which one works on your provider.</li>
 <li>Automatic strategy: on a new network it finds and remembers what works there.</li>
 <li>Encrypted DNS (DNS over HTTPS) for the bypassed apps, and an optional QUIC block so browsers and YouTube use TCP.</li>

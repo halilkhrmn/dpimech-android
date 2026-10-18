@@ -35,6 +35,7 @@
     <string name="notice_not_vpn">DPIMech bir VPN hizmeti değildir. Android\'in VPN özelliği yalnızca seçili uygulamaların trafiğini telefonda yakalamak için kullanılır; bağlantılar yine doğrudan siteye gider, hiçbir şey başkasının sunucusundan geçmez. IP adresiyle engellenen siteler engelli kalır. Android aynı anda yalnızca bir VPN\'e izin verir.</string>
     <string name="lab_title">Strateji Laboratuvarı</string>
     <string name="lab_isp">Sağlayıcın: %1$s</string>
+    <string name="lab_isp_off">Sağlayıcı sorgusu kapalı (Ayarlar).</string>
     <string name="lab_isp_unknown">Sağlayıcın bulunuyor…</string>
     <string name="lab_community">Topluluk listesini de dene</string>
     <string name="lab_count">%1$d strateji denenecek</string>
