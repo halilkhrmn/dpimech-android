@@ -53,6 +53,17 @@
 
 ## Work log
 
+### 2026-10-18 — F-Droid device test passed; its two suggestions
+- Done: fdroiddata!50840 was tested on a device (Redmi Note 8T, Android 13): every checklist item
+  passed, VirusTotal 0/68, first launch only reaches raw.githubusercontent.com, ipwho.is only after
+  "Test my connection", never with the switch off. Its two suggestions: with the lookup off, the
+  Lab and the home card said "looking up your provider" forever; they now say the lookup is off
+  (Lab) or show no provider (home). The descriptions (store, READMEs) say that in whole-phone mode
+  every app's DNS goes to the DNS server chosen in Settings.
+- Verified: tests, lint unchanged.
+- Next: F-Droid merges the MR; these changes ship with the next release (F-Droid picks up new
+  tags itself after the merge).
+
 ### 2026-10-03 — v0.2.1 prepared
 - Done: versionCode 3, versionName 0.2.1; `changelogs/3.txt` in five languages (provider lookup
   switch, typed domains, packs optional in the Lab, new shared site packs).

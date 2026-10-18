@@ -35,6 +35,7 @@
     <string name="notice_not_vpn">DPIMech یک سرویس VPN نیست. قابلیت VPN اندروید فقط برای گرفتن ترافیک برنامه‌های انتخاب‌شده روی گوشی شما به کار می‌رود؛ اتصال‌ها همچنان مستقیم به سایت می‌روند و از سرور هیچ‌کس دیگری عبور نمی‌کنند. سایت‌هایی که با نشانی IP مسدود شده‌اند مسدود می‌مانند. اندروید در هر زمان فقط یک VPN را اجازه می‌دهد.</string>
     <string name="lab_title">آزمایشگاه راهبرد</string>
     <string name="lab_isp">سرویس‌دهندهٔ شما: %1$s</string>
+    <string name="lab_isp_off">شناسایی سرویس‌دهنده خاموش است (تنظیمات).</string>
     <string name="lab_isp_unknown">در حال یافتن سرویس‌دهنده…</string>
     <string name="lab_community">فهرست انجمن هم آزموده شود</string>
     <string name="lab_count">%1$d راهبرد آزموده می‌شود</string>

@@ -113,6 +113,8 @@ fun HomeScreen(
     encryptedDns: Boolean = true,
     blockQuic: Boolean = false,
     onPing: () -> Unit = {},
+    /** The provider is looked up on new networks (setting on, automatic strategy, wizard done). */
+    providerLookup: Boolean = true,
 ) {
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name), fontWeight = FontWeight.SemiBold) }) }) { padding ->
         LazyColumn(
@@ -137,6 +139,7 @@ fun HomeScreen(
                     onToggle = onToggle,
                     onWizard = onWizard,
                     onEdit = onEdit,
+                    providerLookup = providerLookup,
                 )
             }
             if (engine is EngineState.Running) item { TrafficCard(stats, onPing) }
@@ -167,6 +170,7 @@ private fun HeroCard(
     onToggle: (Profile) -> Unit,
     onWizard: () -> Unit,
     onEdit: (String) -> Unit,
+    providerLookup: Boolean,
 ) {
     val on = engine is EngineState.Running
     val busy = engine is EngineState.Starting
@@ -224,7 +228,7 @@ private fun HeroCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             ) {
-                NetworkChip(network)
+                NetworkChip(network, providerLookup)
                 if (encryptedDns) InfoChip(Icons.Default.Lock, stringResource(R.string.chip_doh))
                 if (blockQuic) InfoChip(Icons.Default.Speed, stringResource(R.string.chip_quic))
             }
@@ -316,7 +320,7 @@ private fun ActiveProfile(p: Profile, engine: EngineState, network: NetworkInfo?
 
 /** Which network the phone is on: the per-network strategy memory is keyed by the provider. */
 @Composable
-private fun NetworkChip(network: NetworkInfo?) {
+private fun NetworkChip(network: NetworkInfo?, providerLookup: Boolean) {
     val kind = when (network?.transport) {
         Transport.WIFI -> stringResource(R.string.net_wifi)
         Transport.CELLULAR -> stringResource(R.string.net_mobile)
@@ -330,7 +334,9 @@ private fun NetworkChip(network: NetworkInfo?) {
         null -> Icons.Default.CloudOff
         else -> Icons.Default.Lan
     }
-    val provider = network?.providerName ?: if (network != null && network.networkKey == null) stringResource(R.string.net_looking_up) else null
+    // "Finding the provider" only while a lookup will actually happen.
+    val provider = network?.providerName
+        ?: if (providerLookup && network != null && network.networkKey == null) stringResource(R.string.net_looking_up) else null
     InfoChip(icon, listOfNotNull(kind, provider).joinToString(" · "))
 }
 

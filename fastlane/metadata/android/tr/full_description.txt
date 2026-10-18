@@ -3,7 +3,7 @@
 <p>Özellikler:</p>
 <ul>
 <li>Kurulum sihirbazı: siteleri seç, DPIMech bağlantını test eder ve çalışan ayarı açar.</li>
-<li>Ülkende sık engellenen siteler için tüm telefon ya da yalnızca seçtiğin uygulamalar. Diğer bağlantılara dokunulmaz.</li>
+<li>Ülkende sık engellenen siteler için tüm telefon ya da yalnızca seçtiğin uygulamalar. Diğer bağlantılara dokunulmaz; tüm telefon modunda bütün uygulamaların DNS sorguları Ayarlar'da seçilen DNS sunucusuna gider.</li>
 <li>Strateji Laboratuvarı: stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında hangisinin çalıştığını gösterir.</li>
 <li>Otomatik strateji: yeni bir ağda çalışanı bulur ve hatırlar.</li>
 <li>Atlatılan uygulamalar için şifreli DNS (DNS over HTTPS) ve tarayıcılarla YouTube'u TCP'ye geçiren isteğe bağlı QUIC engeli.</li>
