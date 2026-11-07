@@ -35,6 +35,7 @@
     <string name="notice_not_vpn">DPIMech — не VPN-сервис. Функция VPN в Android используется только чтобы перехватить трафик выбранных приложений на телефоне; соединения идут напрямую к сайту, ничего не проходит через чужие серверы. Сайты, заблокированные по IP-адресу, останутся заблокированными. Android допускает только одну VPN одновременно.</string>
     <string name="lab_title">Лаборатория стратегий</string>
     <string name="lab_isp">Ваш провайдер: %1$s</string>
+    <string name="lab_isp_off">Определение провайдера выключено (Настройки).</string>
     <string name="lab_isp_unknown">Определяем провайдера…</string>
     <string name="lab_community">Проверить и список сообщества</string>
     <string name="lab_count">Будет проверено стратегий: %1$d</string>

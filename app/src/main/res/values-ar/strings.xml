@@ -35,6 +35,7 @@
     <string name="notice_not_vpn">DPIMech ليس خدمة VPN. تُستخدم ميزة VPN في أندرويد فقط لالتقاط حركة التطبيقات المختارة على هاتفك؛ تذهب الاتصالات مباشرة إلى الموقع ولا يمر شيء عبر خادم أي أحد آخر. تبقى المواقع المحجوبة بعنوان IP محجوبة. يسمح أندرويد بشبكة VPN واحدة فقط في الوقت نفسه.</string>
     <string name="lab_title">مختبر الاستراتيجيات</string>
     <string name="lab_isp">مزوّد خدمتك: %1$s</string>
+    <string name="lab_isp_off">التعرّف على المزوّد متوقف (الإعدادات).</string>
     <string name="lab_isp_unknown">جارٍ التعرّف على مزوّد الخدمة…</string>
     <string name="lab_community">اختبر قائمة المجتمع أيضًا</string>
     <string name="lab_count">سيتم اختبار %1$d استراتيجية</string>

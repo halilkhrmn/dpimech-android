@@ -219,6 +219,7 @@ class MainActivity : AppCompatActivity() {
                 autoStrategy = settings.autoStrategy,
                 stats = stats,
                 encryptedDns = settings.encryptedDns,
+                providerLookup = settings.providerLookup && settings.autoStrategy && settings.wizardDone,
                 blockQuic = settings.blockQuic,
                 onPing = { BypassVpnService.ping(this) },
             )
@@ -227,6 +228,7 @@ class MainActivity : AppCompatActivity() {
                 options = strategies,
                 initialPacks = saved.selected?.packs.orEmpty(),
                 initialDomains = saved.selected?.extraDomains.orEmpty(),
+                providerLookup = settings.providerLookup,
                 targetProfile = saved.selected?.name,
                 onDetectIsp = app.lab::detectIsp,
                 onStart = app.lab::start,

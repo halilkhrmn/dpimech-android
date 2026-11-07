@@ -44,7 +44,8 @@ Android 8.0 or newer.
 - **Setup wizard:** pick the sites, DPIMech tests your connection and turns on what works.
 - **Whole phone or chosen apps:** every app, or only the apps you pick (e.g. Discord). The sites
   you choose are what strategies are tested with; the one found then works for all of the apps'
-  connections. "Only these sites" in a profile limits it to those sites.
+  connections. "Only these sites" in a profile limits it to those sites. In whole-phone mode every
+  app's DNS goes to the DNS server chosen in Settings.
 - **Strategy Lab:** tests strategies against real sites, with confirmation rounds, and shows which
   one works on your provider. Presets for known providers are tried first.
 - **Automatic strategy per network:** on a new Wi-Fi or mobile operator it finds what works and
