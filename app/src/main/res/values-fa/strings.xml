@@ -13,7 +13,7 @@
     <string name="profile_domain_add">افزودن دامنه</string>
     <string name="profile_domain_remove">حذف %1$s</string>
     <string name="profile_domain_filter">فقط همین سایت‌ها</string>
-    <string name="profile_domain_filter_hint">اتصال‌های دیگر برنامه‌های انتخاب‌شده دست‌نخورده می‌مانند.</string>
+    <string name="profile_domain_filter_hint">خاموش: راهبرد برای همهٔ اتصال‌های برنامه‌های انتخاب‌شده کار می‌کند. روشن: فقط برای سایت‌های بالا.</string>
     <string name="profile_strategy">راهبرد</string>
     <string name="profile_strategy_choose">انتخاب راهبرد</string>
     <string name="profile_strategy_args">آرگومان‌های ByeDPI</string>
@@ -96,6 +96,7 @@
     <string name="about_source">کد منبع</string>
     <string name="about_desktop">DPIMech برای ویندوز، لینوکس و مک</string>
     <string name="about_credits">ساخته‌شده بر پایهٔ ByeDPI (hufrea) و hev-socks5-tunnel (heiher). راهبردهای انجمن از ByeDPIManager (romanvht).</string>
+    <string name="about_logo">لوگو از Kim De Vries، با دست کشیده شده.</string>
     <string name="about_license">نرم‌افزار آزاد تحت GNU GPL نسخهٔ ۳ یا بالاتر.</string>
     <string name="wizard_step">گام %1$d از %2$d</string>
     <string name="wizard_welcome_title">به DPIMech خوش آمدید</string>
@@ -105,11 +106,12 @@
     <string name="wizard_where_title">دور زدن کجا کار کند؟</string>
     <string name="wizard_whole_phone">کل گوشی</string>
     <string name="wizard_recommended">پیشنهادی</string>
-    <string name="wizard_whole_phone_text_country">همهٔ برنامه‌ها، فقط برای سایت‌هایی که معمولاً در %1$s مسدودند. بقیه دست‌نخورده می‌ماند.</string>
-    <string name="wizard_whole_phone_text">همهٔ برنامه‌ها، فقط برای سایت‌هایی که در زیر انتخاب می‌کنید. بقیه دست‌نخورده می‌ماند.</string>
+    <string name="wizard_whole_phone_text_country">دور زدن برای همهٔ برنامه‌ها کار می‌کند. تنظیم با سایت‌هایی که معمولاً در %1$s مسدودند آزموده می‌شود.</string>
+    <string name="wizard_whole_phone_text">دور زدن برای همهٔ برنامه‌ها کار می‌کند. تنظیم با سایت‌هایی که در زیر انتخاب می‌کنید آزموده می‌شود.</string>
+    <string name="wizard_whole_phone_note">اگر برنامه یا سایتی از کار افتاد، «فقط همین سایت‌ها» را در نمایه روشن کنید.</string>
     <string name="wizard_apps">فقط برخی برنامه‌ها</string>
-    <string name="wizard_apps_text">فقط برنامه‌های سایت‌های انتخاب‌شده (برنامهٔ دیسکورد، برنامهٔ یوتیوب…).</string>
-    <string name="wizard_sites">سایت‌ها</string>
+    <string name="wizard_apps_text">فقط برنامه‌های سایت‌های انتخاب‌شده (برنامهٔ دیسکورد، برنامهٔ یوتیوب…)، با همهٔ اتصال‌هایشان.</string>
+    <string name="wizard_sites">سایت‌های آزمون</string>
     <string name="wizard_test">آزمودن اتصال من</string>
     <string name="wizard_test_title">در حال آزمودن اتصال شما</string>
     <string name="wizard_test_text">DPIMech هر راهبرد را روی سایت‌های انتخاب‌شده امتحان می‌کند. یکی دو دقیقه طول می‌کشد.</string>

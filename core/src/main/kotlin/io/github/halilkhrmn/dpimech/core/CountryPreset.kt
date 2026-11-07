@@ -2,14 +2,14 @@ package io.github.halilkhrmn.dpimech.core
 
 /**
  * Sites commonly blocked with DPI in a country, for the "whole phone" setup: every app goes
- * through the VPN, but only these sites get the bypass (domain filter), so nothing else changes.
- * Lists are deliberately short and only name blocks that were widely reported (sources and the
+ * through the VPN and the strategy found with these sites works for all their connections (no
+ * domain filter, so CDNs and new domains of a site are covered too). Lists are deliberately short and only name blocks that were widely reported (sources and the
  * reasoning are in docs/DECISIONS.md #25). A country without such reports gets [GENERIC].
  */
 data class CountryPreset(val country: String, val packs: List<String>) {
     val domainPacks: List<DomainPack> get() = packs.mapNotNull(DomainPack::byId)
 
-    /** A profile for every app, limited to the preset's sites. */
+    /** A profile for every app; the preset's sites are what strategies are tested with. */
     fun profile(id: String, name: String, strategy: StrategyEntry): Profile = Profile(
         id = id,
         name = name,
@@ -17,7 +17,7 @@ data class CountryPreset(val country: String, val packs: List<String>) {
         strategy = strategy,
         appMode = AppMode.ALL_EXCEPT,
         apps = emptyList(),
-        domainFilter = true,
+        domainFilter = false,
     )
 
     companion object {

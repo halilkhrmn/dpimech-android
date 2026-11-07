@@ -45,6 +45,7 @@
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
   - [x] v0.2.0 (versionCode 2), 2026-10-02
   - [ ] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review; owner creates `v0.2.1`
+  - [ ] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; owner merges, tag `v0.3.0`
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -52,6 +53,32 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-11-07 — Sites pick the strategy, bypass for every connection; desktop logo
+- Done: the wizard and new profiles no longer use the domain filter: the sites are what strategies
+  are tested with, the strategy then works for all connections of the chosen apps or the whole
+  phone (DECISIONS #28). Texts in five languages, READMEs, store descriptions, site and PLAN.
+- Done: the desktop app's hand-drawn chameleon (Kim De Vries) replaces the octopus: launcher icon
+  (vector, white background, themed icon), wizard and About logo, store icon and feature graphic,
+  site logo and favicon; credits in About, READMEs and the site; green fallback colour scheme
+  (DECISIONS #29). Masters copied into `art/`.
+- Verified: app tests (incl. `WizardTest`), `CountryPresetTest`, lint (no new warnings); store
+  images rendered again. Emulator on a Turkish DPI line: whole-phone profile ("all sites") with
+  pornhub.com as test site opens the page fully incl. its CDN, Wikipedia still opens, ping 6/6.
+- Release: 0.3.0, versionCode 4, `changelogs/4.txt` in five languages (all ≤ 500 bytes).
+- Next: tag `v0.3.0` after the merge, then move the F-Droid MR's build to that commit.
+
+### 2026-11-07 — Wizard kept the tested sites; bug report from Russia checked
+- Done: since 0.2.1 the provider is looked up when the wizard test starts; the country it found
+  reset the chosen sites to that country's list, so the saved profile had other sites than the
+  tested ones (e.g. Discord + YouTube tested, Discord + Roblox + Wattpad + Imgur saved). The
+  country now fills in its sites only before the user picks sites or starts the test.
+- Verified: new `WizardTest` (failed before the fix); app tests; on an Android 15 emulator on a
+  Turkish line with DPI: wizard → Lab finds "OOB SNI + TLS rec", Discord opens in Chrome, ping
+  6/6, saved profile keeps the tested sites.
+- Open: the Russian report (AS61360, X profile): all 12 standard strategies got resets for x.com;
+  not reproducible from Turkey. pornhub.com loads only half without `phncdn.com` (its CDN, also
+  blocked). `:core:test` has two failures on Windows only (path separators), green on Linux.
 
 ### 2026-10-18 — F-Droid device test passed; its two suggestions
 - Done: fdroiddata!50840 was tested on a device (Redmi Note 8T, Android 13): every checklist item

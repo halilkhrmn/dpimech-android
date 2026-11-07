@@ -26,10 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,8 +48,7 @@ fun AboutScreen(versionName: String, onReport: () -> Unit, onLogs: () -> Unit, b
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // Pixel art: no smoothing.
-            Image(ImageBitmap.imageResource(R.drawable.logo), null, Modifier.size(112.dp), filterQuality = FilterQuality.None)
+            Image(painterResource(R.drawable.logo), null, Modifier.size(112.dp))
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
             Text(stringResource(R.string.about_version, versionName), style = MaterialTheme.typography.bodyMedium)
             Text(stringResource(R.string.about_text), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
@@ -87,6 +84,7 @@ fun AboutScreen(versionName: String, onReport: () -> Unit, onLogs: () -> Unit, b
                 )
             }
             Text(stringResource(R.string.about_credits), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.about_logo), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
             Text(stringResource(R.string.about_license), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
         }
     }

@@ -21,10 +21,10 @@ class CountryPresetTest {
     }
 
     @Test
-    fun wholePhoneProfileOnlyTouchesTheListedSites() {
+    fun wholePhoneProfileTestsWithTheSitesAndBypassesEverything() {
         val p = CountryPreset.forCountry("TR").profile("1", "Türkiye", StrategyEntry("s", "-s1"))
         assertEquals(AppMode.ALL_EXCEPT, p.appMode)
-        assertTrue(p.domainFilter && p.apps.isEmpty())
+        assertTrue(!p.domainFilter && p.apps.isEmpty())
         assertTrue("discord.com" in p.domains && "roblox.com" in p.domains)
         // The VPN takes every app except DPIMech itself.
         assertEquals(VpnApps(emptyList(), listOf("own")), VpnApps.plan(p, "own", emptySet()).getOrThrow())
