@@ -45,7 +45,7 @@
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
   - [x] v0.2.0 (versionCode 2), 2026-10-02
   - [ ] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review; owner creates `v0.2.1`
-  - [ ] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; owner merges, tag `v0.3.0`
+  - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -53,6 +53,12 @@
   - [ ] F-Droid: merged by the reviewers, app published
 
 ## Work log
+
+### 2026-11-07 — v0.3.0 released; F-Droid build moved to it
+- Done: tag `v0.3.0` on 0b7d267, release workflow green (signed APKs + SHA256SUMS). The draft in
+  `docs/fdroid/` names 0.3.0 (versionCode 4, commit 0b7d267); the owner makes the same change on
+  fdroiddata!50840 (only the newest version is listed).
+- Next: MR pipeline green (incl. the reproducible build check), then wait for the merge.
 
 ### 2026-11-07 — Sites pick the strategy, bypass for every connection; desktop logo
 - Done: the wizard and new profiles no longer use the domain filter: the sites are what strategies
