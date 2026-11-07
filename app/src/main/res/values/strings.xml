@@ -36,6 +36,7 @@
     <string name="notice_not_vpn">DPIMech is not a VPN service. Android\'s VPN feature is only used to catch the chosen apps\' traffic on your phone; connections still go straight to the site and nothing passes through anyone else\'s server. Sites blocked by IP address stay blocked. Android allows one VPN at a time.</string>
     <string name="lab_title">Strategy Lab</string>
     <string name="lab_isp">Your provider: %1$s</string>
+    <string name="lab_isp_off">Provider lookup is off (Settings).</string>
     <string name="lab_isp_unknown">Looking up your provider…</string>
     <string name="lab_community">Also test the community list</string>
     <string name="lab_count">%1$d strategies will be tested</string>

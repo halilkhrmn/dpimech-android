@@ -42,7 +42,8 @@ Android 8.0 ve üstü.
 
 - **Kurulum sihirbazı:** siteleri seç; DPIMech bağlantını test eder ve çalışanı açar.
 - **Tüm telefon ya da seçili uygulamalar:** ülkende sık engellenen siteler için tüm uygulamalar ya da
-  yalnızca seçtiklerin (ör. Discord). Diğer bağlantılara dokunulmaz.
+  yalnızca seçtiklerin (ör. Discord). Diğer bağlantılara dokunulmaz; tüm telefon modunda bütün
+  uygulamaların DNS sorguları Ayarlar'da seçilen DNS sunucusuna gider.
 - **Strateji Laboratuvarı:** stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında
   hangisinin çalıştığını gösterir. Bilinen sağlayıcıların önerileri önce denenir.
 - **Ağa göre otomatik strateji:** yeni bir Wi-Fi'da ya da mobil operatörde çalışanı bulur ve hatırlar.
