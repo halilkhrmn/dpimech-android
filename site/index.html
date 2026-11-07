@@ -29,7 +29,8 @@
     align-items: center;
     gap: 14px;
   }
-  #top img { width: 72px; height: 72px; }
+  /* White tile: the green logo would disappear on the blue bar. */
+  #top img { width: 72px; height: 72px; box-sizing: border-box; padding: 7px; background: #fff; border: 2px outset #eee; }
   #top h1 { margin: 0; font: bold 28px Tahoma, Verdana, sans-serif; letter-spacing: 1px; }
   #top p { margin: 2px 0 0; color: #dde6ff; }
   #nav {
@@ -135,10 +136,10 @@
 <div id="page">
 
 <header id="top">
-  <img src="logo.png" alt="DPIMech logo">
+  <img src="logo.svg" alt="DPIMech logo">
   <div>
     <h1>DPIMech <small style="font-size:16px">for Android</small></h1>
-    <p>Open the sites and apps your internet provider blocks &mdash; only for the apps you choose.</p>
+    <p>Open the sites and apps your internet provider blocks &mdash; on the whole phone or only for the apps you choose.</p>
   </div>
 </header>
 
@@ -213,10 +214,10 @@
 </p>
 <ul>
   <li>A three-step wizard: pick the sites, it tests your connection and turns the working setting on.</li>
-  <li>Whole phone for the sites commonly blocked in your country, or only the apps you pick.</li>
+  <li>The whole phone or only the apps you pick, tested with the sites commonly blocked in your country.</li>
   <li>Automatic strategy: on a new network it finds and remembers what works there.</li>
   <li>Ready-made packs: Discord, YouTube, Roblox, X, Instagram, Wattpad &mdash; the pack also ticks the app.</li>
-  <li>Only the pack's sites get the bypass; everything else in the app is left alone.</li>
+  <li>Strategies are tested with your sites and then work for all connections of the chosen apps; &ldquo;Only these sites&rdquo; narrows it down if you need.</li>
   <li>Strategies shared with the desktop app, updated without a new release, plus a community list.</li>
   <li>Encrypted DNS (DNS over HTTPS) for the bypassed apps, and an optional QUIC block so browsers and YouTube use TCP.</li>
   <li>Live traffic, average ping of your sites and DNS counts on the home screen and in the notification.</li>
@@ -241,6 +242,10 @@
 
 <h2 id="credits">Credits</h2>
 <p>
+  The logo is by <a href="https://www.artstation.com/kdevries21">Kim De Vries</a>, drawn by hand &mdash;
+  no AI was used to make it.
+</p>
+<p>
   DPIMech only manages these projects; the real work is theirs:
   <a href="https://github.com/hufrea/byedpi">ByeDPI</a>,
   <a href="https://github.com/heiher/hev-socks5-tunnel">hev-socks5-tunnel</a>.
@@ -261,6 +266,8 @@
   <br>
   DPIMech &middot; free software under the <a href="https://github.com/halilkhrmn/dpimech-android/blob/main/LICENSE">GNU GPL v3 or later</a>
   &middot; <a href="https://halilkhrmn.github.io/dpimech/">desktop version</a>
+  <br>
+  Logo by <a href="https://www.artstation.com/kdevries21">Kim De Vries</a>, drawn by hand &middot; Made with &#10084;&#65039;
 </footer>
 
 </div>

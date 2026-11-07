@@ -91,12 +91,16 @@ app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), f
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:
           Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
+art/      logo masters copied from the desktop repository
 fastlane/ store listing (en-US, tr, ru, fa, ar) for F-Droid; images from tools/fastlane-images.py
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
 
-- The launcher icon is the desktop octopus (`crates/gui/assets/logo-source.png` there), as an
-  adaptive icon with a light purple background; `site/logo.png` and `favicon.ico` are the desktop files.
+- The logo is the desktop app's hand-drawn chameleon by Kim De Vries (`crates/gui/assets/logo.svg`
+  there; credit it in About, READMEs and the site). `art/logo.svg` + `art/logo-1024.png` are copies of
+  the desktop masters (the PNG feeds `tools/fastlane-images.py`); the launcher icon and the in-app logo
+  are vector drawables with the same path (white background); `site/logo.svg` and `favicon.ico` are
+  the desktop files. If the desktop logo changes, copy these again.
 - The two landing pages link to each other (Desktop / Android switcher); keep them in step.
 
 - ciadpi runs as a **separate process** (`libciadpi.so` in nativeLibraryDir), one per profile or

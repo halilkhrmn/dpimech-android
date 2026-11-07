@@ -42,8 +42,9 @@ Android 8.0 or newer.
 ## Features
 
 - **Setup wizard:** pick the sites, DPIMech tests your connection and turns on what works.
-- **Whole phone or chosen apps:** the sites commonly blocked in your country for every app, or
-  only the apps you pick (e.g. Discord). Other connections are left untouched.
+- **Whole phone or chosen apps:** every app, or only the apps you pick (e.g. Discord). The sites
+  you choose are what strategies are tested with; the one found then works for all of the apps'
+  connections. "Only these sites" in a profile limits it to those sites.
 - **Strategy Lab:** tests strategies against real sites, with confirmation rounds, and shows which
   one works on your provider. Presets for known providers are tried first.
 - **Automatic strategy per network:** on a new Wi-Fi or mobile operator it finds what works and
@@ -114,6 +115,7 @@ Release builds are reproducible.
 - [ByeDPI](https://github.com/hufrea/byedpi) by hufrea: the bypass engine.
 - [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel) by heiher: TUN to SOCKS5.
 - Community strategies from [ByeDPIManager](https://github.com/romanvht/ByeDPIManager).
+- The logo, the same as the desktop app's, is by [Kim De Vries](https://www.artstation.com/kdevries21), drawn by hand (no AI).
 
 Both engines are built from source inside the APK; nothing executable is downloaded later.
 

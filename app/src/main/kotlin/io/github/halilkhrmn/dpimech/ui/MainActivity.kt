@@ -322,6 +322,8 @@ class MainActivity : AppCompatActivity() {
                 extraDomains = choice.domains,
                 strategy = entry,
                 apps = chosen.flatMap { it.packages }.filter { it in installed },
+                // The sites pick the strategy; it then works for all of the apps' connections.
+                domainFilter = false,
             )
         }
         return if (choice.best != null) base.withStrategy(entry, networkKey) else base

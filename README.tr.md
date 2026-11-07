@@ -41,8 +41,9 @@ Android 8.0 ve üstü.
 ## Özellikler
 
 - **Kurulum sihirbazı:** siteleri seç; DPIMech bağlantını test eder ve çalışanı açar.
-- **Tüm telefon ya da seçili uygulamalar:** ülkende sık engellenen siteler için tüm uygulamalar ya da
-  yalnızca seçtiklerin (ör. Discord). Diğer bağlantılara dokunulmaz.
+- **Tüm telefon ya da seçili uygulamalar:** tüm uygulamalar ya da yalnızca seçtiklerin (ör. Discord).
+  Seçtiğin siteler stratejiyi test etmek için kullanılır; bulunan strateji uygulamaların tüm
+  bağlantılarında çalışır. Profildeki "Yalnızca bu siteler" bunu o sitelerle sınırlar.
 - **Strateji Laboratuvarı:** stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında
   hangisinin çalıştığını gösterir. Bilinen sağlayıcıların önerileri önce denenir.
 - **Ağa göre otomatik strateji:** yeni bir Wi-Fi'da ya da mobil operatörde çalışanı bulur ve hatırlar.
@@ -112,6 +113,7 @@ yeniden üretilebilir (reproducible).
 - [ByeDPI](https://github.com/hufrea/byedpi) (hufrea): atlatma motoru.
 - [hev-socks5-tunnel](https://github.com/heiher/hev-socks5-tunnel) (heiher): TUN'dan SOCKS5'e.
 - Topluluk stratejileri: [ByeDPIManager](https://github.com/romanvht/ByeDPIManager).
+- Masaüstü uygulamasıyla aynı logo [Kim De Vries](https://www.artstation.com/kdevries21) tarafından elle çizildi (yapay zekâ kullanılmadı).
 
 İki motor da APK'nın içinde kaynak koddan derlenir; sonradan çalıştırılabilir dosya indirilmez.
 

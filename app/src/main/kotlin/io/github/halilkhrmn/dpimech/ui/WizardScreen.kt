@@ -34,10 +34,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,7 +78,11 @@ fun WizardScreen(
     var wholePhone by rememberSaveable { mutableStateOf(true) }
     val locale = LocalConfiguration.current.locales[0]
     val preset = CountryPreset.forCountry(country ?: locale.country)
-    var packs by rememberSaveable(preset.country) { mutableStateOf(preset.packs) }
+    var packs by rememberSaveable { mutableStateOf(preset.packs) }
+    var packsChosen by rememberSaveable { mutableStateOf(false) }
+    // A country found later may still fill in its sites, but never over the user's choice or the
+    // sites being tested (the provider is looked up when the test starts).
+    LaunchedEffect(preset.country) { if (!packsChosen && step < 2) packs = preset.packs }
     var domains by rememberSaveable { mutableStateOf(emptyList<String>()) }
     var domainInput by rememberSaveable { mutableStateOf("") }
     val allDomains = (domains + Hostlist.parseInput(domainInput)).distinct()
@@ -96,10 +98,7 @@ fun WizardScreen(
             Text(stringResource(R.string.wizard_step, step + 1, 3), style = MaterialTheme.typography.labelLarge)
             when (step) {
                 0 -> {
-                    Image(
-                        ImageBitmap.imageResource(R.drawable.logo), null,
-                        Modifier.size(120.dp).align(Alignment.CenterHorizontally), filterQuality = FilterQuality.None,
-                    )
+                    Image(painterResource(R.drawable.logo), null, Modifier.size(120.dp).align(Alignment.CenterHorizontally))
                     Text(stringResource(R.string.wizard_welcome_title), style = MaterialTheme.typography.headlineMedium)
                     Text(stringResource(R.string.wizard_welcome_text), style = MaterialTheme.typography.bodyLarge)
                     Text(stringResource(R.string.notice_not_vpn), style = MaterialTheme.typography.bodySmall)
@@ -123,11 +122,15 @@ fun WizardScreen(
                         recommended = false,
                         onClick = { wholePhone = false },
                     )
+                    if (wholePhone) Text(stringResource(R.string.wizard_whole_phone_note), style = MaterialTheme.typography.bodySmall)
                     Text(stringResource(R.string.wizard_sites), style = MaterialTheme.typography.titleMedium)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         DomainPack.ALL.forEach { p ->
                             val on = p.id in packs
-                            FilterChip(selected = on, onClick = { packs = if (on) packs - p.id else packs + p.id }, label = { Text(p.label()) })
+                            FilterChip(selected = on, onClick = {
+                                packs = if (on) packs - p.id else packs + p.id
+                                packsChosen = true
+                            }, label = { Text(p.label()) })
                         }
                     }
                     DomainPills(
@@ -150,6 +153,7 @@ fun WizardScreen(
                             domains = allDomains
                             domainInput = ""
                             step = 2
+                            packsChosen = true
                             // The provider is looked up only now, when the user asks for a test.
                             onDetectIsp()
                             onTest(packs, allDomains, false)

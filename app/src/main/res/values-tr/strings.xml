@@ -13,7 +13,7 @@
     <string name="profile_domain_add">Alan adı ekle</string>
     <string name="profile_domain_remove">%1$s kaldır</string>
     <string name="profile_domain_filter">Yalnızca bu siteler</string>
-    <string name="profile_domain_filter_hint">Seçili uygulamaların diğer bağlantılarına dokunulmaz.</string>
+    <string name="profile_domain_filter_hint">Kapalı: strateji seçili uygulamaların tüm bağlantılarında çalışır. Açık: yalnızca yukarıdaki sitelerde.</string>
     <string name="profile_strategy">Strateji</string>
     <string name="profile_strategy_choose">Strateji seç</string>
     <string name="profile_strategy_args">ByeDPI argümanları</string>
@@ -95,6 +95,7 @@
     <string name="about_source">Kaynak kodu</string>
     <string name="about_desktop">Windows, Linux ve macOS için DPIMech</string>
     <string name="about_credits">ByeDPI (hufrea) ve hev-socks5-tunnel (heiher) üzerine kuruludur. Topluluk stratejileri ByeDPIManager\'dan (romanvht).</string>
+    <string name="about_logo">Logo: Kim De Vries, elle çizildi.</string>
     <string name="about_license">GNU GPL v3 veya sonrası altında özgür yazılım.</string>
     <string name="wizard_step">Adım %1$d / %2$d</string>
     <string name="wizard_welcome_title">DPIMech\'e hoş geldin</string>
@@ -104,11 +105,12 @@
     <string name="wizard_where_title">Atlatma nerede çalışsın?</string>
     <string name="wizard_whole_phone">Tüm telefon</string>
     <string name="wizard_recommended">önerilen</string>
-    <string name="wizard_whole_phone_text_country">Tüm uygulamalar, yalnızca sık engellenen siteler için (%1$s). Geri kalan her şeye dokunulmaz.</string>
-    <string name="wizard_whole_phone_text">Tüm uygulamalar, yalnızca aşağıda seçtiğin siteler için. Geri kalan her şeye dokunulmaz.</string>
+    <string name="wizard_whole_phone_text_country">Atlatma tüm uygulamalarda çalışır. Ayar, sık engellenen sitelerle test edilir (%1$s).</string>
+    <string name="wizard_whole_phone_text">Atlatma tüm uygulamalarda çalışır. Ayar, aşağıda seçtiğin sitelerle test edilir.</string>
+    <string name="wizard_whole_phone_note">Bir uygulama ya da site bozulursa profilde “Yalnızca bu siteler”i aç.</string>
     <string name="wizard_apps">Yalnızca bazı uygulamalar</string>
-    <string name="wizard_apps_text">Yalnızca seçilen sitelerin uygulamaları (Discord uygulaması, YouTube uygulaması…).</string>
-    <string name="wizard_sites">Siteler</string>
+    <string name="wizard_apps_text">Yalnızca seçilen sitelerin uygulamaları (Discord uygulaması, YouTube uygulaması…), tüm bağlantılarıyla.</string>
+    <string name="wizard_sites">Test edilecek siteler</string>
     <string name="wizard_test">Bağlantımı test et</string>
     <string name="wizard_test_title">Bağlantın test ediliyor</string>
     <string name="wizard_test_text">DPIMech her stratejiyi seçilen sitelerde dener. Bu bir iki dakika sürer.</string>

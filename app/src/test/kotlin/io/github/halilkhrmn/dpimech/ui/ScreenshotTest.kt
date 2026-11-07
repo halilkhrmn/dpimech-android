@@ -84,12 +84,12 @@ class ScreenshotTest {
 
     @Test fun settings() = shot("settings") { SettingsScreen(AppSettings(language = "tr"), {}, {}, {}, { emptyList() }, 1_790_000_000_000, {}, {}, PaddingValues()) }
 
-    /** The octopus purple used when wallpaper colours are off (or before Android 12). */
-    @Test fun homePurple() {
+    /** The logo's green used when wallpaper colours are off (or before Android 12). */
+    @Test fun homeGreen() {
         compose.setContent {
             DpimechTheme(dynamicColor = false) { HomeScreen(saved, EngineState.Stopped, {}, {}, {}, {}, {}, PaddingValues()) }
         }
-        compose.onRoot().captureRoboImage("${System.getProperty("roborazzi.output.dir", "build/screenshots")}/home_purple.png")
+        compose.onRoot().captureRoboImage("${System.getProperty("roborazzi.output.dir", "build/screenshots")}/home_green.png")
     }
 
     @Test fun profileEditor() = shot("profile_editor") {

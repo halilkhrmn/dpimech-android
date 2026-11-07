@@ -14,7 +14,7 @@
     <string name="profile_domain_add">Add domain</string>
     <string name="profile_domain_remove">Remove %1$s</string>
     <string name="profile_domain_filter">Only these sites</string>
-    <string name="profile_domain_filter_hint">Other connections of the chosen apps are left untouched.</string>
+    <string name="profile_domain_filter_hint">Off: the strategy works for all connections of the chosen apps. On: only for the sites above.</string>
     <string name="profile_strategy">Strategy</string>
     <string name="profile_strategy_choose">Choose a strategy</string>
     <string name="profile_strategy_args">ByeDPI arguments</string>
@@ -96,6 +96,7 @@
     <string name="about_source">Source code</string>
     <string name="about_desktop">DPIMech for Windows, Linux and macOS</string>
     <string name="about_credits">Built on ByeDPI (hufrea) and hev-socks5-tunnel (heiher). Community strategies from ByeDPIManager (romanvht).</string>
+    <string name="about_logo">Logo by Kim De Vries, drawn by hand.</string>
     <string name="about_license">Free software under the GNU GPL v3 or later.</string>
     <string name="wizard_step">Step %1$d of %2$d</string>
     <string name="wizard_welcome_title">Welcome to DPIMech</string>
@@ -105,11 +106,12 @@
     <string name="wizard_where_title">Where should the bypass work?</string>
     <string name="wizard_whole_phone">Whole phone</string>
     <string name="wizard_recommended">recommended</string>
-    <string name="wizard_whole_phone_text_country">Every app, only for the sites commonly blocked in %1$s. Everything else is left alone.</string>
-    <string name="wizard_whole_phone_text">Every app, only for the sites you pick below. Everything else is left alone.</string>
+    <string name="wizard_whole_phone_text_country">Every app gets the bypass. The setting is tested with the sites commonly blocked in %1$s.</string>
+    <string name="wizard_whole_phone_text">Every app gets the bypass. The setting is tested with the sites you pick below.</string>
+    <string name="wizard_whole_phone_note">If an app or site stops working, turn on “Only these sites” in the profile.</string>
     <string name="wizard_apps">Only some apps</string>
-    <string name="wizard_apps_text">Only the apps of the chosen sites (Discord app, YouTube app…).</string>
-    <string name="wizard_sites">Sites</string>
+    <string name="wizard_apps_text">Only the apps of the chosen sites (Discord app, YouTube app…), all of their connections.</string>
+    <string name="wizard_sites">Sites to test with</string>
     <string name="wizard_test">Test my connection</string>
     <string name="wizard_test_title">Testing your connection</string>
     <string name="wizard_test_text">DPIMech tries each strategy against the chosen sites. This takes a minute or two.</string>

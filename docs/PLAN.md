@@ -69,8 +69,9 @@ native/         ndk-build files: byedpi/ and hev-socks5-tunnel/ submodules (hev 
 ### Bypass scope
 - **Per-app bypass**, two modes: *only selected apps* or *all apps except selected*
   (`addAllowedApplication` / `addDisallowedApplication`). Unselected apps never enter the VPN.
-- **Domain filter (hostlist):** inside a selected app, only the profile's domains get the bypass
-  strategy; other connections pass through untouched (ByeDPI hosts list).
+- **Test sites and domain filter:** the profile's sites are what strategies are tested with; the
+  strategy then works for every connection of the chosen apps. The optional domain filter ("Only
+  these sites", ByeDPI hosts list) limits it to those sites; off by default since DECISIONS #28.
 - **Ready-made packs:** choosing the Discord profile also ticks the Discord app; YouTube ticks
   YouTube and known alternative clients, etc.
 - **App picker:** search, icons, "show system apps" switch, one list per profile.

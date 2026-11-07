@@ -82,7 +82,7 @@ fun ProfileEditor(
     var strategyArgs by rememberSaveable { mutableStateOf(initial?.strategy?.args ?: strategies.firstOrNull()?.entry?.args.orEmpty()) }
     var mode by rememberSaveable { mutableStateOf(initial?.appMode ?: AppMode.ONLY_SELECTED) }
     var apps by rememberSaveable { mutableStateOf(initial?.apps.orEmpty()) }
-    var domainFilter by rememberSaveable { mutableStateOf(initial?.domainFilter ?: true) }
+    var domainFilter by rememberSaveable { mutableStateOf(initial?.domainFilter ?: false) }
     var pickStrategy by remember { mutableStateOf(false) }
     var pickApps by remember { mutableStateOf(false) }
 

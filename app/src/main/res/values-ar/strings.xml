@@ -13,7 +13,7 @@
     <string name="profile_domain_add">إضافة نطاق</string>
     <string name="profile_domain_remove">إزالة %1$s</string>
     <string name="profile_domain_filter">هذه المواقع فقط</string>
-    <string name="profile_domain_filter_hint">تبقى الاتصالات الأخرى للتطبيقات المختارة كما هي.</string>
+    <string name="profile_domain_filter_hint">متوقف: تعمل الاستراتيجية لكل اتصالات التطبيقات المختارة. مشغّل: للمواقع أعلاه فقط.</string>
     <string name="profile_strategy">الاستراتيجية</string>
     <string name="profile_strategy_choose">اختر استراتيجية</string>
     <string name="profile_strategy_args">وسائط ByeDPI</string>
@@ -95,6 +95,7 @@
     <string name="about_source">الشيفرة المصدرية</string>
     <string name="about_desktop">DPIMech لويندوز ولينكس وماك</string>
     <string name="about_credits">مبني على ByeDPI (hufrea) و hev-socks5-tunnel (heiher). استراتيجيات المجتمع من ByeDPIManager (romanvht).</string>
+    <string name="about_logo">الشعار من Kim De Vries، مرسوم باليد.</string>
     <string name="about_license">برنامج حر بموجب رخصة GNU GPL الإصدار 3 أو أحدث.</string>
     <string name="wizard_step">الخطوة %1$d من %2$d</string>
     <string name="wizard_welcome_title">مرحبًا بك في DPIMech</string>
@@ -104,11 +105,12 @@
     <string name="wizard_where_title">أين يعمل التجاوز؟</string>
     <string name="wizard_whole_phone">الهاتف كله</string>
     <string name="wizard_recommended">مُوصى به</string>
-    <string name="wizard_whole_phone_text_country">كل التطبيقات، فقط للمواقع المحجوبة عادةً في %1$s. ويبقى كل شيء آخر كما هو.</string>
-    <string name="wizard_whole_phone_text">كل التطبيقات، فقط للمواقع التي تختارها أدناه. ويبقى كل شيء آخر كما هو.</string>
+    <string name="wizard_whole_phone_text_country">يعمل التجاوز لكل التطبيقات. يُختبر الإعداد على المواقع المحجوبة عادةً في %1$s.</string>
+    <string name="wizard_whole_phone_text">يعمل التجاوز لكل التطبيقات. يُختبر الإعداد على المواقع التي تختارها أدناه.</string>
+    <string name="wizard_whole_phone_note">إذا توقف تطبيق أو موقع عن العمل، فشغّل «هذه المواقع فقط» في الملف.</string>
     <string name="wizard_apps">بعض التطبيقات فقط</string>
-    <string name="wizard_apps_text">تطبيقات المواقع المختارة فقط (تطبيق ديسكورد، تطبيق يوتيوب…).</string>
-    <string name="wizard_sites">المواقع</string>
+    <string name="wizard_apps_text">تطبيقات المواقع المختارة فقط (تطبيق ديسكورد، تطبيق يوتيوب…)، بكل اتصالاتها.</string>
+    <string name="wizard_sites">مواقع الاختبار</string>
     <string name="wizard_test">اختبر اتصالي</string>
     <string name="wizard_test_title">جارٍ اختبار اتصالك</string>
     <string name="wizard_test_text">يجرّب DPIMech كل استراتيجية على المواقع المختارة. يستغرق ذلك دقيقة أو دقيقتين.</string>

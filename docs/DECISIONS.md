@@ -178,3 +178,19 @@ Without it the per-network memory still tells mobile operators apart (MCC+MNC); 
 profile's own strategy is used. The store texts and READMEs say what goes to ipwho.is, GitHub and the DNS server,
 and "no tracking" became "no analytics".
 
+## 28. Sites pick the strategy; the bypass covers every connection (2026-11-07)
+The wizard and new profiles used the domain filter: only the chosen sites got the bypass. That
+missed every domain the packs do not list. On a Turkish line pornhub.com opened but stayed half
+loaded, because its CDN (`phncdn.com`) is blocked too; Discord and others add domains over time.
+Now the sites are what the Lab, the automatic strategy and the ping test with, and the strategy
+found works for all connections of the profile's apps (whole phone or chosen apps). "Only these
+sites" stays in the profile editor, off for new profiles; saved profiles keep their setting. On the
+whole phone this touches every app, so the wizard says to turn the filter on if an app or site
+breaks (fake-packet strategies can upset some servers).
+
+## 29. The desktop app's hand-drawn logo (2026-11-07)
+The desktop app replaced the pixel octopus with a chameleon by Kim De Vries, drawn by hand (its
+DECISIONS #51). Android follows: the launcher icon (adaptive, white background, themed icon), the
+logo in the wizard and About, the store icon and feature graphic, and the site use it. The SVG has a
+single path, so the app draws it as a vector drawable (sharp at every size, no PNG per density).
+The fallback colour scheme (no wallpaper colours) uses the logo's green instead of the purple.

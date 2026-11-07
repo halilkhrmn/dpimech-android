@@ -13,14 +13,15 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
-LOGO = ROOT / "app/src/main/res/drawable-nodpi/logo.png"
+# The desktop app's logo (crates/gui/assets/icon-1024.png there), rendered from art/logo.svg.
+LOGO = ROOT / "art/logo-1024.png"
 SHOTS = ROOT / "app/build/screenshots/store"
 META = ROOT / "fastlane/metadata/android"
 LOCALES = {"en": "en-US", "tr": "tr", "ru": "ru", "fa": "fa", "ar": "ar"}
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 FONT_REGULAR = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-BG = (243, 232, 255)  # launcher icon background
-PURPLE = (74, 32, 120)
+BG = (255, 255, 255)  # launcher icon background
+GREEN = (57, 114, 86)  # the logo's colour
 
 
 def save(img: Image.Image, path: Path) -> None:
@@ -32,8 +33,7 @@ def logo(size: int) -> Image.Image:
     art = Image.open(LOGO).convert("RGBA")
     art = art.crop(art.getbbox())
     k = size / max(art.size)
-    # Pixel art: nearest neighbour keeps the edges crisp.
-    return art.resize((round(art.width * k), round(art.height * k)), Image.NEAREST)
+    return art.resize((round(art.width * k), round(art.height * k)), Image.LANCZOS)
 
 
 def icon() -> None:
@@ -48,11 +48,11 @@ def feature() -> None:
     art = logo(360)
     img.alpha_composite(art, (60, (500 - art.height) // 2))
     d = ImageDraw.Draw(img)
-    d.text((470, 150), "DPIMech", font=ImageFont.truetype(FONT, 84), fill=PURPLE)
+    d.text((470, 150), "DPIMech", font=ImageFont.truetype(FONT, 84), fill=GREEN)
     lines = ["Opens sites your provider", "blocks with DPI.", "No root. No remote server."]
     f = ImageFont.truetype(FONT_REGULAR, 34)
     for i, line in enumerate(lines):
-        d.text((474, 265 + i * 46), line, font=f, fill=(40, 30, 60))
+        d.text((474, 265 + i * 46), line, font=f, fill=(30, 45, 38))
     save(img, META / "en-US/images/featureGraphic.png")
 
 

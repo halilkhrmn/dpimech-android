@@ -13,7 +13,7 @@
     <string name="profile_domain_add">Добавить домен</string>
     <string name="profile_domain_remove">Удалить %1$s</string>
     <string name="profile_domain_filter">Только эти сайты</string>
-    <string name="profile_domain_filter_hint">Остальные соединения выбранных приложений не затрагиваются.</string>
+    <string name="profile_domain_filter_hint">Выключено: стратегия работает для всех соединений выбранных приложений. Включено: только для сайтов выше.</string>
     <string name="profile_strategy">Стратегия</string>
     <string name="profile_strategy_choose">Выбрать стратегию</string>
     <string name="profile_strategy_args">Аргументы ByeDPI</string>
@@ -95,6 +95,7 @@
     <string name="about_source">Исходный код</string>
     <string name="about_desktop">DPIMech для Windows, Linux и macOS</string>
     <string name="about_credits">Основано на ByeDPI (hufrea) и hev-socks5-tunnel (heiher). Стратегии сообщества из ByeDPIManager (romanvht).</string>
+    <string name="about_logo">Логотип: Kim De Vries, нарисован от руки.</string>
     <string name="about_license">Свободное ПО под GNU GPL v3 или новее.</string>
     <string name="wizard_step">Шаг %1$d из %2$d</string>
     <string name="wizard_welcome_title">Добро пожаловать в DPIMech</string>
@@ -104,11 +105,12 @@
     <string name="wizard_where_title">Где должен работать обход?</string>
     <string name="wizard_whole_phone">Весь телефон</string>
     <string name="wizard_recommended">рекомендуется</string>
-    <string name="wizard_whole_phone_text_country">Все приложения, только для сайтов, которые часто блокируют (%1$s). Остальное не затрагивается.</string>
-    <string name="wizard_whole_phone_text">Все приложения, только для сайтов, выбранных ниже. Остальное не затрагивается.</string>
+    <string name="wizard_whole_phone_text_country">Обход работает для всех приложений. Настройка проверяется на сайтах, которые часто блокируют (%1$s).</string>
+    <string name="wizard_whole_phone_text">Обход работает для всех приложений. Настройка проверяется на сайтах, выбранных ниже.</string>
+    <string name="wizard_whole_phone_note">Если приложение или сайт перестанет работать, включите «Только эти сайты» в профиле.</string>
     <string name="wizard_apps">Только некоторые приложения</string>
-    <string name="wizard_apps_text">Только приложения выбранных сайтов (Discord, YouTube…).</string>
-    <string name="wizard_sites">Сайты</string>
+    <string name="wizard_apps_text">Только приложения выбранных сайтов (Discord, YouTube…), все их соединения.</string>
+    <string name="wizard_sites">Сайты для проверки</string>
     <string name="wizard_test">Проверить подключение</string>
     <string name="wizard_test_title">Проверяем подключение</string>
     <string name="wizard_test_text">DPIMech пробует каждую стратегию на выбранных сайтах. Это займёт минуту-две.</string>
