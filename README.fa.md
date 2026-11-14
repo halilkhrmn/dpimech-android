@@ -26,8 +26,11 @@
 
 ## دریافت
 
+<a href="https://f-droid.org/packages/io.github.halilkhrmn.dpimech/"><img src="https://f-droid.org/badge/get-it-on-fa.png" alt="دریافت از F-Droid" height="80"></a>
+
 | | |
 |---|---|
+| **F-Droid** | از [F-Droid](https://f-droid.org/packages/io.github.halilkhrmn.dpimech/) نصب کنید؛ به‌روزرسانی‌ها از طریق برنامهٔ F-Droid می‌رسند. |
 | **GitHub Releases** | فایل [`dpimech-<نسخه>-universal.apk`](https://github.com/halilkhrmn/dpimech-android/releases/latest) روی هر گوشی کار می‌کند. APKهای کوچک‌تر برای هر معماری (`arm64-v8a` برای بیشتر گوشی‌ها) و `SHA256SUMS` در همان نسخه هستند. |
 | **Obtainium** | نشانی `https://github.com/halilkhrmn/dpimech-android` را اضافه کنید تا به‌روزرسانی‌ها خودکار برسند. |
 

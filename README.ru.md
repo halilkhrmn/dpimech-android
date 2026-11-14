@@ -21,8 +21,11 @@
 
 ## Скачать
 
+<a href="https://f-droid.org/packages/io.github.halilkhrmn.dpimech/"><img src="https://f-droid.org/badge/get-it-on-ru.png" alt="Скачать на F-Droid" height="80"></a>
+
 | | |
 |---|---|
+| **F-Droid** | Установите из [F-Droid](https://f-droid.org/packages/io.github.halilkhrmn.dpimech/); обновления приходят через приложение F-Droid. |
 | **GitHub Releases** | [`dpimech-<версия>-universal.apk`](https://github.com/halilkhrmn/dpimech-android/releases/latest) работает на любом телефоне. В том же выпуске есть APK поменьше для отдельных архитектур (`arm64-v8a` для большинства телефонов) и `SHA256SUMS`. |
 | **Obtainium** | Добавьте `https://github.com/halilkhrmn/dpimech-android`, чтобы получать обновления автоматически. |
 

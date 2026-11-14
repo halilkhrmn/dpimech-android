@@ -44,15 +44,24 @@
   - [x] Fastlane metadata (en/tr/ru), store images, reproducible release build
   - [x] First signed release: v0.1.0 (2026-10-01), reproducible (apksigcopier compare)
   - [x] v0.2.0 (versionCode 2), 2026-10-02
-  - [ ] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review; owner creates `v0.2.1`
+  - [x] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
     review done (commit hash, only 0.2.0, category VPN & Proxy), waiting for F-Droid's test
-  - [ ] F-Droid: merged by the reviewers, app published
+  - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-14 — On F-Droid
+- Done: fdroiddata!50840 merged; DPIMech is on F-Droid. "Get it on F-Droid" badges (each README in
+  its own language, the website's download section) and an F-Droid row in the download tables.
+  F-Droid ships our own signed APK (reproducible build, `AllowedAPKSigningKeys`), so people can
+  switch between F-Droid, GitHub and Obtainium without reinstalling.
+- Verified: the app is in F-Droid's index; badge images answer for all five languages.
+- Next: new `v*` tags reach F-Droid by themselves (`AutoUpdateMode: Version`); IzzyOnDroid is
+  still open.
 
 ### 2026-11-07 — v0.3.0 released; F-Droid build moved to it
 - Done: tag `v0.3.0` on 0b7d267, release workflow green (signed APKs + SHA256SUMS). The draft in

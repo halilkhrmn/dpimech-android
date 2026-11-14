@@ -21,8 +21,11 @@
 
 ## İndir
 
+<a href="https://f-droid.org/packages/io.github.halilkhrmn.dpimech/"><img src="https://f-droid.org/badge/get-it-on-tr.png" alt="F-Droid'den edinin" height="80"></a>
+
 | | |
 |---|---|
+| **F-Droid** | [F-Droid](https://f-droid.org/packages/io.github.halilkhrmn.dpimech/) üzerinden kur; güncellemeler F-Droid uygulamasıyla gelir. |
 | **GitHub Releases** | [`dpimech-<sürüm>-universal.apk`](https://github.com/halilkhrmn/dpimech-android/releases/latest) her telefonda çalışır. Aynı sürümde mimariye özel daha küçük APK'lar (çoğu telefon için `arm64-v8a`) ve `SHA256SUMS` dosyası da var. |
 | **Obtainium** | Güncellemeleri otomatik almak için `https://github.com/halilkhrmn/dpimech-android` adresini ekle. |
 
