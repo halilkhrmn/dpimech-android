@@ -47,4 +47,6 @@ Local signed build: `DPIMECH_KEYSTORE=… DPIMECH_KEYSTORE_PASSWORD=… DPIMECH_
 ## Later
 
 - IzzyOnDroid: request inclusion once a signed release exists (it reads the newest release's APK).
-- F-Droid: metadata in `fastlane/metadata/android/` (en-US, tr, ru, fa, ar; `changelogs/<versionCode>.txt` each); F-Droid builds from the tag.
+- F-Droid (published since 2026-11): metadata in `fastlane/metadata/android/` (en-US, tr, ru, fa,
+  ar; `changelogs/<versionCode>.txt` each). F-Droid finds new `v*` tags itself, builds from the tag
+  and publishes our signed APK when its build matches; nothing to do there per release.
