@@ -46,8 +46,8 @@
   - [x] v0.2.0 (versionCode 2), 2026-10-02
   - [x] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
-  - [ ] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
-    status icon; prepared 2026-11-15, tag after the merge
+  - [x] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
+    status icon; released 2026-11-15
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -70,7 +70,7 @@
   Turkish, Russian, Persian and Arabic screens.
 - Note: the wizard starts the Lab before the notification permission is asked, so on a fresh
   install the Lab's progress notification is not shown until the permission is granted.
-- Next: merge, then `git tag v0.4.0 && git push origin v0.4.0`.
+- Released: tag v0.4.0, release workflow run 43701381362 built the signed APKs and `SHA256SUMS`.
 
 ### 2026-11-15 — Green everywhere
 - Done: the Material You setting still said the fallback colours were "DPIMech purple" (all five
