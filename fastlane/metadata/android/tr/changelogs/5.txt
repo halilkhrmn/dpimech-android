@@ -1,0 +1,1 @@
+18 hazır site daha, toplam 35. Hazır siteler artık çip satırları yerine aramalı tek bir listeden seçilir: profilde, sihirbazda ve Strateji Laboratuvarında; her satır uygulamanın da kapsanıp kapsanmadığını gösterir. İki DNS sunucusu daha: DNS4EU ve Comss. Durum çubuğu, bildirim ve Hızlı Ayarlar kutucuğundaki simge artık bukalemun. Kısayol simgeleri logo gibi yeşil.
