@@ -231,4 +231,24 @@
         <item quantity="other">Восстановлено %d профиля.</item>
     </plurals>
     <string name="restore_failed">Не удалось прочитать резервную копию.</string>
+    <string name="site_picker_none">Готовые сайты не выбраны</string>
+    <string name="site_picker_tap">Нажмите, чтобы выбрать из списка</string>
+    <string name="site_picker_title">Выберите сайты</string>
+    <string name="site_picker_search">Поиск</string>
+    <string name="site_kind_app">Приложение + сайт</string>
+    <string name="site_kind_web">Сайт</string>
+    <string name="site_picker_clear">Очистить</string>
+    <string name="site_picker_empty">Нет совпадений. Добавьте его ниже как домен.</string>
+    <plurals name="site_picker_count">
+        <item quantity="one">%d готовый сайт · нажмите, чтобы изменить</item>
+        <item quantity="few">%d готовых сайта · нажмите, чтобы изменить</item>
+        <item quantity="many">%d готовых сайтов · нажмите, чтобы изменить</item>
+        <item quantity="other">%d готового сайта · нажмите, чтобы изменить</item>
+    </plurals>
+    <plurals name="site_picker_selected">
+        <item quantity="one">Выбран %d</item>
+        <item quantity="few">Выбрано %d</item>
+        <item quantity="many">Выбрано %d</item>
+        <item quantity="other">Выбрано %d</item>
+    </plurals>
 </resources>

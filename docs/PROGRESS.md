@@ -54,6 +54,17 @@
 
 ## Work log
 
+### 2026-11-15 — Ready-made sites in a bottom-sheet list
+- Done: with 35 packs the chip rows filled the profile editor, the wizard and the Strategy Lab. The
+  owner picked option C of four mockups: one summary row ("Discord, YouTube · 2 ready-made sites")
+  that opens a bottom sheet with search and a multi-select list; each row shows on the right, at a
+  fixed width, whether the pack covers an app too ("App + site") or a site only. No categories
+  (owner's choice). `SitePicker.kt`; strings in all five languages (plurals for the counts).
+- Verified: not compiled here (Gradle could not download dependencies in this session); CI builds,
+  lints and renders the screens. The store images still show the old chips until they are rendered
+  again.
+- Next: render the store images again once a build works here.
+
 ### 2026-11-15 — Issues #28 and #29: more sites, two DNS servers
 - Done: #29 — DNS4EU (unfiltered, 86.54.11.100, DoH on unfiltered.joindns4.eu) and Comss
   (83.220.169.155, DoH on dns.comss.one) in the DNS list. Both only serve DoH under their names, so

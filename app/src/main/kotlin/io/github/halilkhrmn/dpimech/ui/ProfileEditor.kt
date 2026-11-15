@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,23 +119,14 @@ fun ProfileEditor(
 
             Section(stringResource(R.string.profile_sites))
             val language = LocalConfiguration.current.locales[0].language
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DomainPack.ALL.forEach { pack ->
-                    val on = pack.id in packs
-                    FilterChip(
-                        selected = on,
-                        onClick = {
-                            packs = if (on) packs - pack.id else packs + pack.id
-                            if (!on) {
-                                // Ticking a pack also ticks its installed apps.
-                                apps = (apps + pack.packages.filter { it in installed }).distinct()
-                                if (name.isBlank()) name = pack.displayName(language)
-                            }
-                        },
-                        label = { Text(pack.label()) },
-                    )
+            SitePicker(packs, onChange = { now ->
+                // A newly ticked pack also ticks its installed apps.
+                DomainPack.ALL.filter { it.id in now && it.id !in packs }.forEach { pack ->
+                    apps = (apps + pack.packages.filter { it in installed }).distinct()
+                    if (name.isBlank()) name = pack.displayName(language)
                 }
-            }
+                packs = now
+            })
             DomainPills(
                 domains = domains,
                 input = domainInput,

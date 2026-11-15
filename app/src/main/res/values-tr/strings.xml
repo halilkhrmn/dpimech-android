@@ -229,4 +229,20 @@
         <item quantity="other">%d profil geri yüklendi.</item>
     </plurals>
     <string name="restore_failed">Yedek okunamadı.</string>
+    <string name="site_picker_none">Hazır site seçilmedi</string>
+    <string name="site_picker_tap">Dokun ve listeden seç</string>
+    <string name="site_picker_title">Siteleri seç</string>
+    <string name="site_picker_search">Ara</string>
+    <string name="site_kind_app">Uygulama + site</string>
+    <string name="site_kind_web">Site</string>
+    <string name="site_picker_clear">Temizle</string>
+    <string name="site_picker_empty">Eşleşen site yok. Aşağıdan domain olarak ekleyebilirsin.</string>
+    <plurals name="site_picker_count">
+        <item quantity="one">%d hazır site · değiştirmek için dokun</item>
+        <item quantity="other">%d hazır site · değiştirmek için dokun</item>
+    </plurals>
+    <plurals name="site_picker_selected">
+        <item quantity="one">%d seçili</item>
+        <item quantity="other">%d seçili</item>
+    </plurals>
 </resources>

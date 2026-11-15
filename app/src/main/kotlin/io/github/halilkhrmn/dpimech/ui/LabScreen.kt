@@ -3,7 +3,6 @@ package io.github.halilkhrmn.dpimech.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -110,17 +108,7 @@ fun LabScreen(
             }
             item {
                 Text(stringResource(R.string.profile_sites), style = MaterialTheme.typography.titleMedium)
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    DomainPack.ALL.forEach { p ->
-                        val on = p.id in packs
-                        FilterChip(
-                            selected = on,
-                            enabled = !state.running,
-                            onClick = { packs = if (on) packs - p.id else packs + p.id },
-                            label = { Text(p.label()) },
-                        )
-                    }
-                }
+                SitePicker(packs, onChange = { packs = it }, enabled = !state.running)
                 if (!state.running) {
                     DomainPills(
                         domains = domains,
