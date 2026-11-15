@@ -338,6 +338,248 @@
       ]
     },
     {
+      "id": "wikipedia",
+      "name": "Wikipedia",
+      "domains": [
+        "wikipedia.org",
+        "wikimedia.org",
+        "wikidata.org",
+        "wiktionary.org"
+      ],
+      "probes": [
+        "www.wikipedia.org",
+        "en.wikipedia.org"
+      ],
+      "android_packages": [
+        "org.wikipedia"
+      ]
+    },
+    {
+      "id": "twitch",
+      "name": "Twitch",
+      "domains": [
+        "twitch.tv",
+        "ttvnw.net",
+        "jtvnw.net",
+        "twitchcdn.net",
+        "twitchsvc.net"
+      ],
+      "probes": [
+        "www.twitch.tv",
+        "twitch.tv"
+      ],
+      "countries": [
+        "BY"
+      ],
+      "android_packages": [
+        "tv.twitch.android.app"
+      ]
+    },
+    {
+      "id": "kick",
+      "name": "Kick",
+      "domains": [
+        "kick.com"
+      ],
+      "probes": [
+        "kick.com"
+      ],
+      "android_packages": [
+        "com.kick.mobile"
+      ]
+    },
+    {
+      "id": "rumble",
+      "name": "Rumble",
+      "domains": [
+        "rumble.com",
+        "1a-1791.com"
+      ],
+      "probes": [
+        "rumble.com"
+      ],
+      "android_packages": [
+        "com.rumble.battles"
+      ]
+    },
+    {
+      "id": "odysee",
+      "name": "Odysee",
+      "domains": [
+        "odysee.com",
+        "odycdn.com",
+        "lbry.com"
+      ],
+      "probes": [
+        "odysee.com"
+      ],
+      "android_packages": [
+        "com.odysee.app"
+      ]
+    },
+    {
+      "id": "bitchute",
+      "name": "BitChute",
+      "domains": [
+        "bitchute.com"
+      ],
+      "probes": [
+        "www.bitchute.com"
+      ]
+    },
+    {
+      "id": "dailymotion",
+      "name": "Dailymotion",
+      "domains": [
+        "dailymotion.com",
+        "dmcdn.net",
+        "dm-event.net"
+      ],
+      "probes": [
+        "www.dailymotion.com"
+      ],
+      "android_packages": [
+        "com.dailymotion.dailymotion"
+      ]
+    },
+    {
+      "id": "nicovideo",
+      "name": "Niconico",
+      "domains": [
+        "nicovideo.jp",
+        "nimg.jp",
+        "dmc.nico"
+      ],
+      "probes": [
+        "www.nicovideo.jp"
+      ],
+      "android_packages": [
+        "jp.nicovideo.android"
+      ]
+    },
+    {
+      "id": "rutube",
+      "name": "Rutube",
+      "domains": [
+        "rutube.ru"
+      ],
+      "probes": [
+        "rutube.ru"
+      ],
+      "android_packages": [
+        "ru.rutube.app"
+      ]
+    },
+    {
+      "id": "vkvideo",
+      "name": "VK Video",
+      "domains": [
+        "vkvideo.ru",
+        "vk.com",
+        "vkuser.net",
+        "userapi.com"
+      ],
+      "probes": [
+        "vkvideo.ru"
+      ],
+      "android_packages": [
+        "com.vk.vkvideo"
+      ]
+    },
+    {
+      "id": "twitcasting",
+      "name": "TwitCasting",
+      "domains": [
+        "twitcasting.tv"
+      ],
+      "probes": [
+        "twitcasting.tv"
+      ]
+    },
+    {
+      "id": "goodgame",
+      "name": "GoodGame",
+      "domains": [
+        "goodgame.ru"
+      ],
+      "probes": [
+        "goodgame.ru"
+      ]
+    },
+    {
+      "id": "joystick",
+      "name": "Joystick.tv",
+      "domains": [
+        "joystick.tv"
+      ],
+      "probes": [
+        "joystick.tv"
+      ]
+    },
+    {
+      "id": "3speak",
+      "name": "3Speak",
+      "domains": [
+        "3speak.tv"
+      ],
+      "probes": [
+        "3speak.tv"
+      ]
+    },
+    {
+      "id": "cos-tv",
+      "name": "COS.TV",
+      "domains": [
+        "cos.tv"
+      ],
+      "probes": [
+        "cos.tv"
+      ]
+    },
+    {
+      "id": "peertube",
+      "name": "PeerTube search",
+      "domains": [
+        "sepiasearch.org",
+        "joinpeertube.org"
+      ],
+      "probes": [
+        "sepiasearch.org",
+        "search.joinpeertube.org"
+      ]
+    },
+    {
+      "id": "matrix",
+      "name": "Matrix",
+      "domains": [
+        "matrix.org",
+        "element.io"
+      ],
+      "probes": [
+        "matrix.org",
+        "app.element.io"
+      ],
+      "android_packages": [
+        "im.vector.app",
+        "io.element.android.x"
+      ]
+    },
+    {
+      "id": "pornhub",
+      "name": "Pornhub",
+      "domains": [
+        "pornhub.com",
+        "phncdn.com"
+      ],
+      "probes": [
+        "www.pornhub.com",
+        "pornhub.com"
+      ],
+      "countries": [
+        "TR"
+      ]
+    },
+    {
       "id": "news-by",
       "name": "Belarusian independent media",
       "domains": [

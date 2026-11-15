@@ -112,7 +112,11 @@ class DohClient(
         const val REST_MS = 60_000L
         private const val TIMEOUT_MS = 4000
 
-        /** DoH endpoints of the servers offered in the settings, by IP so no lookup is needed first. */
+        /**
+         * DoH endpoints of the servers offered in the settings: by IP where the server's
+         * certificate allows it, so no lookup is needed first; DNS4EU and Comss only answer DoH on
+         * their names (looked up by the system resolver: DPIMech itself is outside the VPN).
+         */
         private val KNOWN = mapOf(
             "1.1.1.1" to "https://1.1.1.1/dns-query",
             "1.0.0.1" to "https://1.0.0.1/dns-query",
@@ -120,6 +124,8 @@ class DohClient(
             "8.8.4.4" to "https://8.8.4.4/dns-query",
             "9.9.9.9" to "https://9.9.9.9/dns-query",
             "94.140.14.14" to "https://94.140.14.14/dns-query",
+            "86.54.11.100" to "https://unfiltered.joindns4.eu/dns-query",
+            "83.220.169.155" to "https://dns.comss.one/dns-query",
         )
 
         /** DoH URL for a DNS server address; unknown servers use Cloudflare. */

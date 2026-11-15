@@ -54,6 +54,20 @@
 
 ## Work log
 
+### 2026-11-15 — Issues #28 and #29: more sites, two DNS servers
+- Done: #29 — DNS4EU (unfiltered, 86.54.11.100, DoH on unfiltered.joindns4.eu) and Comss
+  (83.220.169.155, DoH on dns.comss.one) in the DNS list. Both only serve DoH under their names, so
+  `DohClient` uses the names there (resolved by the system: DPIMech is outside its VPN). DNS over QUIC
+  (the issue's `quic://dns.comss.one`) is not supported; the same server's DoH is used instead.
+  #28 — 18 site packs added to the desktop repository's `domains.json` (Wikipedia, Twitch, Kick,
+  Rumble, Odysee, BitChute, Dailymotion, Niconico, Rutube, VK Video, TwitCasting, GoodGame,
+  Joystick.tv, 3Speak, COS.TV, PeerTube search, Matrix, Pornhub) and copied here. The IP addresses
+  in the issue are not used: DPIMech does not pin IPs, and they change.
+- Verified: both DoH endpoints answered a DNS query, the plain DNS addresses answered on UDP 53, and
+  every probe host answered HTTPS (2026-11-15). Gradle could not download dependencies in this
+  session (Maven Central rate limit), so tests and lint run in CI only.
+- Next: merge the desktop PR first (the app downloads `domains.json` from its `main`).
+
 ### 2026-11-14 — On F-Droid
 - Done: fdroiddata!50840 merged; DPIMech is on F-Droid. "Get it on F-Droid" badges (each README in
   its own language, the website's download section) and an F-Droid row in the download tables.

@@ -11,8 +11,8 @@ class CatalogTest {
         assertEquals(DomainPack.ALL.size, DomainPack.ALL.map { it.id }.toSet().size)
         for (p in DomainPack.ALL) {
             assertTrue(p.probes.isNotEmpty(), p.id)
-            // Every pack but the news sites has an Android app.
-            assertTrue(p.packages.isNotEmpty() || p.id.startsWith("news-"), p.id)
+            // Android apps are optional: some packs are web sites only.
+            assertTrue(p.packages.all { '.' in it }, p.id)
             for (d in p.domains + p.probes) assertEquals(d, Hostlist.normalize(d), "${p.id}: $d")
             // Every probe is covered by the hostlist (ciadpi matches subdomains).
             for (probe in p.probes) {

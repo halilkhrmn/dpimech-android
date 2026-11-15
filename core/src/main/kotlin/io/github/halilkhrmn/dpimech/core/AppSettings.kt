@@ -53,6 +53,8 @@ data class AppSettings(
             DnsServer("Google", "8.8.8.8"),
             DnsServer("Quad9", "9.9.9.9"),
             DnsServer("AdGuard", "94.140.14.14"),
+            DnsServer("DNS4EU (unfiltered)", "86.54.11.100"),
+            DnsServer("Comss", "83.220.169.155"),
         )
 
         private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
