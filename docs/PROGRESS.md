@@ -46,6 +46,8 @@
   - [x] v0.2.0 (versionCode 2), 2026-10-02
   - [x] v0.2.1 (versionCode 3): provider lookup switch for the F-Droid review
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
+  - [ ] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
+    status icon; prepared 2026-11-15, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -53,6 +55,22 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-15 — 0.4.0 prepared
+- Done: versionCode 5, versionName 0.4.0; `changelogs/5.txt` in all five languages (each under
+  500 bytes); the About store screenshot says 0.4.0. Store screenshots 2–5 rendered again in all
+  five languages: they show the site summary row instead of the chips (1 is unchanged).
+- Verified on an emulator (Android 15, x86_64) with the debug APK of CI run 43699359690 (main
+  `ff5dab3`), fresh install: wizard steps 1–3; the site summary row and its bottom sheet (search,
+  select, counter, "App + site" / "Site" labels, 35 rows) in the wizard and the profile editor;
+  the strategy test ran 18 strategies and turned the bypass on (6 of 6 sites open); the chameleon
+  shows in the status bar, the ongoing notification and the Quick Settings tile. From the CI
+  renders: the summary row in the Strategy Lab, "DPIMech green" in the Material You setting.
+- Not checked on the emulator: the two new DNS servers in use, the launcher shortcut icons, the
+  Turkish, Russian, Persian and Arabic screens.
+- Note: the wizard starts the Lab before the notification permission is asked, so on a fresh
+  install the Lab's progress notification is not shown until the permission is granted.
+- Next: merge, then `git tag v0.4.0 && git push origin v0.4.0`.
 
 ### 2026-11-15 — Green everywhere
 - Done: the Material You setting still said the fallback colours were "DPIMech purple" (all five

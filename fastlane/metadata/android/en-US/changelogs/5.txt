@@ -1,0 +1,1 @@
+18 more ready-made sites, 35 in total. They are now picked from one list with search instead of rows of chips, in the profile, the wizard and the Strategy Lab; each row says whether the app is covered too. Two more DNS servers: DNS4EU and Comss. The chameleon is now the icon in the status bar, the notification and the Quick Settings tile. Shortcut icons are green like the logo.
