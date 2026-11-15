@@ -123,7 +123,7 @@
     <string name="wizard_save_only">Save without turning on</string>
     <string name="wizard_profile_whole_phone">Blocked sites</string>
     <string name="settings_dynamic_color">Wallpaper colours (Material You)</string>
-    <string name="settings_dynamic_color_hint">Take the app colours from your wallpaper. Off: DPIMech purple.</string>
+    <string name="settings_dynamic_color_hint">Take the app colours from your wallpaper. Off: DPIMech green.</string>
     <string name="settings_section_look">Appearance</string>
     <string name="settings_section_bypass">Bypass</string>
     <string name="settings_section_notifications">Notifications</string>

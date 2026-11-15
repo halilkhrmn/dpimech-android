@@ -122,7 +122,7 @@
     <string name="wizard_save_only">احفظ دون تشغيل</string>
     <string name="wizard_profile_whole_phone">المواقع المحجوبة</string>
     <string name="settings_dynamic_color">ألوان الخلفية (Material You)</string>
-    <string name="settings_dynamic_color_hint">خذ ألوان التطبيق من خلفية الشاشة. عند الإيقاف: بنفسجي DPIMech.</string>
+    <string name="settings_dynamic_color_hint">خذ ألوان التطبيق من خلفية الشاشة. عند الإيقاف: أخضر DPIMech.</string>
     <string name="settings_section_look">المظهر</string>
     <string name="settings_section_bypass">التجاوز</string>
     <string name="settings_section_notifications">الإشعارات</string>
