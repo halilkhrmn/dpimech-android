@@ -59,6 +59,9 @@
   languages); it says green now, as the theme has been since the chameleon logo. The three launcher
   shortcut icons (Test, Logs, Turn off) were still purple; now the logo's green.
 - Verified: no purple colour value or wording left in app, engine or site resources.
+- Also: the status bar / notification icon and the Quick Settings tile showed a "path that splits"
+  glyph (it looked like a fork); both are the chameleon now, one colour, from the same path as the
+  themed launcher icon, scaled to 24 dp.
 
 ### 2026-11-15 — Ready-made sites in a bottom-sheet list
 - Done: with 35 packs the chip rows filled the profile editor, the wizard and the Strategy Lab. The
