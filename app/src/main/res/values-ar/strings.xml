@@ -233,4 +233,28 @@
         <item quantity="other">استُعيد %d ملف.</item>
     </plurals>
     <string name="restore_failed">تعذّرت قراءة النسخة الاحتياطية.</string>
+    <string name="site_picker_none">لم تُختر مواقع جاهزة</string>
+    <string name="site_picker_tap">اضغط للاختيار من القائمة</string>
+    <string name="site_picker_title">اختر المواقع</string>
+    <string name="site_picker_search">بحث</string>
+    <string name="site_kind_app">تطبيق + موقع</string>
+    <string name="site_kind_web">موقع</string>
+    <string name="site_picker_clear">مسح</string>
+    <string name="site_picker_empty">لا يوجد موقع مطابق. أضفه أدناه كنطاق.</string>
+    <plurals name="site_picker_count">
+        <item quantity="zero">لا مواقع جاهزة · اضغط للتغيير</item>
+        <item quantity="one">موقع جاهز واحد · اضغط للتغيير</item>
+        <item quantity="two">موقعان جاهزان · اضغط للتغيير</item>
+        <item quantity="few">%d مواقع جاهزة · اضغط للتغيير</item>
+        <item quantity="many">%d موقعًا جاهزًا · اضغط للتغيير</item>
+        <item quantity="other">%d موقع جاهز · اضغط للتغيير</item>
+    </plurals>
+    <plurals name="site_picker_selected">
+        <item quantity="zero">لا شيء محدد</item>
+        <item quantity="one">واحد محدد</item>
+        <item quantity="two">اثنان محددان</item>
+        <item quantity="few">%d محددة</item>
+        <item quantity="many">%d محددًا</item>
+        <item quantity="other">%d محدد</item>
+    </plurals>
 </resources>

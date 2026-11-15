@@ -230,4 +230,20 @@
         <item quantity="other">%d profiles restored.</item>
     </plurals>
     <string name="restore_failed">Could not read the backup.</string>
+    <string name="site_picker_none">No ready-made sites chosen</string>
+    <string name="site_picker_tap">Tap to choose from the list</string>
+    <string name="site_picker_title">Choose sites</string>
+    <string name="site_picker_search">Search</string>
+    <string name="site_kind_app">App + site</string>
+    <string name="site_kind_web">Site</string>
+    <string name="site_picker_clear">Clear</string>
+    <string name="site_picker_empty">No site matches. Add it below as a domain.</string>
+    <plurals name="site_picker_count">
+        <item quantity="one">%d ready-made site · tap to change</item>
+        <item quantity="other">%d ready-made sites · tap to change</item>
+    </plurals>
+    <plurals name="site_picker_selected">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
 </resources>

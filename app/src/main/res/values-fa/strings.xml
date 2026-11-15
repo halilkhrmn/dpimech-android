@@ -229,4 +229,20 @@
         <item quantity="other">%d نمایه بازیابی شد.</item>
     </plurals>
     <string name="restore_failed">فایل پشتیبان خوانده نشد.</string>
+    <string name="site_picker_none">سایت آماده‌ای انتخاب نشده</string>
+    <string name="site_picker_tap">برای انتخاب از فهرست ضربه بزنید</string>
+    <string name="site_picker_title">انتخاب سایت‌ها</string>
+    <string name="site_picker_search">جستجو</string>
+    <string name="site_kind_app">برنامه + سایت</string>
+    <string name="site_kind_web">سایت</string>
+    <string name="site_picker_clear">پاک کردن</string>
+    <string name="site_picker_empty">سایتی پیدا نشد. آن را پایین‌تر به‌عنوان دامنه اضافه کنید.</string>
+    <plurals name="site_picker_count">
+        <item quantity="one">%d سایت آماده · برای تغییر ضربه بزنید</item>
+        <item quantity="other">%d سایت آماده · برای تغییر ضربه بزنید</item>
+    </plurals>
+    <plurals name="site_picker_selected">
+        <item quantity="one">%d انتخاب‌شده</item>
+        <item quantity="other">%d انتخاب‌شده</item>
+    </plurals>
 </resources>

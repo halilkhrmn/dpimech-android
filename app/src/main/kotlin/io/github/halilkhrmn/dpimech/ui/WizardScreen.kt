@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -41,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.CountryPreset
-import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.data.LabState
@@ -124,15 +121,10 @@ fun WizardScreen(
                     )
                     if (wholePhone) Text(stringResource(R.string.wizard_whole_phone_note), style = MaterialTheme.typography.bodySmall)
                     Text(stringResource(R.string.wizard_sites), style = MaterialTheme.typography.titleMedium)
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        DomainPack.ALL.forEach { p ->
-                            val on = p.id in packs
-                            FilterChip(selected = on, onClick = {
-                                packs = if (on) packs - p.id else packs + p.id
-                                packsChosen = true
-                            }, label = { Text(p.label()) })
-                        }
-                    }
+                    SitePicker(packs, onChange = {
+                        packs = it
+                        packsChosen = true
+                    })
                     DomainPills(
                         domains = domains,
                         input = domainInput,
