@@ -135,7 +135,12 @@ class TunnelDnsTest {
 
     @Test
     fun knownServersHaveDohUrls() {
-        AppSettings.DNS_SERVERS.forEach { assertTrue(DohClient.urlFor(it.address).startsWith("https://${it.address}/")) }
+        // Every offered server has its own DoH endpoint (none falls back to Cloudflare by mistake).
+        AppSettings.DNS_SERVERS.forEach {
+            val url = DohClient.urlFor(it.address)
+            assertTrue(url.startsWith("https://") && url.endsWith("/dns-query"), url)
+            if (it.address != "1.1.1.1") assertTrue(!url.startsWith("https://1.1.1.1/"), it.name)
+        }
         assertEquals("https://1.1.1.1/dns-query", DohClient.urlFor("10.0.0.1"))
     }
 }
