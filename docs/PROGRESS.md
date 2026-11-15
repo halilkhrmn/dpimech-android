@@ -54,6 +54,12 @@
 
 ## Work log
 
+### 2026-11-15 — Green everywhere
+- Done: the Material You setting still said the fallback colours were "DPIMech purple" (all five
+  languages); it says green now, as the theme has been since the chameleon logo. The three launcher
+  shortcut icons (Test, Logs, Turn off) were still purple; now the logo's green.
+- Verified: no purple colour value or wording left in app, engine or site resources.
+
 ### 2026-11-15 — Ready-made sites in a bottom-sheet list
 - Done: with 35 packs the chip rows filled the profile editor, the wizard and the Strategy Lab. The
   owner picked option C of four mockups: one summary row ("Discord, YouTube · 2 ready-made sites")

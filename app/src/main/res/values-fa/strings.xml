@@ -122,7 +122,7 @@
     <string name="wizard_save_only">ذخیره بدون روشن کردن</string>
     <string name="wizard_profile_whole_phone">سایت‌های مسدود</string>
     <string name="settings_dynamic_color">رنگ‌های کاغذدیواری (Material You)</string>
-    <string name="settings_dynamic_color_hint">رنگ‌های برنامه از کاغذدیواری گرفته شود. خاموش: بنفش DPIMech.</string>
+    <string name="settings_dynamic_color_hint">رنگ‌های برنامه از کاغذدیواری گرفته شود. خاموش: سبز DPIMech.</string>
     <string name="settings_section_look">ظاهر</string>
     <string name="settings_section_bypass">دور زدن</string>
     <string name="settings_section_notifications">اعلان‌ها</string>
