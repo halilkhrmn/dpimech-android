@@ -1,0 +1,1 @@
+New DNS choice: "System DNS", the network's own resolver (Private DNS still applies). With DNS over HTTPS on, if the chosen server does not answer on your network, DPIMech now switches to the network's own DNS by itself and tells you once, so apps keep resolving names where third-party DNS is blocked.

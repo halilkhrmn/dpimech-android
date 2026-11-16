@@ -48,6 +48,8 @@
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
   - [x] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
     status icon; released 2026-11-15
+  - [ ] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); prepared
+    2026-11-16, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -55,6 +57,15 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-16 — 0.5.0 prepared
+- Done: versionCode 6, versionName 0.5.0; `changelogs/6.txt` in all five languages (each under
+  500 bytes); the About store screenshot test says 0.5.0 (the PNG is not rendered again here, no
+  Android SDK in this container; it still shows 0.4.0).
+- Verified: the owner ran the CI debug APK on a phone (system DNS, DoH with fallback: 6 of 6 sites
+  open), and the reporter of #35 says it works on their network.
+- Next: merge #36, then `git tag v0.5.0 && git push origin v0.5.0`; then run Actions → "Delete
+  old artifacts".
 
 ### 2026-11-16 — Smaller CI artifacts
 - Done: CI ran twice per PR commit (push and pull_request) and kept a ~100 MB debug APK set (four
