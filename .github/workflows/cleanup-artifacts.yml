@@ -1,0 +1,35 @@
+name: Delete old artifacts
+
+# Run by hand (Actions → Delete old artifacts → Run workflow). New artifacts expire by themselves
+# (see ci.yml); this clears what older runs left behind, which GitHub keeps for 90 days.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: Delete artifacts older than this many days (0 = all)
+        default: "2"
+
+permissions:
+  actions: write
+
+jobs:
+  delete:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          DAYS: ${{ inputs.days }}
+        with:
+          script: |
+            const days = Number(process.env.DAYS || 2);
+            const cutoff = Date.now() - days * 86400000;
+            const all = await github.paginate(github.rest.actions.listArtifactsForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 100,
+            });
+            let deleted = 0, bytes = 0;
+            for (const a of all) {
+              if (a.expired || Date.parse(a.created_at) > cutoff) continue;
+              await github.rest.actions.deleteArtifact({ owner: context.repo.owner, repo: context.repo.repo, artifact_id: a.id });
+              deleted++; bytes += a.size_in_bytes;
+            }
+            core.info(`Deleted ${deleted} of ${all.length} artifacts, ${(bytes / 1e6).toFixed(1)} MB.`);

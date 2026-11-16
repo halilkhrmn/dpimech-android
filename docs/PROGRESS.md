@@ -56,6 +56,15 @@
 
 ## Work log
 
+### 2026-11-16 — Smaller CI artifacts
+- Done: CI ran twice per PR commit (push and pull_request) and kept a ~100 MB debug APK set (four
+  ABIs and universal) for 90 days each time: ~490 artifacts. Now one run per commit (pull requests
+  only from forks), docs-only pushes skip CI, a newer push cancels the older run on the same branch,
+  only the arm64 debug APK is kept (7 days), renders / lint / test reports only when a job fails
+  (3 days). `cleanup-artifacts.yml` (run by hand) deletes what older runs left. F-Droid and releases
+  are untouched: F-Droid builds from tags and takes the signed APK from GitHub releases.
+- Verified: both workflow files parse as YAML; the next CI run shows the rest.
+
 ### 2026-11-16 — System DNS and an automatic fallback to it (#35)
 - Done: a user reported that Google and similar DNS do not work on some networks (providers block
   them, DoH included), only the system DNS. Two parts, as the owner asked:
