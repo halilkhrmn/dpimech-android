@@ -165,7 +165,7 @@
     <string name="shortcut_long_open">Запустить DPI с %1$s и открыть %2$s</string>
     <string name="shortcut_pin">Добавить на главный экран</string>
     <string name="settings_doh">Шифрованный DNS (DoH)</string>
-    <string name="settings_doh_hint">DNS-запросы приложений идут по HTTPS на сервер выше, провайдер не может их прочитать или подменить. Применяется при следующем включении.</string>
+    <string name="settings_doh_hint">DNS-запросы приложений идут по HTTPS на сервер выше, провайдер не может их прочитать или подменить. Если он не отвечает, используется DNS самой сети. Применяется при следующем включении.</string>
     <string name="settings_quic">Блокировать QUIC</string>
     <string name="settings_quic_hint">Браузеры и YouTube переходят на TCP, где обход работает. Включите, если видео или сайты всё ещё не открываются.</string>
     <string name="home_state_on">Обход включён</string>
@@ -251,4 +251,6 @@
         <item quantity="many">Выбрано %d</item>
         <item quantity="other">Выбрано %d</item>
     </plurals>
+    <string name="dns_system">Системный DNS (DNS самой сети)</string>
+    <string name="settings_doh_system">Не используется с системным DNS: запросы идут к DNS самой сети (их шифрует «Частный DNS» Android, если он включён).</string>
 </resources>

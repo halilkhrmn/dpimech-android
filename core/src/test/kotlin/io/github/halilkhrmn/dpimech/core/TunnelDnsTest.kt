@@ -85,14 +85,14 @@ class TunnelDnsTest {
         val quic = IpPacket.build(true, app6, 1, dns6, 443, ByteArray(20))
         val other = IpPacket.build(false, app4, 1, dns4, 3478, ByteArray(20))
 
-        val both = TunnelFilter(encryptDns = true, blockQuic = true)
+        val both = TunnelFilter(interceptDns = true, blockQuic = true)
         assertEquals(TunnelFilter.Verdict.DNS, both.classify(dns, dns.size))
         assertEquals(TunnelFilter.Verdict.DROP, both.classify(quic, quic.size))
         assertEquals(TunnelFilter.Verdict.PASS, both.classify(other, other.size))
         assertEquals(1, both.dnsQueries.get())
         assertEquals(1, both.quicDropped.get())
 
-        val none = TunnelFilter(encryptDns = false, blockQuic = false)
+        val none = TunnelFilter(interceptDns = false, blockQuic = false)
         assertEquals(false, none.active)
         assertEquals(TunnelFilter.Verdict.PASS, none.classify(dns, dns.size))
         assertEquals(TunnelFilter.Verdict.PASS, none.classify(quic, quic.size))
@@ -136,11 +136,44 @@ class TunnelDnsTest {
     @Test
     fun knownServersHaveDohUrls() {
         // Every offered server has its own DoH endpoint (none falls back to Cloudflare by mistake).
-        AppSettings.DNS_SERVERS.forEach {
+        AppSettings.DNS_SERVERS.filter { it.address != AppSettings.SYSTEM_DNS }.forEach {
             val url = DohClient.urlFor(it.address)
             assertTrue(url.startsWith("https://") && url.endsWith("/dns-query"), url)
             if (it.address != "1.1.1.1") assertTrue(!url.startsWith("https://1.1.1.1/"), it.name)
         }
         assertEquals("https://1.1.1.1/dns-query", DohClient.urlFor("10.0.0.1"))
+    }
+
+    @Test
+    fun chainFallsBackToTheNetworksDnsOnce() {
+        val query = byteArrayOf(1)
+        var primaryUp = false
+        var told = 0
+        val chain = DnsChain(
+            primary = { if (primaryUp) byteArrayOf(1, 1) else null },
+            fallback = { byteArrayOf(2, 2) },
+            onFallback = { told++ },
+        )
+        // The chosen server does not answer: the network's own DNS does, and the user is told once.
+        assertEquals(listOf<Byte>(2, 2), chain.resolve(query)!!.toList())
+        assertEquals(listOf<Byte>(2, 2), chain.resolve(query)!!.toList())
+        assertEquals(1, told)
+        assertEquals(2, chain.fallbackAnswered.get())
+        // Back up: the chosen server answers again.
+        primaryUp = true
+        assertEquals(listOf<Byte>(1, 1), chain.resolve(query)!!.toList())
+        // Nobody answers: null, so the filter sends the query through the tunnel as before.
+        assertEquals(null, DnsChain(primary = { null }, fallback = { null }).resolve(query))
+    }
+
+    @Test
+    fun systemDnsAloneIsNotAFallback() {
+        var told = 0
+        val chain = DnsChain(primary = null, fallback = { byteArrayOf(3) }, onFallback = { told++ })
+        assertEquals(listOf<Byte>(3), chain.resolve(byteArrayOf(1))!!.toList())
+        assertEquals(0, told)
+        // The apps get an address inside the tunnel that only the filter answers.
+        assertEquals(TunnelConfig.systemDnsAddress, TunnelConfig(socksPort = 1080, dns = AppSettings.SYSTEM_DNS).announcedDns)
+        assertEquals("9.9.9.9", TunnelConfig(socksPort = 1080, dns = "9.9.9.9").announcedDns)
     }
 }

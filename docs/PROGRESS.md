@@ -56,6 +56,19 @@
 
 ## Work log
 
+### 2026-11-16 — System DNS and an automatic fallback to it (#35)
+- Done: a user reported that Google and similar DNS do not work on some networks (providers block
+  them, DoH included), only the system DNS. Two parts, as the owner asked:
+  "System DNS (the network's own)" in the DNS list, and an automatic fallback to it. The apps then
+  get 198.18.0.2, an address inside the tunnel that only the packet filter answers, by asking the
+  real network's resolver from outside the VPN (`SystemDns`: Android's resolver on 10+, so Private
+  DNS applies; UDP to the network's DNS server on 8–9). With DNS over HTTPS on, `DnsChain` asks the
+  chosen server first and the network's own DNS when it does not answer; the first fallback is
+  logged and notified once. The DoH switch is greyed out with the system DNS.
+- Verified: `:core:test` here (`DnsChain`, announced address); the app and engine were not built here
+  (no Android SDK in this session), CI builds and lints them.
+- Next: phone test on a network that blocks 8.8.8.8 / 1.1.1.1.
+
 ### 2026-11-15 — 0.4.0 prepared
 - Done: versionCode 5, versionName 0.4.0; `changelogs/5.txt` in all five languages (each under
   500 bytes); the About store screenshot says 0.4.0. Store screenshots 2–5 rendered again in all

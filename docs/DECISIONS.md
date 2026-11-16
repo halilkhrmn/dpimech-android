@@ -194,3 +194,13 @@ DECISIONS #51). Android follows: the launcher icon (adaptive, white background, 
 logo in the wizard and About, the store icon and feature graphic, and the site use it. The SVG has a
 single path, so the app draws it as a vector drawable (sharp at every size, no PNG per density).
 The fallback colour scheme (no wallpaper colours) uses the logo's green instead of the purple.
+
+## 30. The network's own DNS: a choice and the fallback (2026-11-16)
+Some providers block third-party DNS (Google, Cloudflare, their DoH too); then every bypassed app
+lost name resolution (issue #35). The network's own resolver always answers, so it is offered as a
+DNS choice and used automatically when DNS over HTTPS gets no answer. It is asked from outside the
+VPN (DPIMech is not in its own tunnel), through Android's resolver where possible, so Private DNS
+still applies. Trade-offs: without Private DNS it is unencrypted, and where blocking is done in DNS
+(e.g. Turkey) its answers can be the blocked ones; the default stays Cloudflare over HTTPS. With DoH
+off and a fixed server, queries still pass through the tunnel as before (no fallback there).
+

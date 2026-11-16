@@ -165,7 +165,7 @@
     <string name="shortcut_long_open">تشغيل DPI مع %1$s وفتح %2$s</string>
     <string name="shortcut_pin">إضافة إلى الشاشة الرئيسية</string>
     <string name="settings_doh">DNS مشفّر (DoH)</string>
-    <string name="settings_doh_hint">يذهب DNS للتطبيقات التي تحصل على التجاوز عبر HTTPS إلى الخادم أعلاه، فلا يستطيع المزوّد قراءته أو تغييره. يُطبّق عند تشغيل التجاوز في المرة القادمة.</string>
+    <string name="settings_doh_hint">يذهب DNS للتطبيقات التي تحصل على التجاوز عبر HTTPS إلى الخادم أعلاه، فلا يستطيع المزوّد قراءته أو تغييره. إن لم يستجب، يُستخدم DNS الشبكة نفسها. يُطبّق عند تشغيل التجاوز في المرة القادمة.</string>
     <string name="settings_quic">حجب QUIC</string>
     <string name="settings_quic_hint">تعود المتصفحات ويوتيوب إلى TCP حيث يعمل التجاوز. فعّله إذا كانت الفيديوهات أو المواقع لا تزال لا تُحمَّل.</string>
     <string name="home_state_on">التجاوز يعمل</string>
@@ -257,4 +257,6 @@
         <item quantity="many">%d محددًا</item>
         <item quantity="other">%d محدد</item>
     </plurals>
+    <string name="dns_system">DNS النظام (DNS الشبكة نفسها)</string>
+    <string name="settings_doh_system">لا يُستخدم مع DNS النظام: تذهب الاستعلامات إلى DNS الشبكة نفسها (يشفّرها DNS الخاص في أندرويد إن كان مفعّلًا).</string>
 </resources>

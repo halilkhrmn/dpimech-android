@@ -165,7 +165,7 @@
     <string name="shortcut_long_open">شروع DPI با %1$s و باز کردن %2$s</string>
     <string name="shortcut_pin">افزودن به صفحهٔ اصلی</string>
     <string name="settings_doh">DNS رمزگذاری‌شده (DoH)</string>
-    <string name="settings_doh_hint">DNS برنامه‌هایی که دور زدن دارند از راه HTTPS به سرور بالا می‌رود، پس سرویس‌دهنده نمی‌تواند آن را بخواند یا عوض کند. از روشن شدن بعدی دور زدن اعمال می‌شود.</string>
+    <string name="settings_doh_hint">DNS برنامه‌هایی که دور زدن دارند از راه HTTPS به سرور بالا می‌رود، پس سرویس‌دهنده نمی‌تواند آن را بخواند یا عوض کند. اگر پاسخ ندهد، DNS خود شبکه استفاده می‌شود. از روشن شدن بعدی دور زدن اعمال می‌شود.</string>
     <string name="settings_quic">مسدود کردن QUIC</string>
     <string name="settings_quic_hint">مرورگرها و یوتیوب به TCP برمی‌گردند که دور زدن روی آن کار می‌کند. اگر ویدیوها یا سایت‌ها هنوز باز نمی‌شوند روشن کنید.</string>
     <string name="home_state_on">دور زدن روشن است</string>
@@ -245,4 +245,6 @@
         <item quantity="one">%d انتخاب‌شده</item>
         <item quantity="other">%d انتخاب‌شده</item>
     </plurals>
+    <string name="dns_system">DNS سیستم (DNS خود شبکه)</string>
+    <string name="settings_doh_system">با DNS سیستم استفاده نمی‌شود: درخواست‌ها به DNS خود شبکه می‌روند (اگر DNS خصوصی اندروید فعال باشد، آن‌ها را رمزگذاری می‌کند).</string>
 </resources>

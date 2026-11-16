@@ -6,20 +6,21 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * What the packet filter in front of hev-socks5-tunnel does with each packet the bypassed apps
- * send: DNS queries (UDP port 53, to any server) are answered over DNS over HTTPS, QUIC
- * (UDP port 443) is dropped when the switch is on so apps fall back to TCP, the rest passes.
+ * send: DNS queries (UDP port 53, to any server) are answered by the app itself when
+ * [interceptDns] (DNS over HTTPS, or the network's own DNS), QUIC (UDP port 443) is dropped when
+ * the switch is on so apps fall back to TCP, the rest passes.
  */
-class TunnelFilter(val encryptDns: Boolean, val blockQuic: Boolean) {
+class TunnelFilter(val interceptDns: Boolean, val blockQuic: Boolean) {
     enum class Verdict { PASS, DROP, DNS }
 
     val dnsQueries = AtomicLong()
     val quicDropped = AtomicLong()
 
     /** Whether the filter has anything to do; otherwise hev gets the TUN directly. */
-    val active get() = encryptDns || blockQuic
+    val active get() = interceptDns || blockQuic
 
     fun classify(buf: ByteArray, len: Int): Verdict = when (IpPacket.udpDstPort(buf, len)) {
-        DNS_PORT -> if (encryptDns) Verdict.DNS.also { dnsQueries.incrementAndGet() } else Verdict.PASS
+        DNS_PORT -> if (interceptDns) Verdict.DNS.also { dnsQueries.incrementAndGet() } else Verdict.PASS
         QUIC_PORT -> if (blockQuic) Verdict.DROP.also { quicDropped.incrementAndGet() } else Verdict.PASS
         else -> Verdict.PASS
     }
@@ -80,14 +81,14 @@ class DohClient(
     val url: String,
     private val transport: (url: String, body: ByteArray) -> ByteArray = ::post,
     private val now: () -> Long = System::currentTimeMillis,
-) {
+) : DnsUpstream {
     private var failures = 0
     private var restUntil = 0L
     val answered = AtomicLong()
     val failed = AtomicLong()
 
     /** The answer to [query] (its id kept), or null when DoH is not available right now. */
-    fun resolve(query: ByteArray): ByteArray? {
+    override fun resolve(query: ByteArray): ByteArray? {
         if (!DnsMessage.isQuery(query)) return null
         synchronized(this) { if (now() < restUntil) return null }
         val answer = runCatching { transport(url, DnsMessage.withId(query, 0)) }.getOrNull()
@@ -146,3 +147,33 @@ class DohClient(
         }
     }
 }
+
+/** Somewhere DNS queries can go: the answer to a wire-format query, or null when it cannot answer now. */
+fun interface DnsUpstream {
+    fun resolve(query: ByteArray): ByteArray?
+}
+
+/**
+ * The chosen server first ([primary], DNS over HTTPS); when it cannot answer, the network's own
+ * DNS ([fallback]). Some providers block Google, Cloudflare and the like, DoH included, but their
+ * own resolver always works. [onFallback] runs once, the first time the fallback answers, so the
+ * user can be told. With no primary (the "system DNS" choice) only the fallback is asked.
+ */
+class DnsChain(
+    private val primary: DnsUpstream?,
+    private val fallback: DnsUpstream?,
+    private val onFallback: () -> Unit = {},
+) : DnsUpstream {
+    /** Queries the fallback answered. */
+    val fallbackAnswered = AtomicLong()
+    private val told = java.util.concurrent.atomic.AtomicBoolean(primary == null)
+
+    override fun resolve(query: ByteArray): ByteArray? {
+        primary?.resolve(query)?.let { return it }
+        val answer = fallback?.resolve(query) ?: return null
+        fallbackAnswered.incrementAndGet()
+        if (told.compareAndSet(false, true)) onFallback()
+        return answer
+    }
+}
+

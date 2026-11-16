@@ -37,6 +37,7 @@ class CountryPresetTest {
         assertEquals(AppSettings(), AppSettings.decode("{broken"))
         assertTrue(AppSettings.isValidDns("94.140.14.14"))
         assertFalse(AppSettings.isValidDns("dns.google"))
-        assertTrue(AppSettings.DNS_SERVERS.all { AppSettings.isValidDns(it.address) })
+        assertTrue(AppSettings.DNS_SERVERS.all { AppSettings.isValidDns(it.address) || it.address == AppSettings.SYSTEM_DNS })
+        assertFalse(AppSettings.isValidDns(AppSettings.SYSTEM_DNS))
     }
 }

@@ -20,4 +20,5 @@
     <string name="engine_stats_ping_none">No site opens right now (%1$d tried)</string>
     <string name="engine_auto_progress">Finding the best strategy: %1$d of %2$d tests</string>
     <string name="engine_next_profile">Next profile</string>
+    <string name="event_dns_fallback">The chosen DNS server does not answer on this network; DPIMech uses the network\'s own DNS instead.</string>
 </resources>
