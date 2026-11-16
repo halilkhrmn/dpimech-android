@@ -109,6 +109,9 @@ object NetworkIdentity {
             .onFailure { EngineLog.add("network callback failed: $it") }
     }
 
+    /** The real (non-VPN) network DPIMech is on, or null while there is none. */
+    fun network(): Network? = current
+
     /**
      * Looks the provider up again on the current network (Strategy Lab's "provider" line), when
      * the user allows lookups at all.

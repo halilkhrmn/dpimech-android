@@ -16,6 +16,8 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
 import io.github.halilkhrmn.dpimech.core.Connector
+import io.github.halilkhrmn.dpimech.core.AppSettings
+import io.github.halilkhrmn.dpimech.core.DnsChain
 import io.github.halilkhrmn.dpimech.core.DohClient
 import io.github.halilkhrmn.dpimech.core.Ping
 import io.github.halilkhrmn.dpimech.core.SiteCheck
@@ -59,6 +61,7 @@ class BypassVpnService : VpnService() {
     private var filter: PacketFilter? = null
     private var tunnelFilter: TunnelFilter? = null
     private var doh: DohClient? = null
+    private var dnsChain: DnsChain? = null
     private var encryptDns = true
     private var blockQuic = false
     private var statsJob: Job? = null
@@ -230,7 +233,7 @@ class BypassVpnService : VpnService() {
             .setMtu(config.mtu)
             .addAddress(config.ipv4, 32)
             .addRoute("0.0.0.0", 0)
-            .addDnsServer(config.dns)
+            .addDnsServer(config.announcedDns)
             .setBlocking(false)
         if (ipv6) builder.addAddress(config.ipv6, 128).addRoute("::", 0)
         apps.allowed.forEach { builder.addAllowedApplication(it) }
@@ -240,9 +243,11 @@ class BypassVpnService : VpnService() {
         tun = fd
         tunnelIpv6 = ipv6
         // DoH and the QUIC switch need to see the packets first; otherwise hev gets the TUN.
-        val rules = tunnelFilter ?: TunnelFilter(encryptDns, blockQuic).also { tunnelFilter = it }
+        // "System DNS" is always answered by the filter: the apps' DNS address exists only there.
+        val systemDns = dns == AppSettings.SYSTEM_DNS
+        val rules = tunnelFilter ?: TunnelFilter(encryptDns || systemDns, blockQuic).also { tunnelFilter = it }
         val pf = if (rules.active) {
-            PacketFilter(fd, rules, doh ?: DohClient(DohClient.urlFor(dns)).also { doh = it }, config.mtu)
+            PacketFilter(fd, rules, dnsUpstream(systemDns), config.mtu)
         } else {
             null
         }
@@ -251,7 +256,7 @@ class BypassVpnService : VpnService() {
         check(TProxy.TProxyStartService(yaml.path, pf?.hevFd?.fd ?: fd.fd)) { "tunnel did not start" }
         EngineLog.add(
             "tunnel up (IPv6 ${if (ipv6) "on" else "off"}" +
-                (if (encryptDns) ", DNS over HTTPS ${doh?.url}" else "") +
+                (if (systemDns) ", system DNS" else if (encryptDns) ", DNS over HTTPS ${doh?.url}, system DNS as fallback" else "") +
                 (if (blockQuic) ", QUIC blocked" else "") + ")",
         )
     }
@@ -413,6 +418,7 @@ class BypassVpnService : VpnService() {
         filter = null
         tunnelFilter = null
         doh = null
+        dnsChain = null
         runCatching { tun?.close() }
         tun = null
         EngineStats.reset()
@@ -486,6 +492,20 @@ class BypassVpnService : VpnService() {
             }
         }
     }
+
+    /**
+     * DNS for the filter: DNS over HTTPS to the chosen server, and the network's own DNS when that
+     * does not answer (some providers block Google, Cloudflare and their DoH). With [systemOnly]
+     * the network's own DNS alone. The first fallback is logged and, if wanted, notified once.
+     */
+    private fun dnsUpstream(systemOnly: Boolean): DnsChain = dnsChain ?: DnsChain(
+        primary = if (systemOnly) null else doh ?: DohClient(DohClient.urlFor(dns)).also { doh = it },
+        fallback = SystemDns(this),
+        onFallback = {
+            EngineLog.add("DNS: $dns did not answer, using the network's own DNS")
+            if (notifyErrors) event(getString(R.string.event_dns_fallback))
+        },
+    ).also { dnsChain = it }
 
     /** A one-off notification on the events channel (strategy found, bypass stopped). */
     private fun event(text: String) {

@@ -166,7 +166,7 @@
     <string name="shortcut_long_open">Start DPI with %1$s and open %2$s</string>
     <string name="shortcut_pin">Add to home screen</string>
     <string name="settings_doh">Encrypted DNS (DoH)</string>
-    <string name="settings_doh_hint">DNS of the bypassed apps goes over HTTPS to the server above, so the provider cannot read or replace it. Applies the next time the bypass starts.</string>
+    <string name="settings_doh_hint">DNS of the bypassed apps goes over HTTPS to the server above, so the provider cannot read or replace it. If it does not answer, the network\'s own DNS is used. Applies the next time the bypass starts.</string>
     <string name="settings_quic">Block QUIC</string>
     <string name="settings_quic_hint">Browsers and YouTube fall back to TCP, where the bypass works. Turn on if videos or sites still do not load.</string>
     <string name="home_state_on">Bypass is on</string>
@@ -246,4 +246,6 @@
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
     </plurals>
+    <string name="dns_system">System DNS (the network\'s own)</string>
+    <string name="settings_doh_system">Not used with the system DNS: queries go to the network\'s own resolver (Android\'s Private DNS, if set, encrypts them).</string>
 </resources>

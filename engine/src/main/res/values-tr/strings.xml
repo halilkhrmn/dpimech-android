@@ -19,4 +19,5 @@
     <string name="engine_stats_ping_none">Şu an hiçbir site açılmıyor (%1$d denendi)</string>
     <string name="engine_auto_progress">En iyi strateji aranıyor: %2$d testten %1$d</string>
     <string name="engine_next_profile">Sonraki profil</string>
+    <string name="event_dns_fallback">Seçilen DNS sunucusu bu ağda cevap vermiyor; DPIMech onun yerine ağın kendi DNS\'ini kullanıyor.</string>
 </resources>

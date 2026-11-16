@@ -55,14 +55,19 @@ data class AppSettings(
             DnsServer("AdGuard", "94.140.14.14"),
             DnsServer("DNS4EU (unfiltered)", "86.54.11.100"),
             DnsServer("Comss", "83.220.169.155"),
+            // The network's own resolver (the provider's, or Android's Private DNS); named in the UI.
+            DnsServer("", SYSTEM_DNS),
         )
+
+        /** [dns] value for "the network's own DNS": no fixed address, the app asks the system. */
+        const val SYSTEM_DNS = "system"
 
         private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
         fun decode(text: String): AppSettings =
             runCatching { json.decodeFromString(serializer(), text) }.getOrDefault(AppSettings())
 
-        /** A plain IPv4 address (the VPN builder rejects anything else). */
+        /** A plain IPv4 address (the VPN builder rejects anything else); [SYSTEM_DNS] is not one. */
         fun isValidDns(s: String) = s.split('.').let { p -> p.size == 4 && p.all { it.toIntOrNull() in 0..255 } }
     }
 }

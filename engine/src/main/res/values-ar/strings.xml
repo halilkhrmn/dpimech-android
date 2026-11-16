@@ -19,4 +19,5 @@
     <string name="engine_stats_ping_none">لا يفتح أي موقع الآن (جُرّب %1$d)</string>
     <string name="engine_auto_progress">البحث عن أفضل استراتيجية: %1$d من %2$d اختبار</string>
     <string name="engine_next_profile">الملف التالي</string>
+    <string name="event_dns_fallback">خادم DNS المختار لا يستجيب على هذه الشبكة؛ يستخدم DPIMech بدلًا منه DNS الشبكة نفسها.</string>
 </resources>

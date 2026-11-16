@@ -1,11 +1,21 @@
 name: CI
 
+# One run per commit: pushes (any branch) build here, so a PR from this repository needs no
+# second run; pull requests run only when they come from a fork. Docs-only pushes skip CI.
 on:
   push:
+    paths-ignore: ["docs/**", "**/*.md"]
   pull_request:
+    paths-ignore: ["docs/**", "**/*.md"]
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+# A newer push to the same branch cancels the older run (never on main).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   NDK_VERSION: 29.0.14206865
@@ -13,6 +23,7 @@ env:
 jobs:
   test:
     name: Core tests + engines on Linux
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -41,14 +52,17 @@ jobs:
         run: |
           f=core/build/test-results/test/TEST-io.github.halilkhrmn.dpimech.core.TunnelEndToEndTest.xml
           grep -q 'skipped="0"' "$f" && grep -q 'failures="0"' "$f"
+      # Reports only when something failed, kept 3 days.
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: core-test-results
           path: core/build/test-results/
+          retention-days: 3
 
   android:
     name: Android build + lint
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -63,23 +77,29 @@ jobs:
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
       - name: Build debug APK, lint, screen tests
         run: ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest --console=plain
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: screenshots
-          path: app/build/screenshots/
+      # The arm64 debug APK only (nearly every phone; the other ABIs made it ~100 MB a run), kept a
+      # week for testing on a phone. Renders and the lint report only when something failed.
       - uses: actions/upload-artifact@v4
         with:
           name: dpimech-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*arm64-v8a*.apk
+          retention-days: 7
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
+        with:
+          name: screenshots
+          path: app/build/screenshots/
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        if: failure()
         with:
           name: lint-report
           path: app/build/reports/lint-results-debug.html
+          retention-days: 3
 
   fastlane:
     name: Store metadata (fastlane)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4

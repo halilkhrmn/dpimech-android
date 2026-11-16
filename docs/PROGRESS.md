@@ -48,6 +48,8 @@
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
   - [x] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
     status icon; released 2026-11-15
+  - [ ] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); prepared
+    2026-11-16, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -55,6 +57,37 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-16 — 0.5.0 prepared
+- Done: versionCode 6, versionName 0.5.0; `changelogs/6.txt` in all five languages (each under
+  500 bytes); the About store screenshot test says 0.5.0 (the PNG is not rendered again here, no
+  Android SDK in this container; it still shows 0.4.0).
+- Verified: the owner ran the CI debug APK on a phone (system DNS, DoH with fallback: 6 of 6 sites
+  open), and the reporter of #35 says it works on their network.
+- Next: merge #36, then `git tag v0.5.0 && git push origin v0.5.0`; then run Actions → "Delete
+  old artifacts".
+
+### 2026-11-16 — Smaller CI artifacts
+- Done: CI ran twice per PR commit (push and pull_request) and kept a ~100 MB debug APK set (four
+  ABIs and universal) for 90 days each time: ~490 artifacts. Now one run per commit (pull requests
+  only from forks), docs-only pushes skip CI, a newer push cancels the older run on the same branch,
+  only the arm64 debug APK is kept (7 days), renders / lint / test reports only when a job fails
+  (3 days). `cleanup-artifacts.yml` (run by hand) deletes what older runs left. F-Droid and releases
+  are untouched: F-Droid builds from tags and takes the signed APK from GitHub releases.
+- Verified: both workflow files parse as YAML; the next CI run shows the rest.
+
+### 2026-11-16 — System DNS and an automatic fallback to it (#35)
+- Done: a user reported that Google and similar DNS do not work on some networks (providers block
+  them, DoH included), only the system DNS. Two parts, as the owner asked:
+  "System DNS (the network's own)" in the DNS list, and an automatic fallback to it. The apps then
+  get 198.18.0.2, an address inside the tunnel that only the packet filter answers, by asking the
+  real network's resolver from outside the VPN (`SystemDns`: Android's resolver on 10+, so Private
+  DNS applies; UDP to the network's DNS server on 8–9). With DNS over HTTPS on, `DnsChain` asks the
+  chosen server first and the network's own DNS when it does not answer; the first fallback is
+  logged and notified once. The DoH switch is greyed out with the system DNS.
+- Verified: `:core:test` here (`DnsChain`, announced address); the app and engine were not built here
+  (no Android SDK in this session), CI builds and lints them.
+- Next: phone test on a network that blocks 8.8.8.8 / 1.1.1.1.
 
 ### 2026-11-15 — 0.4.0 prepared
 - Done: versionCode 5, versionName 0.4.0; `changelogs/5.txt` in all five languages (each under

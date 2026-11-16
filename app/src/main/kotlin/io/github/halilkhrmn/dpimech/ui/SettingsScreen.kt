@@ -126,15 +126,17 @@ fun SettingsScreen(
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_dns)) },
                 supportingContent = {
-                    Text((AppSettings.DNS_SERVERS.find { it.address == settings.dns }?.name ?: "") + " (${settings.dns})\n" + stringResource(R.string.settings_dns_hint))
+                    Text(dnsLabel(settings.dns) + "\n" + stringResource(R.string.settings_dns_hint))
                 },
                 modifier = Modifier.clickable { pickDns = true },
             )
+            // The network's own DNS is not encrypted by DPIMech (Android's Private DNS may be).
+            val systemDns = settings.dns == AppSettings.SYSTEM_DNS
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_doh)) },
-                supportingContent = { Text(stringResource(R.string.settings_doh_hint)) },
-                trailingContent = { Switch(settings.encryptedDns, { on -> onChange { it.copy(encryptedDns = on) } }) },
-                modifier = Modifier.clickable { onChange { it.copy(encryptedDns = !it.encryptedDns) } },
+                supportingContent = { Text(stringResource(if (systemDns) R.string.settings_doh_system else R.string.settings_doh_hint)) },
+                trailingContent = { Switch(settings.encryptedDns && !systemDns, { on -> onChange { it.copy(encryptedDns = on) } }, enabled = !systemDns) },
+                modifier = Modifier.clickable(enabled = !systemDns) { onChange { it.copy(encryptedDns = !it.encryptedDns) } },
             )
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_quic)) },
@@ -273,13 +275,19 @@ fun SettingsScreen(
     if (pickDns) {
         ChoiceDialog(
             title = stringResource(R.string.settings_dns),
-            options = AppSettings.DNS_SERVERS.map { it.address to "${it.name} (${it.address})" },
+            options = AppSettings.DNS_SERVERS.map { it.address to dnsLabel(it.address) },
             selected = settings.dns,
             onPick = { dns -> pickDns = false; onChange { it.copy(dns = dns) } },
             onDismiss = { pickDns = false },
         )
     }
 }
+
+/** "Cloudflare (1.1.1.1)", or the translated name of the network's own DNS. */
+@Composable
+private fun dnsLabel(address: String): String =
+    if (address == AppSettings.SYSTEM_DNS) stringResource(R.string.dns_system)
+    else (AppSettings.DNS_SERVERS.find { it.address == address }?.name ?: "") + " ($address)"
 
 private fun isIgnoringBattery(context: android.content.Context) =
     context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)

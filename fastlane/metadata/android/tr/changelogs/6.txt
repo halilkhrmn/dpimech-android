@@ -1,0 +1,1 @@
+Yeni DNS seçeneği: "Sistem DNS'i", ağın kendi çözümleyicisi (Özel DNS yine geçerli). DNS over HTTPS açıkken seçilen sunucu ağınızda cevap vermezse DPIMech artık kendiliğinden ağın DNS'ine geçer ve bir kez haber verir; böylece üçüncü taraf DNS'in engellendiği yerlerde uygulamalar çalışmaya devam eder.

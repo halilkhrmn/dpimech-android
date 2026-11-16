@@ -19,4 +19,5 @@
     <string name="engine_stats_ping_none">اکنون هیچ سایتی باز نمی‌شود (%1$d آزموده شد)</string>
     <string name="engine_auto_progress">یافتن بهترین راهبرد: %1$d از %2$d آزمون</string>
     <string name="engine_next_profile">نمایهٔ بعدی</string>
+    <string name="event_dns_fallback">سرور DNS انتخاب‌شده در این شبکه پاسخ نمی‌دهد؛ DPIMech به‌جای آن از DNS خود شبکه استفاده می‌کند.</string>
 </resources>

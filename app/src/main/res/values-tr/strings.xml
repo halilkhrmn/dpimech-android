@@ -165,7 +165,7 @@
     <string name="shortcut_long_open">%1$s ile DPI başlat ve %2$s aç</string>
     <string name="shortcut_pin">Ana ekrana ekle</string>
     <string name="settings_doh">Şifreli DNS (DoH)</string>
-    <string name="settings_doh_hint">Atlatılan uygulamaların DNS sorguları yukarıdaki sunucuya HTTPS ile gider; sağlayıcı okuyamaz, değiştiremez. Atlatma bir sonraki açılışta uygulanır.</string>
+    <string name="settings_doh_hint">Atlatılan uygulamaların DNS sorguları yukarıdaki sunucuya HTTPS ile gider; sağlayıcı okuyamaz, değiştiremez. Cevap vermezse ağın kendi DNS\'i kullanılır. Atlatma bir sonraki açılışta uygulanır.</string>
     <string name="settings_quic">QUIC\'i engelle</string>
     <string name="settings_quic_hint">Tarayıcılar ve YouTube, atlatmanın çalıştığı TCP\'ye geçer. Videolar ya da siteler hâlâ açılmıyorsa açın.</string>
     <string name="home_state_on">Atlatma açık</string>
@@ -245,4 +245,6 @@
         <item quantity="one">%d seçili</item>
         <item quantity="other">%d seçili</item>
     </plurals>
+    <string name="dns_system">Sistem DNS\'i (ağın kendi DNS\'i)</string>
+    <string name="settings_doh_system">Sistem DNS\'i seçiliyken kullanılmaz: sorgular ağın kendi DNS\'ine gider (Android\'de Özel DNS ayarlıysa o şifreler).</string>
 </resources>

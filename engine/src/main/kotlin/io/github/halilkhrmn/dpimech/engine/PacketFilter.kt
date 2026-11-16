@@ -5,7 +5,7 @@ import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
 import android.system.StructPollfd
-import io.github.halilkhrmn.dpimech.core.DohClient
+import io.github.halilkhrmn.dpimech.core.DnsUpstream
 import io.github.halilkhrmn.dpimech.core.IpPacket
 import io.github.halilkhrmn.dpimech.core.TunnelFilter
 import java.io.FileDescriptor
@@ -17,13 +17,14 @@ import kotlin.concurrent.thread
 /**
  * Sits between the TUN and hev-socks5-tunnel when DNS over HTTPS or the QUIC switch is on:
  * hev gets one end of a packet socket pair instead of the TUN, and every packet the apps send
- * passes [TunnelFilter] first. DNS queries are answered over DoH (plain DNS through the tunnel
- * when DoH is not reachable), QUIC is dropped, the rest goes to hev unchanged.
+ * passes [TunnelFilter] first. DNS queries are answered by [upstream] (DoH, then the network's own
+ * DNS; plain DNS through the tunnel when neither answers), QUIC is dropped, the rest goes to hev
+ * unchanged.
  */
 internal class PacketFilter(
     private val tun: ParcelFileDescriptor,
     private val filter: TunnelFilter,
-    private val doh: DohClient,
+    private val upstream: DnsUpstream,
     mtu: Int,
 ) {
     private val ours = FileDescriptor()
@@ -34,7 +35,7 @@ internal class PacketFilter(
     @Volatile
     private var running = true
     private val size = mtu + 64
-    private val dns = Executors.newFixedThreadPool(4) { r -> Thread(r, "doh").apply { isDaemon = true } }
+    private val dns = Executors.newFixedThreadPool(4) { r -> Thread(r, "dns").apply { isDaemon = true } }
     private val tunLock = Any()
     private val up: Thread
     private val down: Thread
@@ -93,9 +94,9 @@ internal class PacketFilter(
 
     private fun answer(packet: ByteArray) {
         val q = IpPacket.udp(packet, packet.size) ?: return toHev(packet, packet.size)
-        val reply = doh.resolve(q.payload)
+        val reply = upstream.resolve(q.payload)
         if (reply == null || !running) {
-            // DoH unavailable: let the query go the old way, through hev and ciadpi.
+            // No answer: let the query go the old way, through hev and ciadpi.
             toHev(packet, packet.size)
             return
         }
