@@ -153,6 +153,7 @@ class BypassVpnService : VpnService() {
         stopEngine(null, stopService = false)
         stopping = false
         EngineState.set(EngineState.Starting(p.id))
+        CrashRecorder.starting(true)
         try {
             val apps = VpnApps.plan(p, packageName, installedPackages()).getOrThrow()
             val lists = File(filesDir, "lists").apply { mkdirs() }
@@ -181,9 +182,13 @@ class BypassVpnService : VpnService() {
             startStats(p)
             EngineState.set(EngineState.Running(p.id, p.name, entry.name))
             EngineLog.add("started profile ${p.name} on port $port")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // Throwable, not Exception: an Error here (a missing class on an old Android) used to
+            // kill the whole app instead of showing why the start failed.
             EngineLog.add("start failed: $e")
             stopEngine(EngineState.Failed(p.id, e.message ?: e.toString()))
+        } finally {
+            CrashRecorder.starting(false)
         }
     }
 
@@ -270,7 +275,7 @@ class BypassVpnService : VpnService() {
         oldFilter?.stop()
         try {
             openTunnel(enginePort)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             EngineLog.add("tunnel rebuild failed: $e")
             stopEngine(EngineState.Failed(profile?.id, e.message ?: e.toString()))
         } finally {
@@ -393,7 +398,7 @@ class BypassVpnService : VpnService() {
         old.stop()
         try {
             engine = Ciadpi.start(this, engineArgs, port, profile?.name ?: "engine")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             // The next watchdog tick sees a dead engine and tries again (or gives up).
             EngineLog.add("restart failed: $e")
         }

@@ -10,6 +10,7 @@ import io.github.halilkhrmn.dpimech.data.ProfileRepository
 import io.github.halilkhrmn.dpimech.data.SettingsRepository
 import io.github.halilkhrmn.dpimech.data.StrategyRepository
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
+import io.github.halilkhrmn.dpimech.engine.CrashRecorder
 import io.github.halilkhrmn.dpimech.engine.EngineEvents
 import io.github.halilkhrmn.dpimech.engine.EngineState
 import io.github.halilkhrmn.dpimech.shortcut.Shortcuts
@@ -34,6 +35,8 @@ class DpimechApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // First: the log file and the crash handler, so the next report shows how a crash ended.
+        CrashRecorder.install(filesDir)
         profiles = ProfileRepository(filesDir)
         strategies = StrategyRepository(filesDir)
         settings = SettingsRepository(filesDir)

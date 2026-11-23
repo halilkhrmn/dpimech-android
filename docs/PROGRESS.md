@@ -58,6 +58,19 @@
 
 ## Work log
 
+### 2026-11-23 — The log survives a crash
+- Why: a problem report from 0.5.0 on a Xiaomi Mi 6 (Android 9) says the app closes when "Start"
+  is tapped, but the log held nothing after the crash: it was only in memory. The 0.5.0 release APK
+  was taken apart (baksmali): the Android 10 DNS call is behind its version check and R8 keeps it
+  there, so the system DNS code is not the obvious cause.
+- Done (DECISIONS #31): `CrashRecord` + `LogFile` (core), `CrashRecorder` (engine): the log is also
+  written to `files/log.txt`, an uncaught exception writes `files/crash.txt`, and turning a profile
+  on leaves a mark until it ends. The next start puts the previous run's last 30 lines and the trace
+  into the log. Starting, rebuilding the tunnel and restarting ByeDPI catch `Throwable`.
+- Verified: `CrashRecordTest` (trace, previous run, file size limit); app and engine by CI.
+- Next: the reporter tries the CI APK and sends a new report; ask whether 0.4.0 worked and whether
+  turning DNS over HTTPS or the automatic strategy off changes anything.
+
 ### 2026-11-16 — 0.5.0 prepared
 - Done: versionCode 6, versionName 0.5.0; `changelogs/6.txt` in all five languages (each under
   500 bytes); the About store screenshot test says 0.5.0 (the PNG is not rendered again here, no

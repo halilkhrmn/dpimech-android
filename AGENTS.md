@@ -78,12 +78,14 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   Ping              average connect+TLS time of the profile's sites through ciadpi
   QuickCheck        one site, directly and through a short-lived ciadpi (Test tab)
   ProfileBackup     profiles to/from a file (Settings → Backup)
+  CrashRecord, LogFile  previous run's end (last log lines, stack trace) for the next report
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
           (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
           notifications), StartMemory (last start, for always-on VPN), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
-          AndroidEngineLauncher (Lab)
+          SystemDns (the network's own DNS), EngineLog + CrashRecorder (log file, crash trace for
+          the next report), AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
           profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:

@@ -204,3 +204,14 @@ still applies. Trade-offs: without Private DNS it is unencrypted, and where bloc
 (e.g. Turkey) its answers can be the blocked ones; the default stays Cloudflare over HTTPS. With DoH
 off and a fixed server, queries still pass through the tunnel as before (no fallback there).
 
+
+## 31. The log survives a crash, on the phone only (2026-11-23)
+A report from Android 9 said the app closes when a profile is turned on, but its log held nothing:
+the log lived only in memory and died with the app. Crash reporters are out (F-Droid, no
+telemetry), so DPIMech keeps the evidence locally: the log is also written to a small file in the
+app's own storage (128 KB at most), an uncaught exception writes its stack trace, and turning a
+profile on leaves a mark until it finishes (a crash in native code, such as hev, leaves only that).
+At the next start the previous run's last lines and the trace go into the log once, so the next
+"Report a problem" carries them; nothing is sent by itself. Starting a profile now catches
+`Throwable`, not only `Exception`: an `Error` there (e.g. a class missing on an old Android) shows
+as "start failed" instead of closing the app.
