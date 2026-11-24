@@ -75,6 +75,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Install NDK and platform
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
+      # Robolectric downloads its Android jars from Maven Central at test time; that download
+      # failed twice in a row (2026-11-23/24), so keep them between runs.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ hashFiles('gradle/libs.versions.toml') }}
       - name: Build debug APK, lint, screen tests
         run: ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest --console=plain
       # The arm64 debug APK only (nearly every phone; the other ABIs made it ~100 MB a run), kept a
