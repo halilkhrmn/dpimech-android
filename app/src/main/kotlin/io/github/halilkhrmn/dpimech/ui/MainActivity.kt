@@ -43,6 +43,7 @@ import io.github.halilkhrmn.dpimech.core.LabResult
 import io.github.halilkhrmn.dpimech.core.ProblemReport
 import io.github.halilkhrmn.dpimech.core.Profile
 import io.github.halilkhrmn.dpimech.core.StrategyEntry
+import io.github.halilkhrmn.dpimech.engine.VpnPermission
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     private val vpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val p = pending
         pending = null
+        VpnPermission.remember(this, result.resultCode == RESULT_OK)
         if (result.resultCode == RESULT_OK && p != null) {
             app.startBypass(this, p)
             openAfterStart?.let { pkg -> packageManager.getLaunchIntentForPackage(pkg)?.let { runCatching { startActivity(it) } } }
@@ -394,7 +396,7 @@ class MainActivity : AppCompatActivity() {
             profiles = app.profiles.saved.value,
             engineState = state,
             isp = NetworkIdentity.flow.value?.isp ?: app.lab.flow.value.isp,
-            log = EngineLog.snapshot().takeLast(300),
+            log = EngineLog.history(300),
         )
     }
 
@@ -413,7 +415,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        val ask = VpnService.prepare(this)
+        val ask = VpnPermission.ask(this, "turning on")
         if (ask == null) {
             app.startBypass(this, profile)
         } else {

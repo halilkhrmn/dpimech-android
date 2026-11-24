@@ -215,3 +215,13 @@ At the next start the previous run's last lines and the trace go into the log on
 "Report a problem" carries them; nothing is sent by itself. Starting a profile now catches
 `Throwable`, not only `Exception`: an `Error` there (e.g. a class missing on an old Android) shows
 as "start failed" instead of closing the app.
+
+## 32. Ask for the VPN permission only when the user turns DPIMech on (2026-11-24)
+Once the user has allowed DPIMech, `VpnService.prepare()` is not just a question: Android hands the
+VPN to the calling app and stops whichever other VPN app was running, even if DPIMech then starts
+nothing. A user of DuckDuckGo's App Tracking Protection saw it turn off now and then (issue #38).
+The home-screen widget called prepare() on every redraw; it now uses the last known answer, and
+prepare() runs only on a user's action (button, tile, widget tap, shortcut, start on boot), through
+`VpnPermission`, which logs every call. DPIMech also logs when another app's VPN turns on or off,
+and "Report a problem" takes the log from the file, so these lines survive the app being closed in
+the background.

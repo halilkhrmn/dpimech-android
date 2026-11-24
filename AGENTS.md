@@ -85,7 +85,8 @@ engine/   Android library: BypassVpnService (+ watchdog, network changes, stats)
           notifications), StartMemory (last start, for always-on VPN), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
           SystemDns (the network's own DNS), EngineLog + CrashRecorder (log file, crash trace for
-          the next report), AndroidEngineLauncher (Lab)
+          the next report), VpnPermission (logged prepare(): it stops other VPN apps),
+          AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
           profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:

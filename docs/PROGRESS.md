@@ -58,6 +58,18 @@
 
 ## Work log
 
+### 2026-11-24 — Other VPN apps: the permission check and the log (#38)
+- Why: a DuckDuckGo App Tracking Protection user says it turns off now and then with DPIMech
+  installed, even with the bypass off and no widget, tile, shortcut or start on boot.
+- Done (DECISIONS #32): `VpnPermission` wraps `VpnService.prepare()` (which hands the VPN to the
+  caller and stops another VPN app once DPIMech was allowed) and logs every call; the widget no
+  longer calls it on redraw (last known answer instead). `NetworkIdentity` logs when another app's
+  VPN turns on and off. Problem reports take the log from `files/log.txt` (with an "app started"
+  line per run), so lines from before the app was closed in the background are kept.
+- Verified: core tests; app and engine by CI. Not checked on a phone with another VPN app.
+- Next: the reporter answers whether DuckDuckGo still turns off with DPIMech force-stopped, and
+  sends a report from a build with these lines.
+
 ### 2026-11-23 — The log survives a crash
 - Why: a problem report from 0.5.0 on a Xiaomi Mi 6 (Android 9) says the app closes when "Start"
   is tapped, but the log held nothing after the crash: it was only in memory. The 0.5.0 release APK

@@ -33,9 +33,18 @@ object EngineLog {
     fun attach(path: File, previous: Int): List<String> {
         val log = LogFile(path)
         val before = log.tail(previous)
+        log.append("${time.format(Date())} --- app started ---")
         file = log
         return before
     }
+
+    /**
+     * The newest [n] lines across app restarts, for problem reports: Android ends the app in the
+     * background, and what happened before (another VPN stopping, issue #38) would be gone from
+     * memory. Falls back to memory when there is no file.
+     */
+    @Synchronized
+    fun history(n: Int): List<String> = file?.tail(n)?.takeIf { it.isNotEmpty() } ?: lines.toList().takeLast(n)
 
     /** The newest lines, oldest first; updates live. */
     val flow: StateFlow<List<String>> = state.asStateFlow()

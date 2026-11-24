@@ -30,6 +30,12 @@ object NetworkIdentity {
 
     @Volatile
     private var current: Network? = null
+
+    /**
+     * Another app's VPN while it is DPIMech's default network. DPIMech is outside its own VPN, so
+     * a VPN seen here is always someone else's; its start and end go into the log (issue #38).
+     */
+    private var otherVpn: Network? = null
     private var started = false
 
     /** Look the provider up on every new network (automatic strategy). Off until [configure]. */
@@ -70,7 +76,17 @@ object NetworkIdentity {
         val cm = app.getSystemService(ConnectivityManager::class.java)
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
-                if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) return
+                if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                    if (otherVpn != network) {
+                        otherVpn = network
+                        EngineLog.add("network: another app's VPN is on")
+                    }
+                    return
+                }
+                if (otherVpn != null) {
+                    otherVpn = null
+                    EngineLog.add("network: the other app's VPN is off")
+                }
                 val transport = when {
                     caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> Transport.WIFI
                     caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> Transport.CELLULAR
@@ -99,6 +115,11 @@ object NetworkIdentity {
             }
 
             override fun onLost(network: Network) {
+                if (network == otherVpn) {
+                    otherVpn = null
+                    EngineLog.add("network: the other app's VPN is off")
+                    return
+                }
                 if (network != current) return
                 current = null
                 state.value = null

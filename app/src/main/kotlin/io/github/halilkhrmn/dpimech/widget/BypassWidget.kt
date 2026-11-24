@@ -13,6 +13,7 @@ import androidx.core.content.edit
 import io.github.halilkhrmn.dpimech.DpimechApp
 import io.github.halilkhrmn.dpimech.R
 import io.github.halilkhrmn.dpimech.core.Profile
+import io.github.halilkhrmn.dpimech.engine.VpnPermission
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
@@ -45,6 +46,9 @@ class BypassWidget : AppWidgetProvider() {
                     // On with this widget's profile (or a following widget): turn off.
                     engine.isActive() && (target == null || runningId == target.id || WidgetPrefs.boundProfile(context, widgetId) == null) ->
                         BypassVpnService.stop(context)
+                    // Checked only on a tap: the check stops any other VPN app. Without the
+                    // permission the widget opens the app next time (render).
+                    target != null && VpnPermission.ask(context, "widget") != null -> render(context)
                     target != null -> {
                         EngineLog.add("widget: turning on \"${target.name}\"")
                         app.profiles.select(target.id)
@@ -56,7 +60,7 @@ class BypassWidget : AppWidgetProvider() {
                 app.profiles.selectNext()
                 val next = app.profiles.saved.value.selected
                 // Switching while on moves the bypass to the new profile.
-                if (next != null && EngineState.flow.value.isActive() && VpnService.prepare(context) == null) {
+                if (next != null && EngineState.flow.value.isActive() && VpnPermission.ask(context, "widget, next profile") == null) {
                     app.startBypass(context, next)
                 }
                 render(context)
@@ -115,7 +119,8 @@ class BypassWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
             // Without a profile or the VPN permission the app has to ask first: open it instead.
-            val canToggle = on || (profile != null && VpnService.prepare(context) == null)
+            // The last known permission, not a fresh check: checking stops other VPN apps.
+            val canToggle = on || (profile != null && VpnPermission.lastKnown(context))
             v.setOnClickPendingIntent(R.id.widget_power, if (canToggle) broadcast(context, ACTION_TOGGLE, widgetId) else openApp)
             // Only a widget that follows the selected profile can switch profiles.
             v.setViewVisibility(R.id.widget_next, if (bound == null) View.VISIBLE else View.GONE)
