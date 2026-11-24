@@ -81,6 +81,16 @@ jobs:
         with:
           path: ~/.m2/repository/org/robolectric
           key: robolectric-${{ hashFiles('gradle/libs.versions.toml') }}
+      # One download with retries before the tests (Robolectric 4.17, API 35). Parallel test classes
+      # fetching it themselves failed now and then; with the jar in place they skip the download.
+      # After a Robolectric update a wrong name only costs the old behaviour (they fetch it).
+      - name: Fetch Robolectric's Android jar
+        run: |
+          v=15-robolectric-13954326-i7
+          d=~/.m2/repository/org/robolectric/android-all-instrumented/$v
+          mkdir -p "$d"
+          test -s "$d/android-all-instrumented-$v.jar" || curl -fsSL --retry 5 --retry-all-errors -o "$d/android-all-instrumented-$v.jar" \
+            "https://repo1.maven.org/maven2/org/robolectric/android-all-instrumented/$v/android-all-instrumented-$v.jar"
       - name: Build debug APK, lint, screen tests
         run: ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest --console=plain
       # The arm64 debug APK only (nearly every phone; the other ABIs made it ~100 MB a run), kept a
