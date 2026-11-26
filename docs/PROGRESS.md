@@ -50,8 +50,8 @@
     status icon; released 2026-11-15
   - [x] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); released
     2026-11-16
-  - [ ] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
-    user's action (#38), the log survives a crash; prepared 2026-11-26, tag after the merge
+  - [x] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
+    user's action (#38), the log survives a crash; released 2026-11-26
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -65,7 +65,8 @@
   the full store descriptions list ad blocking and say where block lists come from (all under
   4000 characters); the About store screenshot test says 0.6.0 (PNGs not rendered again: Maven
   Central limits this container, so Robolectric cannot fetch its jar here).
-- Next: merge, then tag `v0.6.0` on main (GitHub → Releases → new release); F-Droid picks it up.
+- Released: #39 merged (3c1d71d), tag v0.6.0; release workflow run 45900039804 built the signed
+  APKs and `SHA256SUMS`. F-Droid picks the tag up by itself.
 
 ### 2026-11-26 — Block lists from a catalog on GitHub
 - Why: the owner wants no list addresses in the code, only open lists hosted on GitHub-like sites,
