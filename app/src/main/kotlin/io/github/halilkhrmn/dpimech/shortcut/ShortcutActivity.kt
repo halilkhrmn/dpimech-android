@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import io.github.halilkhrmn.dpimech.DpimechApp
+import io.github.halilkhrmn.dpimech.engine.VpnPermission
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 import io.github.halilkhrmn.dpimech.engine.EngineState
@@ -32,7 +33,7 @@ class ShortcutActivity : ComponentActivity() {
         }
         val profile = app.profiles.saved.value.profiles.find { it.id == intent.getStringExtra(Shortcuts.EXTRA_PROFILE) }
         val open = intent.getStringExtra(Shortcuts.EXTRA_OPEN)
-        if (profile == null || VpnService.prepare(this) != null) {
+        if (profile == null || VpnPermission.ask(this, "shortcut") != null) {
             startActivity(
                 Intent(this, MainActivity::class.java)
                     .putExtra(MainActivity.EXTRA_START_PROFILE, profile?.id)

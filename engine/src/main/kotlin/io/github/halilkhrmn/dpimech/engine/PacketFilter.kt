@@ -5,6 +5,8 @@ import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
 import android.system.StructPollfd
+import io.github.halilkhrmn.dpimech.core.DnsBlockAnswer
+import io.github.halilkhrmn.dpimech.core.DnsBlocker
 import io.github.halilkhrmn.dpimech.core.DnsUpstream
 import io.github.halilkhrmn.dpimech.core.IpPacket
 import io.github.halilkhrmn.dpimech.core.TunnelFilter
@@ -17,15 +19,20 @@ import kotlin.concurrent.thread
 /**
  * Sits between the TUN and hev-socks5-tunnel when DNS over HTTPS or the QUIC switch is on:
  * hev gets one end of a packet socket pair instead of the TUN, and every packet the apps send
- * passes [TunnelFilter] first. DNS queries are answered by [upstream] (DoH, then the network's own
- * DNS; plain DNS through the tunnel when neither answers), QUIC is dropped, the rest goes to hev
- * unchanged.
+ * passes [TunnelFilter] first. DNS queries for blocked names get an empty answer ([blocker], ad
+ * blocking); the others are answered by [upstream] (DoH, then the network's own DNS; plain DNS
+ * through the tunnel when neither answers), QUIC is dropped, the rest goes to hev unchanged.
  */
 internal class PacketFilter(
     private val tun: ParcelFileDescriptor,
     private val filter: TunnelFilter,
-    private val upstream: DnsUpstream,
+    /** Where DNS goes; null passes queries through the tunnel (ad blocking with DoH off). */
+    private val upstream: DnsUpstream?,
     mtu: Int,
+    /** Ad blocking for the profile, or null. */
+    private val blocker: DnsBlocker? = null,
+    /** A name was blocked (the query, for the app that asked). */
+    private val onBlocked: (IpPacket.Udp, String) -> Unit = { _, _ -> },
 ) {
     private val ours = FileDescriptor()
     private val theirs = FileDescriptor()
@@ -94,7 +101,18 @@ internal class PacketFilter(
 
     private fun answer(packet: ByteArray) {
         val q = IpPacket.udp(packet, packet.size) ?: return toHev(packet, packet.size)
-        val reply = upstream.resolve(q.payload)
+        if (blocker != null) {
+            val name = DnsBlockAnswer.question(q.payload)?.first
+            if (name != null && blocker.blocks(name)) {
+                DnsBlockAnswer.answer(q.payload)?.let { blocked ->
+                    val out = IpPacket.reply(q, blocked)
+                    toApps(out, out.size)
+                    onBlocked(q, name)
+                    return
+                }
+            }
+        }
+        val reply = upstream?.resolve(q.payload)
         if (reply == null || !running) {
             // No answer: let the query go the old way, through hev and ciadpi.
             toHev(packet, packet.size)

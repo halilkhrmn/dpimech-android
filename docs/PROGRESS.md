@@ -48,8 +48,10 @@
   - [x] v0.3.0 (versionCode 4): sites pick the strategy, desktop logo; released 2026-11-07
   - [x] v0.4.0 (versionCode 5): site list with search, 18 more sites, two DNS servers, chameleon
     status icon; released 2026-11-15
-  - [ ] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); prepared
-    2026-11-16, tag after the merge
+  - [x] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); released
+    2026-11-16
+  - [ ] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
+    user's action (#38), the log survives a crash; prepared 2026-11-26, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -58,14 +60,75 @@
 
 ## Work log
 
+### 2026-11-26 — 0.6.0 prepared
+- Done: versionCode 7, versionName 0.6.0; `changelogs/7.txt` in five languages (each ≤ 500 bytes);
+  the full store descriptions list ad blocking and say where block lists come from (all under
+  4000 characters); the About store screenshot test says 0.6.0 (PNGs not rendered again: Maven
+  Central limits this container, so Robolectric cannot fetch its jar here).
+- Next: merge, then tag `v0.6.0` on main (GitHub → Releases → new release); F-Droid picks it up.
+
+### 2026-11-26 — Block lists from a catalog on GitHub
+- Why: the owner wants no list addresses in the code, only open lists hosted on GitHub-like sites,
+  downloaded when picked.
+- Done: `blocklists/catalog.json` (6 lists: HaGeZi Light/Normal/Pro, AdGuard DNS, StevenBlack,
+  1Hosts Lite; notes in five languages); `BlockListCatalog` parses it, `AdblockStore` downloads and
+  keeps it (weekly refresh with the other lists), the editor shows its lists with licence and
+  source. OISD and Peter Lowe's list dropped. Debug builds from CI read the catalog of their branch
+  (`BuildConfig.CATALOG_BRANCH`), release builds `main`.
+- Verified: `BlockListCatalogTest` (every entry usable, open licence, code host, all notes),
+  `AdblockTest`; app compiled locally.
+- Verified on the owner's phone (CI debug APK of e2d6739): the catalog loads, lists download,
+  ad blocking works.
+
+### 2026-11-26 — Ad and tracker blocking per profile
+- Done (DECISIONS #33): `Adblock.kt` in core (catalog, parser, `DomainSet`, `DnsBlocker`, blocked
+  answers), `AdblockStore` / `AdblockLog` in engine, blocking in `PacketFilter`, own DNS address
+  with blocking + DoH, bypass-off profiles. Profile editor: "DPI bypass" switch, "Ad blocking"
+  section (lists with notes and status, add by address, update, "Never block"). Home: blocked count
+  that opens "Recently blocked" with "Allow". Notification: count in the short line and its own
+  line. Strings in all five languages; READMEs, PLAN, AGENTS.
+- Verified: `AdblockTest` (parser on all three formats, packed set, allowlist and exceptions, DNS
+  answers, old profiles read with blocking off); the parser and set timed on the real lists
+  (AdGuard: 194 000 names, 4.1 MB, parse 141 ms, load 11 ms, 100 000 lookups 43 ms); engine and app
+  compiled locally (Android SDK now in the container); the rest by CI.
+- Not checked on a phone yet: blocking in apps and Chrome, the app shown for a blocked name, the
+  editor and the "Recently blocked" screen.
+- Next: the owner tries the CI APK; store texts (fastlane) when it is released.
+
+### 2026-11-24 — Other VPN apps: the permission check and the log (#38)
+- Why: a DuckDuckGo App Tracking Protection user says it turns off now and then with DPIMech
+  installed, even with the bypass off and no widget, tile, shortcut or start on boot.
+- Done (DECISIONS #32): `VpnPermission` wraps `VpnService.prepare()` (which hands the VPN to the
+  caller and stops another VPN app once DPIMech was allowed) and logs every call; the widget no
+  longer calls it on redraw (last known answer instead). `NetworkIdentity` logs when another app's
+  VPN turns on and off. Problem reports take the log from `files/log.txt` (with an "app started"
+  line per run), so lines from before the app was closed in the background are kept.
+- Verified: core tests; app and engine by CI. Not checked on a phone with another VPN app.
+- Next: the reporter answers whether DuckDuckGo still turns off with DPIMech force-stopped, and
+  sends a report from a build with these lines.
+
+### 2026-11-23 — The log survives a crash
+- Why: a problem report from 0.5.0 on a Xiaomi Mi 6 (Android 9) says the app closes when "Start"
+  is tapped, but the log held nothing after the crash: it was only in memory. The 0.5.0 release APK
+  was taken apart (baksmali): the Android 10 DNS call is behind its version check and R8 keeps it
+  there, so the system DNS code is not the obvious cause.
+- Done (DECISIONS #31): `CrashRecord` + `LogFile` (core), `CrashRecorder` (engine): the log is also
+  written to `files/log.txt`, an uncaught exception writes `files/crash.txt`, and turning a profile
+  on leaves a mark until it ends. The next start puts the previous run's last 30 lines and the trace
+  into the log. Starting, rebuilding the tunnel and restarting ByeDPI catch `Throwable`.
+- Verified: `CrashRecordTest` (trace, previous run, file size limit); app and engine by CI.
+- Next: the reporter tries the CI APK and sends a new report; ask whether 0.4.0 worked and whether
+  turning DNS over HTTPS or the automatic strategy off changes anything.
+
 ### 2026-11-16 — 0.5.0 prepared
 - Done: versionCode 6, versionName 0.5.0; `changelogs/6.txt` in all five languages (each under
   500 bytes); the About store screenshot test says 0.5.0 (the PNG is not rendered again here, no
   Android SDK in this container; it still shows 0.4.0).
 - Verified: the owner ran the CI debug APK on a phone (system DNS, DoH with fallback: 6 of 6 sites
   open), and the reporter of #35 says it works on their network.
-- Next: merge #36, then `git tag v0.5.0 && git push origin v0.5.0`; then run Actions → "Delete
-  old artifacts".
+- Released: #36 merged, tag v0.5.0 on cb10815; release workflow run 43896451530 built the signed
+  APKs and `SHA256SUMS`. F-Droid picks the tag up by itself.
+- Next: run Actions → "Delete old artifacts" once.
 
 ### 2026-11-16 — Smaller CI artifacts
 - Done: CI ran twice per PR commit (push and pull_request) and kept a ~100 MB debug APK set (four

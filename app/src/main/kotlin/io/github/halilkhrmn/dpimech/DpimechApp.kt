@@ -9,7 +9,10 @@ import io.github.halilkhrmn.dpimech.data.LabController
 import io.github.halilkhrmn.dpimech.data.ProfileRepository
 import io.github.halilkhrmn.dpimech.data.SettingsRepository
 import io.github.halilkhrmn.dpimech.data.StrategyRepository
+import io.github.halilkhrmn.dpimech.core.BlockListCatalog
+import io.github.halilkhrmn.dpimech.engine.AdblockStore
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
+import io.github.halilkhrmn.dpimech.engine.CrashRecorder
 import io.github.halilkhrmn.dpimech.engine.EngineEvents
 import io.github.halilkhrmn.dpimech.engine.EngineState
 import io.github.halilkhrmn.dpimech.shortcut.Shortcuts
@@ -34,6 +37,10 @@ class DpimechApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // First: the log file and the crash handler, so the next report shows how a crash ended.
+        CrashRecorder.install(filesDir)
+        // The block list catalog comes from main; a debug build made by CI reads its own branch's.
+        AdblockStore.init(filesDir, BlockListCatalog.url(BuildConfig.CATALOG_BRANCH))
         profiles = ProfileRepository(filesDir)
         strategies = StrategyRepository(filesDir)
         settings = SettingsRepository(filesDir)
@@ -72,6 +79,17 @@ class DpimechApp : Application() {
     /** Strategy lists older than [LIST_MAX_AGE_MS] are downloaded again in the background. */
     private fun updateListsIfOld(scope: kotlinx.coroutines.CoroutineScope) {
         if (!settings.settings.value.autoUpdateLists || Build.FINGERPRINT == "robolectric") return
+        // Block lists used by a profile with ad blocking, a week after their last download.
+        val now = System.currentTimeMillis()
+        val used = profiles.saved.value.profiles.filter { it.adblock }.flatMap { it.blockLists }.distinct()
+        if (used.isNotEmpty()) {
+            scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                if (now - AdblockStore.catalogUpdated > AdblockStore.MAX_AGE_MS) AdblockStore.refreshCatalog()
+                used.filter { id -> AdblockStore.status.value[id]?.let { now - it.updated > AdblockStore.MAX_AGE_MS } == true }
+                    .mapNotNull(AdblockStore::list)
+                    .forEach(AdblockStore::download)
+            }
+        }
         val last = strategies.lastUpdated.value
         if (last != null && System.currentTimeMillis() - last < LIST_MAX_AGE_MS) return
         scope.launch {

@@ -204,3 +204,54 @@ still applies. Trade-offs: without Private DNS it is unencrypted, and where bloc
 (e.g. Turkey) its answers can be the blocked ones; the default stays Cloudflare over HTTPS. With DoH
 off and a fixed server, queries still pass through the tunnel as before (no fallback there).
 
+
+## 31. The log survives a crash, on the phone only (2026-11-23)
+A report from Android 9 said the app closes when a profile is turned on, but its log held nothing:
+the log lived only in memory and died with the app. Crash reporters are out (F-Droid, no
+telemetry), so DPIMech keeps the evidence locally: the log is also written to a small file in the
+app's own storage (128 KB at most), an uncaught exception writes its stack trace, and turning a
+profile on leaves a mark until it finishes (a crash in native code, such as hev, leaves only that).
+At the next start the previous run's last lines and the trace go into the log once, so the next
+"Report a problem" carries them; nothing is sent by itself. Starting a profile now catches
+`Throwable`, not only `Exception`: an `Error` there (e.g. a class missing on an old Android) shows
+as "start failed" instead of closing the app.
+
+## 32. Ask for the VPN permission only when the user turns DPIMech on (2026-11-24)
+Once the user has allowed DPIMech, `VpnService.prepare()` is not just a question: Android hands the
+VPN to the calling app and stops whichever other VPN app was running, even if DPIMech then starts
+nothing. A user of DuckDuckGo's App Tracking Protection saw it turn off now and then (issue #38).
+The home-screen widget called prepare() on every redraw; it now uses the last known answer, and
+prepare() runs only on a user's action (button, tile, widget tap, shortcut, start on boot), through
+`VpnPermission`, which logs every call. DPIMech also logs when another app's VPN turns on or off,
+and "Report a problem" takes the log from the file, so these lines survive the app being closed in
+the background.
+
+## 33. Ad and tracker blocking by DNS, per profile (2026-11-26)
+The owner asked for an ad blocker that lives in the profile, not in Settings, so a profile can be
+an ad blocker only and switching profiles turns it on or off. DPIMech already answers the apps' DNS
+in the packet filter (DoH, system DNS), so blocking is a lookup before the answer: a name on the
+profile's lists gets `0.0.0.0` / `::` (no records for other types) and the app fails at once.
+- **Lists:** picked one by one like AdAway, plus any list added by its address. No list address is
+  in the code: the lists on offer are in `blocklists/catalog.json` in this repository, which the app
+  downloads from GitHub (a CI debug build reads its own branch's copy). The owner's rule: only lists
+  with an open licence hosted on GitHub (or GitLab, Codeberg); `BlockListCatalogTest` checks it.
+  Today: HaGeZi Light/Normal/Pro (GPL-3.0), AdGuard DNS filter (GPL-3.0, GitHub Pages), StevenBlack
+  (MIT), 1Hosts Lite (MPL-2.0); OISD and Peter Lowe's list were dropped (own sites). A list is
+  fetched from its source only when a profile ticks it; HaGeZi Normal is ticked when a profile turns
+  blocking on. Lists are data downloaded at runtime (F-Droid allows that, as for AdAway), kept
+  compiled (a sorted, packed name set: ~4 MB for 200 000 names, loads in milliseconds) and fetched
+  again after a week with the automatic list update. The parser reads hosts files, domain lists and
+  the DNS part of the adblock syntax (`||name^`, `@@||name^`); anything else is skipped.
+- **Per profile:** on/off (off by default), the lists, and a "Never block" allowlist. The recently
+  blocked names (kept in memory, with the app that asked on Android 10+) have an "Allow" button
+  that adds to the running profile's allowlist.
+- **Bypass off:** a new profile switch; then ciadpi runs with no options (it only relays), and the
+  automatic strategy and the ping are skipped.
+- **The DNS address:** with blocking and DoH on, the apps are told DPIMech's own address
+  (`198.18.0.2`), not e.g. `1.1.1.1`: Chrome sees a well-known server and switches to its own DoH,
+  past the blocking. With DoH off the real server stays and unanswered queries go through the
+  tunnel as before.
+- **Limits, said in the UI:** ads served from the content's own address (YouTube, Instagram) cannot
+  be blocked by DNS; a browser's own secure DNS or Android's Private DNS goes around it; only the
+  profile's apps are covered. Nothing changes page content (no cosmetic filtering, no TLS
+  interception).

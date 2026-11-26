@@ -24,6 +24,9 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
   before tagging; keep short descriptions ≤ 80 characters.
 
 - Scope is fixed in `docs/PLAN.md`: ByeDPI only, no root mode, no remote tunnels, no Android TV.
+  Ad blocking is DNS-only (block lists per profile); nothing that changes page content. List
+  addresses live in `blocklists/catalog.json` (open licence, hosted on GitHub/GitLab/Codeberg,
+  notes in all five languages; checked by `BlockListCatalogTest`), never in the code.
 - Keep F-Droid compatible: no Google Play Services, Firebase, analytics or crash reporters; no
   executable downloads at runtime; native code only from pinned submodules.
 - Strategy data comes from the desktop repo's `strategies/default.json`, site packs from its
@@ -78,19 +81,26 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   Ping              average connect+TLS time of the profile's sites through ciadpi
   QuickCheck        one site, directly and through a short-lived ciadpi (Test tab)
   ProfileBackup     profiles to/from a file (Settings → Backup)
+  CrashRecord, LogFile  previous run's end (last log lines, stack trace) for the next report
+  Adblock           BlockList, BlockListCatalog (reads blocklists/catalog.json), list parser (hosts / domains / ||adblock^), DomainSet
+                    (packed sorted names), DnsBlocker, DnsBlockAnswer (empty answers)
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
           (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
           notifications), StartMemory (last start, for always-on VPN), Ciadpi (process),
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
+          SystemDns (the network's own DNS), EngineLog + CrashRecorder (log file, crash trace for
+          the next report), VpnPermission (logged prepare(): it stops other VPN apps),
+          AdblockStore (downloaded block lists, compiled), AdblockLog (count, recent blocks),
           AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
-          profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
+          profile editor (+ AdblockUi: block lists, recently blocked), app picker; QS tile; widget/ (home-screen widget, per-widget profile in
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:
           Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
 art/      logo masters copied from the desktop repository
 fastlane/ store listing (en-US, tr, ru, fa, ar) for F-Droid; images from tools/fastlane-images.py
+blocklists/ catalog.json: the block lists offered for ad blocking (downloaded by the app from GitHub)
 site/     landing page (plain HTML, same style and logo as the desktop page; deployed by pages.yml)
 ```
 

@@ -9,6 +9,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import io.github.halilkhrmn.dpimech.DpimechApp
 import io.github.halilkhrmn.dpimech.R
+import io.github.halilkhrmn.dpimech.engine.VpnPermission
 import io.github.halilkhrmn.dpimech.engine.BypassVpnService
 import io.github.halilkhrmn.dpimech.engine.EngineState
 import io.github.halilkhrmn.dpimech.ui.MainActivity
@@ -39,7 +40,7 @@ class BypassTileService : TileService() {
             return
         }
         val profile = (application as DpimechApp).profiles.saved.value.selected
-        if (profile == null || VpnService.prepare(this) != null) {
+        if (profile == null || VpnPermission.ask(this, "tile") != null) {
             // No profile yet, or the VPN permission must be granted in the app first.
             openApp()
             return

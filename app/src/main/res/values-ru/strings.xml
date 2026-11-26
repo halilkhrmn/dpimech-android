@@ -253,4 +253,32 @@
     </plurals>
     <string name="dns_system">Системный DNS (DNS самой сети)</string>
     <string name="settings_doh_system">Не используется с системным DNS: запросы идут к DNS самой сети (их шифрует «Частный DNS» Android, если он включён).</string>
+    <string name="profile_bypass">Обход DPI</string>
+    <string name="profile_bypass_hint">Выключено: профиль только блокирует рекламу, без обхода.</string>
+    <string name="profile_needs_something">Включите обход DPI или блокировку рекламы.</string>
+    <string name="profile_adblock_section">Блокировка рекламы</string>
+    <string name="profile_adblock">Блокировать рекламу и трекеры</string>
+    <string name="profile_adblock_hint">Для приложений этого профиля имена из выбранных списков не разрешаются. Рекламу с того же адреса, что и контент (YouTube, Instagram), так не заблокировать. Собственный защищённый DNS браузера или частный DNS Android обходят блокировку.</string>
+    <string name="adblock_lists">Списки блокировки</string>
+    <string name="adblock_list_status">%1$d имён · обновлён %2$s</string>
+    <string name="adblock_list_missing">Ещё не загружен</string>
+    <string name="adblock_list_downloading">Загрузка…</string>
+    <string name="adblock_list_failed">Не загрузился; повторим при запуске профиля</string>
+    <string name="adblock_custom">Добавить список по адресу</string>
+    <string name="adblock_custom_hint">Файл hosts, список доменов или список в стиле AdGuard (https://…)</string>
+    <string name="adblock_custom_add">Добавить список</string>
+    <string name="adblock_custom_remove">Удалить %1$s</string>
+    <string name="adblock_update">Обновить отмеченные списки</string>
+    <string name="adblock_allow">Никогда не блокировать</string>
+    <string name="adblock_allow_hint">Домены, которые в этом профиле всегда доступны, вместе с поддоменами</string>
+    <string name="home_blocked">Заблокировано рекламы и трекеров</string>
+    <string name="home_blocked_open">Последние</string>
+    <string name="blocked_title">Недавно заблокированные</string>
+    <string name="blocked_hint">Хранится только на этом телефоне до следующего запуска. Если приложение или сайт сломались, разрешите имя: оно попадёт в список «Никогда не блокировать» профиля %1$s.</string>
+    <string name="blocked_empty">Пока ничего не заблокировано.</string>
+    <string name="blocked_allow">Разрешить</string>
+    <string name="blocked_allowed">Разрешено</string>
+    <string name="adblock_catalog_loading">Загружаем доступные списки…</string>
+    <string name="adblock_catalog_failed">Не удалось получить списки. Проверьте подключение.</string>
+    <string name="adblock_catalog_retry">Повторить</string>
 </resources>

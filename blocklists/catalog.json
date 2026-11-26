@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "about": "Block lists offered by DPIMech for Android's ad blocking (DECISIONS #33). Only lists with an open licence, hosted on GitHub (or GitLab, Codeberg). The app downloads this file and fetches a list only when a profile ticks it. Checked by core's BlockListCatalogTest.",
+  "lists": [
+    {
+      "id": "hagezi-light",
+      "name": "HaGeZi Light",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
+      "homepage": "https://github.com/hagezi/dns-blocklists",
+      "license": "GPL-3.0",
+      "notes": {
+        "en": "About 80,000 names. Ads and trackers; rarely breaks anything.",
+        "tr": "Yaklaşık 80.000 adres. Reklam ve izleyiciler; nadiren bir şeyi bozar.",
+        "ru": "Около 80 000 имён. Реклама и трекеры; редко что-то ломает.",
+        "fa": "حدود ۸۰٬۰۰۰ نام. تبلیغات و ردیاب‌ها؛ به‌ندرت چیزی را خراب می‌کند.",
+        "ar": "نحو 80٬000 اسم. إعلانات وأدوات تتبع؛ نادرًا ما يعطّل شيئًا."
+      }
+    },
+    {
+      "id": "hagezi-normal",
+      "name": "HaGeZi Normal",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/multi-onlydomains.txt",
+      "homepage": "https://github.com/hagezi/dns-blocklists",
+      "license": "GPL-3.0",
+      "notes": {
+        "en": "About 180,000 names. A good all-round choice.",
+        "tr": "Yaklaşık 180.000 adres. Her iş için iyi bir seçim.",
+        "ru": "Около 180 000 имён. Хороший выбор на каждый день.",
+        "fa": "حدود ۱۸۰٬۰۰۰ نام. انتخابی خوب برای همه‌کار.",
+        "ar": "نحو 180٬000 اسم. خيار جيد لكل الاستخدامات."
+      }
+    },
+    {
+      "id": "hagezi-pro",
+      "name": "HaGeZi Pro",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro-onlydomains.txt",
+      "homepage": "https://github.com/hagezi/dns-blocklists",
+      "license": "GPL-3.0",
+      "notes": {
+        "en": "About 240,000 names. Stricter; a few sites may break.",
+        "tr": "Yaklaşık 240.000 adres. Daha sıkı; birkaç site bozulabilir.",
+        "ru": "Около 240 000 имён. Строже; некоторые сайты могут сломаться.",
+        "fa": "حدود ۲۴۰٬۰۰۰ نام. سخت‌گیرتر؛ ممکن است چند سایت خراب شوند.",
+        "ar": "نحو 240٬000 اسم. أشد؛ قد تتعطل بعض المواقع."
+      }
+    },
+    {
+      "id": "adguard-dns",
+      "name": "AdGuard DNS filter",
+      "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
+      "homepage": "https://github.com/AdguardTeam/AdGuardSDNSFilter",
+      "license": "GPL-3.0",
+      "notes": {
+        "en": "About 195,000 names. AdGuard's list for DNS blocking.",
+        "tr": "Yaklaşık 195.000 adres. AdGuard'ın DNS engelleme listesi.",
+        "ru": "Около 195 000 имён. Список AdGuard для блокировки через DNS.",
+        "fa": "حدود ۱۹۵٬۰۰۰ نام. فهرست AdGuard برای مسدودسازی DNS.",
+        "ar": "نحو 195٬000 اسم. قائمة AdGuard للحجب عبر DNS."
+      }
+    },
+    {
+      "id": "stevenblack",
+      "name": "StevenBlack hosts",
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+      "homepage": "https://github.com/StevenBlack/hosts",
+      "license": "MIT",
+      "notes": {
+        "en": "About 80,000 names. Ads and malware.",
+        "tr": "Yaklaşık 80.000 adres. Reklam ve zararlı yazılım.",
+        "ru": "Около 80 000 имён. Реклама и вредоносные сайты.",
+        "fa": "حدود ۸۰٬۰۰۰ نام. تبلیغات و بدافزار.",
+        "ar": "نحو 80٬000 اسم. إعلانات وبرمجيات خبيثة."
+      }
+    },
+    {
+      "id": "1hosts-lite",
+      "name": "1Hosts Lite",
+      "url": "https://raw.githubusercontent.com/badmojr/1Hosts/master/Lite/domains.wildcards",
+      "homepage": "https://github.com/badmojr/1Hosts",
+      "license": "MPL-2.0",
+      "notes": {
+        "en": "About 100,000 names. Ads and trackers, few false blocks.",
+        "tr": "Yaklaşık 100.000 adres. Reklam ve izleyiciler, az yanlış engelleme.",
+        "ru": "Около 100 000 имён. Реклама и трекеры, мало ложных блокировок.",
+        "fa": "حدود ۱۰۰٬۰۰۰ نام. تبلیغات و ردیاب‌ها، مسدودسازی اشتباه کم.",
+        "ar": "نحو 100٬000 اسم. إعلانات وأدوات تتبع، حجب خاطئ قليل."
+      }
+    }
+  ]
+}

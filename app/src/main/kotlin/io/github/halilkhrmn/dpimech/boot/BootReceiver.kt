@@ -3,8 +3,8 @@ package io.github.halilkhrmn.dpimech.boot
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.VpnService
 import io.github.halilkhrmn.dpimech.DpimechApp
+import io.github.halilkhrmn.dpimech.engine.VpnPermission
 import io.github.halilkhrmn.dpimech.engine.EngineLog
 
 /**
@@ -19,7 +19,7 @@ class BootReceiver : BroadcastReceiver() {
         if (!app.settings.settings.value.startOnBoot) return
         val profile = app.profiles.saved.value.selected ?: return
         // Without the VPN permission only the app itself can ask for it.
-        if (VpnService.prepare(context) != null) {
+        if (VpnPermission.ask(context, "start on boot") != null) {
             EngineLog.add("boot: VPN permission missing, not starting")
             return
         }

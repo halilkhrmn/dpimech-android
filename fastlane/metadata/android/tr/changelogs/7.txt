@@ -1,0 +1,1 @@
+Yeni: profil başına reklam ve izleyici engelleme, varsayılan kapalı. GitHub'daki açık listelerden seç, kendi listeni ekle, izin listesi tut, neyin engellendiğini gör. Profil atlatma olmadan da reklam engelleyebilir. VPN izni yalnızca DPIMech'i açarken kontrol edilir, diğer VPN uygulamaları durmaz. Kayıt çökmeden sonra da kalır ve sonraki rapora girer.

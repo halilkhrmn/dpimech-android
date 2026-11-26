@@ -29,7 +29,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Edit
@@ -113,6 +115,8 @@ fun HomeScreen(
     encryptedDns: Boolean = true,
     blockQuic: Boolean = false,
     onPing: () -> Unit = {},
+    /** Opens the recently blocked names (ad blocking). */
+    onBlocked: () -> Unit = {},
     /** The provider is looked up on new networks (setting on, automatic strategy, wizard done). */
     providerLookup: Boolean = true,
 ) {
@@ -142,7 +146,7 @@ fun HomeScreen(
                     providerLookup = providerLookup,
                 )
             }
-            if (engine is EngineState.Running) item { TrafficCard(stats, onPing) }
+            if (engine is EngineState.Running) item { TrafficCard(stats, onPing, onBlocked) }
             item { ProfilesCard(saved, onSelect, onEdit, onNew) }
             item {
                 Text(
@@ -354,7 +358,7 @@ private fun InfoChip(icon: ImageVector, text: String) {
  * dashed line (so the two differ without colour too). Touch the chart to read a second.
  */
 @Composable
-private fun TrafficCard(stats: TrafficStats, onPing: () -> Unit) {
+private fun TrafficCard(stats: TrafficStats, onPing: () -> Unit, onBlocked: () -> Unit) {
     val downColor = MaterialTheme.colorScheme.primary
     val upColor = MaterialTheme.colorScheme.tertiary
     var picked by remember { mutableIntStateOf(-1) }
@@ -395,6 +399,7 @@ private fun TrafficCard(stats: TrafficStats, onPing: () -> Unit) {
                     Modifier.weight(1f),
                 )
             }
+            if (stats.adblock) BlockedRow(stats.adsBlocked, onBlocked)
         }
     }
 }
@@ -526,6 +531,26 @@ private fun PingRow(stats: TrafficStats, onPing: () -> Unit) {
             } else {
                 IconButton(onClick = onPing) { Icon(Icons.Default.Refresh, stringResource(R.string.home_ping_refresh)) }
             }
+        }
+    }
+}
+
+/** Ad blocking: how many names were answered empty; opens the recent ones. */
+@Composable
+private fun BlockedRow(count: Long, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp).clickable(onClick = onClick),
+    ) {
+        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Block, null, tint = MaterialTheme.colorScheme.primary)
+            Column(Modifier.weight(1f).padding(start = 12.dp)) {
+                Text(stringResource(R.string.home_blocked), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(count.toString(), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            }
+            Text(stringResource(R.string.home_blocked_open), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

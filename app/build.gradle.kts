@@ -12,8 +12,10 @@ android {
         minSdk = 26
         targetSdk = 36
         // Release tags are vX.Y.Z and versionName must match (checked by the release workflow).
-        versionCode = 6
-        versionName = "0.5.0"
+        versionCode = 7
+        versionName = "0.6.0"
+        // Branch of this repository the block list catalog is read from (BlockListCatalog).
+        buildConfigField("String", "CATALOG_BRANCH", "\"main\"")
     }
 
     // Release signing comes from the environment (CI secrets, see docs/RELEASING.md); without it
@@ -51,6 +53,9 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
+            // A test APK from CI reads the catalog of the branch it was built from.
+            val branch = System.getenv("GITHUB_REF_NAME")?.takeIf { System.getenv("GITHUB_REF_TYPE") == "branch" && it.matches(Regex("[A-Za-z0-9._/-]+")) }
+            if (branch != null) buildConfigField("String", "CATALOG_BRANCH", "\"$branch\"")
         }
     }
     compileOptions {
@@ -59,6 +64,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         // ciadpi is executed from nativeLibraryDir, so native libraries must be extracted.

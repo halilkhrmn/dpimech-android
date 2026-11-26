@@ -18,6 +18,9 @@ data class TrafficStats(
     val restarts: Int = 0,
     val encryptedDns: Boolean = false,
     val blockQuic: Boolean = false,
+    /** Ad blocking on in the running profile, and the queries it answered empty. */
+    val adblock: Boolean = false,
+    val adsBlocked: Long = 0,
     /** Last average ping of the profile's sites through the bypass, null before the first one. */
     val ping: PingResult? = null,
     val pinging: Boolean = false,

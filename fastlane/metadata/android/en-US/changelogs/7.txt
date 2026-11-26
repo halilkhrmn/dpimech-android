@@ -1,0 +1,1 @@
+New: ad and tracker blocking per profile, off by default. Pick open block lists from GitHub, add your own, keep an allowlist and see what was blocked. A profile can also block ads without the bypass. The VPN permission is checked only when you turn DPIMech on, so other VPN apps are not stopped. The log survives a crash and goes into the next problem report.
