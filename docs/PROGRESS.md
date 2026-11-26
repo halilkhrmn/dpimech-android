@@ -68,6 +68,8 @@
   (`BuildConfig.CATALOG_BRANCH`), release builds `main`.
 - Verified: `BlockListCatalogTest` (every entry usable, open licence, code host, all notes),
   `AdblockTest`; app compiled locally.
+- Verified on the owner's phone (CI debug APK of e2d6739): the catalog loads, lists download,
+  ad blocking works.
 
 ### 2026-11-26 — Ad and tracker blocking per profile
 - Done (DECISIONS #33): `Adblock.kt` in core (catalog, parser, `DomainSet`, `DnsBlocker`, blocked
