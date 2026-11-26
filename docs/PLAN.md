@@ -18,6 +18,7 @@ the internet provider blocks with DPI, without root and without sending traffic 
 | TUN → engine | **hev-socks5-tunnel** (TUN ↔ local SOCKS5), built from source with the NDK |
 | Root | Not required, not supported (no root mode) |
 | Remote tunnels (WARP, WireGuard, VLESS…) | **Out of scope** |
+| Ad blocking | DNS block lists per profile, off by default; a profile may block ads without the bypass (DECISIONS #33) |
 | Google services | None (no Play Services, no Firebase, no analytics) |
 | Distribution | GitHub Releases → IzzyOnDroid → F-Droid |
 | Application ID | `io.github.halilkhrmn.dpimech` |

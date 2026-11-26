@@ -259,4 +259,36 @@
     </plurals>
     <string name="dns_system">DNS النظام (DNS الشبكة نفسها)</string>
     <string name="settings_doh_system">لا يُستخدم مع DNS النظام: تذهب الاستعلامات إلى DNS الشبكة نفسها (يشفّرها DNS الخاص في أندرويد إن كان مفعّلًا).</string>
+    <string name="profile_bypass">تجاوز DPI</string>
+    <string name="profile_bypass_hint">عند الإيقاف: يحجب الملف الإعلانات فقط، دون تجاوز.</string>
+    <string name="profile_needs_something">شغّل تجاوز DPI أو حجب الإعلانات.</string>
+    <string name="profile_adblock_section">حجب الإعلانات</string>
+    <string name="profile_adblock">حجب الإعلانات وأدوات التتبع</string>
+    <string name="profile_adblock_hint">لتطبيقات هذا الملف، لا تُحلّ الأسماء الموجودة في القوائم المختارة. لا يمكن حجب الإعلانات القادمة من عنوان المحتوى نفسه (يوتيوب، إنستغرام) بهذه الطريقة. يتجاوزها DNS الآمن الخاص بالمتصفح أو DNS الخاص في أندرويد.</string>
+    <string name="adblock_lists">قوائم الحجب</string>
+    <string name="blocklist_hagezi_light">نحو 80٬000 اسم. إعلانات وأدوات تتبع؛ نادرًا ما يعطّل شيئًا.</string>
+    <string name="blocklist_hagezi_normal">نحو 180٬000 اسم. خيار جيد لكل الاستخدامات.</string>
+    <string name="blocklist_hagezi_pro">نحو 240٬000 اسم. أشد؛ قد تتعطل بعض المواقع.</string>
+    <string name="blocklist_adguard">نحو 195٬000 اسم. قائمة AdGuard للحجب عبر DNS.</string>
+    <string name="blocklist_stevenblack">نحو 80٬000 اسم. إعلانات وبرمجيات خبيثة.</string>
+    <string name="blocklist_oisd">نحو 60٬000 اسم. إعلانات؛ حجب خاطئ قليل جدًا.</string>
+    <string name="blocklist_peterlowe">نحو 3٬500 اسم. خفيفة جدًا.</string>
+    <string name="adblock_list_status">%1$d اسم · حُدّث %2$s</string>
+    <string name="adblock_list_missing">لم يُنزَّل بعد</string>
+    <string name="adblock_list_downloading">جارٍ التنزيل…</string>
+    <string name="adblock_list_failed">فشل التنزيل؛ ستُعاد المحاولة عند تشغيل الملف</string>
+    <string name="adblock_custom">إضافة قائمة بعنوانها</string>
+    <string name="adblock_custom_hint">ملف hosts أو قائمة نطاقات أو قائمة بنمط AdGuard (https://…)</string>
+    <string name="adblock_custom_add">إضافة القائمة</string>
+    <string name="adblock_custom_remove">إزالة %1$s</string>
+    <string name="adblock_update">تحديث القوائم المحددة</string>
+    <string name="adblock_allow">لا تحجب أبدًا</string>
+    <string name="adblock_allow_hint">نطاقات تبقى متاحة في هذا الملف مع نطاقاتها الفرعية</string>
+    <string name="home_blocked">الإعلانات وأدوات التتبع المحجوبة</string>
+    <string name="home_blocked_open">الأخيرة</string>
+    <string name="blocked_title">المحجوبة مؤخرًا</string>
+    <string name="blocked_hint">تُحفظ على هذا الهاتف فقط حتى التشغيل التالي. إذا تعطل تطبيق أو موقع، اسمح بالاسم: يُضاف إلى قائمة «لا تحجب أبدًا» في الملف %1$s.</string>
+    <string name="blocked_empty">لم يُحجب شيء بعد.</string>
+    <string name="blocked_allow">السماح</string>
+    <string name="blocked_allowed">مسموح</string>
 </resources>

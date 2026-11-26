@@ -50,6 +50,7 @@ import io.github.halilkhrmn.dpimech.R
 import androidx.compose.ui.platform.LocalConfiguration
 import io.github.halilkhrmn.dpimech.core.AppMode
 import io.github.halilkhrmn.dpimech.core.ArgPolicy
+import io.github.halilkhrmn.dpimech.core.BlockList
 import io.github.halilkhrmn.dpimech.core.DomainPack
 import io.github.halilkhrmn.dpimech.core.Hostlist
 import io.github.halilkhrmn.dpimech.core.Profile
@@ -81,13 +82,19 @@ fun ProfileEditor(
     var mode by rememberSaveable { mutableStateOf(initial?.appMode ?: AppMode.ONLY_SELECTED) }
     var apps by rememberSaveable { mutableStateOf(initial?.apps.orEmpty()) }
     var domainFilter by rememberSaveable { mutableStateOf(initial?.domainFilter ?: false) }
+    var bypass by rememberSaveable { mutableStateOf(initial?.bypass ?: true) }
+    var adblock by rememberSaveable { mutableStateOf(initial?.adblock ?: false) }
+    var blockLists by rememberSaveable { mutableStateOf(initial?.blockLists ?: listOf(BlockList.DEFAULT)) }
+    var adAllow by rememberSaveable { mutableStateOf(initial?.adAllow.orEmpty()) }
+    var allowInput by rememberSaveable { mutableStateOf("") }
     var pickStrategy by remember { mutableStateOf(false) }
     var pickApps by remember { mutableStateOf(false) }
 
     // Same check as at launch, so a bad custom strategy is caught while editing.
     val argsError = ArgPolicy.check(splitArgs(strategyArgs.replace("{sni}", "x").replace("{hostlist}", "/l/h")), listOf(File("/l")))
         .exceptionOrNull()?.message
-    val canSave = name.isNotBlank() && strategyArgs.isNotBlank() && argsError == null &&
+    val canSave = name.isNotBlank() && (bypass || adblock) &&
+        (!bypass || (strategyArgs.isNotBlank() && argsError == null)) &&
         (mode == AppMode.ALL_EXCEPT || apps.isNotEmpty())
 
     Scaffold(
@@ -117,6 +124,11 @@ fun ProfileEditor(
                 singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
 
+            SwitchRow(stringResource(R.string.profile_bypass), stringResource(R.string.profile_bypass_hint), bypass) { bypass = it }
+            if (!bypass && !adblock) {
+                Text(stringResource(R.string.profile_needs_something), color = MaterialTheme.colorScheme.error)
+            }
+            if (bypass) {
             Section(stringResource(R.string.profile_sites))
             val language = LocalConfiguration.current.locales[0].language
             SitePicker(packs, onChange = { now ->
@@ -160,6 +172,29 @@ fun ProfileEditor(
                 supportingText = argsError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
             )
+            }
+
+            Section(stringResource(R.string.profile_adblock_section))
+            SwitchRow(stringResource(R.string.profile_adblock), stringResource(R.string.profile_adblock_hint), adblock) { adblock = it }
+            if (adblock) {
+                AdblockLists(blockLists, onChange = { blockLists = it })
+                DomainPills(
+                    domains = adAllow,
+                    input = allowInput,
+                    onInput = { text ->
+                        val (done, left) = Hostlist.splitTyped(text)
+                        adAllow = (adAllow + done).distinct()
+                        allowInput = left
+                    },
+                    onAdd = {
+                        adAllow = (adAllow + Hostlist.parseInput(allowInput)).distinct()
+                        allowInput = ""
+                    },
+                    onRemove = { d -> adAllow = adAllow - d },
+                    label = stringResource(R.string.adblock_allow),
+                    hint = stringResource(R.string.adblock_allow_hint),
+                )
+            }
 
             Section(stringResource(R.string.profile_apps))
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
@@ -198,6 +233,10 @@ fun ProfileEditor(
                             appMode = mode,
                             apps = apps,
                             domainFilter = domainFilter,
+                            bypass = bypass,
+                            adblock = adblock,
+                            blockLists = blockLists,
+                            adAllow = (adAllow + Hostlist.parseInput(allowInput)).distinct(),
                         ),
                     )
                 },
@@ -215,6 +254,17 @@ fun ProfileEditor(
     }
     if (pickApps) {
         AppPicker(selected = apps.toSet(), onDone = { apps = it.toList(); pickApps = false })
+    }
+}
+
+@Composable
+private fun SwitchRow(title: String, hint: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(hint, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(checked = checked, onCheckedChange = onChange)
     }
 }
 

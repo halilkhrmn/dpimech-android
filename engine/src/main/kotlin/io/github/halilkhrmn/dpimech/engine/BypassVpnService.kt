@@ -8,16 +8,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.net.ConnectivityManager
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.system.OsConstants
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import io.github.halilkhrmn.dpimech.core.ByeDpiCommand
 import io.github.halilkhrmn.dpimech.core.Connector
 import io.github.halilkhrmn.dpimech.core.AppSettings
+import io.github.halilkhrmn.dpimech.core.DnsBlocker
 import io.github.halilkhrmn.dpimech.core.DnsChain
+import io.github.halilkhrmn.dpimech.core.IpPacket
 import io.github.halilkhrmn.dpimech.core.DohClient
 import io.github.halilkhrmn.dpimech.core.Ping
 import io.github.halilkhrmn.dpimech.core.SiteCheck
@@ -37,6 +41,8 @@ import io.github.halilkhrmn.dpimech.core.StrategyEntry
 import io.github.halilkhrmn.dpimech.core.VpnApps
 import io.github.halilkhrmn.dpimech.core.Watchdog
 import java.io.File
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
 import kotlinx.coroutines.CoroutineScope
@@ -62,6 +68,11 @@ class BypassVpnService : VpnService() {
     private var tunnelFilter: TunnelFilter? = null
     private var doh: DohClient? = null
     private var dnsChain: DnsChain? = null
+    /** Ad blocking of the running profile, or null. */
+    @Volatile
+    private var blocker: DnsBlocker? = null
+    /** uid → package of the app that asked for a blocked name. */
+    private val appOfUid = java.util.concurrent.ConcurrentHashMap<Int, String>()
     private var encryptDns = true
     private var blockQuic = false
     private var statsJob: Job? = null
@@ -156,6 +167,14 @@ class BypassVpnService : VpnService() {
         CrashRecorder.starting(true)
         try {
             val apps = VpnApps.plan(p, packageName, installedPackages()).getOrThrow()
+            AdblockLog.reset()
+            blocker = if (p.adblock) {
+                AdblockStore.init(filesDir)
+                AdblockStore.blocker(p.blockLists, p.adAllow).also { EngineLog.add("ad blocking: ${it.size} names") }
+            } else {
+                null
+            }
+            if (!p.bypass) EngineLog.add("DPI bypass off in this profile: ByeDPI only relays")
             val lists = File(filesDir, "lists").apply { mkdirs() }
             val domains = p.domains
             val hostlist = if (domains.isEmpty()) {
@@ -233,12 +252,19 @@ class BypassVpnService : VpnService() {
         val apps = vpnApps ?: error("no app list")
         val ipv6 = NetworkIdentity.flow.value?.hasIpv6 ?: true
         val config = TunnelConfig(socksPort = port, dns = dns, useIpv6 = ipv6)
+        val systemDns = dns == AppSettings.SYSTEM_DNS
+        val rulesForAds = blocker
+        // With blocking, the apps get DPIMech's own DNS address when DPIMech answers anyway (DoH
+        // on): a well-known one such as 1.1.1.1 makes Chrome switch to its own DNS over HTTPS,
+        // past the blocking. With DoH off unanswered queries go through the tunnel, so the real
+        // server stays.
+        val announced = if (rulesForAds != null && encryptDns) TunnelConfig.systemDnsAddress else config.announcedDns
         val builder = Builder()
             .setSession(tunnelProfileName)
             .setMtu(config.mtu)
             .addAddress(config.ipv4, 32)
             .addRoute("0.0.0.0", 0)
-            .addDnsServer(config.announcedDns)
+            .addDnsServer(announced)
             .setBlocking(false)
         if (ipv6) builder.addAddress(config.ipv6, 128).addRoute("::", 0)
         apps.allowed.forEach { builder.addAllowedApplication(it) }
@@ -249,10 +275,11 @@ class BypassVpnService : VpnService() {
         tunnelIpv6 = ipv6
         // DoH and the QUIC switch need to see the packets first; otherwise hev gets the TUN.
         // "System DNS" is always answered by the filter: the apps' DNS address exists only there.
-        val systemDns = dns == AppSettings.SYSTEM_DNS
-        val rules = tunnelFilter ?: TunnelFilter(encryptDns || systemDns, blockQuic).also { tunnelFilter = it }
+        // Ad blocking needs every query too.
+        val answerDns = encryptDns || systemDns
+        val rules = tunnelFilter ?: TunnelFilter(answerDns || rulesForAds != null, blockQuic).also { tunnelFilter = it }
         val pf = if (rules.active) {
-            PacketFilter(fd, rules, dnsUpstream(systemDns), config.mtu)
+            PacketFilter(fd, rules, if (answerDns) dnsUpstream(systemDns) else null, config.mtu, rulesForAds, ::blocked)
         } else {
             null
         }
@@ -262,8 +289,27 @@ class BypassVpnService : VpnService() {
         EngineLog.add(
             "tunnel up (IPv6 ${if (ipv6) "on" else "off"}" +
                 (if (systemDns) ", system DNS" else if (encryptDns) ", DNS over HTTPS ${doh?.url}, system DNS as fallback" else "") +
-                (if (blockQuic) ", QUIC blocked" else "") + ")",
+                (if (blockQuic) ", QUIC blocked" else "") +
+                (if (rulesForAds != null) ", ad blocking" else "") + ")",
         )
+    }
+
+    /** A name was blocked: count it and remember which app asked (Android 10+ can tell). */
+    private fun blocked(q: IpPacket.Udp, name: String) {
+        AdblockLog.add(name, appOf(q))
+    }
+
+    private fun appOf(q: IpPacket.Udp): String? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+        return runCatching {
+            val uid = getSystemService(ConnectivityManager::class.java).getConnectionOwnerUid(
+                OsConstants.IPPROTO_UDP,
+                InetSocketAddress(InetAddress.getByAddress(q.src), q.srcPort),
+                InetSocketAddress(InetAddress.getByAddress(q.dst), q.dstPort),
+            )
+            if (uid < 0) return null
+            appOfUid[uid] ?: packageManager.getPackagesForUid(uid)?.firstOrNull()?.also { appOfUid[uid] = it }
+        }.getOrNull()
     }
 
     /** The network gained or lost IPv6: rebuild the TUN to match. Must run on [worker]. */
@@ -286,11 +332,12 @@ class BypassVpnService : VpnService() {
 
     private fun buildArgs(p: Profile, entry: StrategyEntry, port: Int, hostlist: File?) = ByeDpiCommand.build(
         ByeDpiCommand.Request(
-            strategyArgs = entry.args,
+            // Bypass off (an ad blocker-only profile): no options, ciadpi only relays.
+            strategyArgs = if (p.bypass) entry.args else "",
             port = port,
             listsDir = File(filesDir, "lists"),
             hostlist = hostlist,
-            domainFilter = p.domainFilter && hostlist != null,
+            domainFilter = p.bypass && p.domainFilter && hostlist != null,
         ),
     )
 
@@ -352,6 +399,7 @@ class BypassVpnService : VpnService() {
      */
     private fun maybeAutoStrategy(networkKey: String, isp: io.github.halilkhrmn.dpimech.core.Isp?) {
         val p = profile ?: return
+        if (!p.bypass) return
         if (!autoStrategy || stopping || networkKey in p.perNetwork || !autoTested.add(networkKey)) return
         val probes = p.probes.take(6)
         if (probes.isEmpty() || autoRun?.isAlive == true) return
@@ -424,6 +472,7 @@ class BypassVpnService : VpnService() {
         tunnelFilter = null
         doh = null
         dnsChain = null
+        blocker = null
         runCatching { tun?.close() }
         tun = null
         EngineStats.reset()
@@ -443,7 +492,9 @@ class BypassVpnService : VpnService() {
      */
     private fun startStats(p: Profile) {
         restarts = 0
-        EngineStats.reset(TrafficStats(since = System.currentTimeMillis(), encryptedDns = encryptDns, blockQuic = blockQuic))
+        EngineStats.reset(
+            TrafficStats(since = System.currentTimeMillis(), encryptedDns = encryptDns, blockQuic = blockQuic, adblock = blocker != null),
+        )
         statsJob?.cancel()
         statsJob = scope.launch {
             var tick = 0
@@ -457,6 +508,7 @@ class BypassVpnService : VpnService() {
                             dnsQueries = rules?.dnsQueries?.get() ?: 0,
                             dnsEncrypted = resolver?.answered?.get() ?: 0,
                             quicBlocked = rules?.quicDropped?.get() ?: 0,
+                            adsBlocked = AdblockLog.count,
                         )
                 }
                 if (tick++ % NOTIFY_EVERY == 0 && !stopping) runCatching { goForeground(p, EngineStats.flow.value) }
@@ -479,6 +531,7 @@ class BypassVpnService : VpnService() {
      */
     private fun pingNow() {
         val p = profile ?: return
+        if (!p.bypass) return
         val port = enginePort
         val hosts = p.probes
         if (hosts.isEmpty() || port == 0 || !pingBusy.compareAndSet(false, true)) return
@@ -582,11 +635,14 @@ class BypassVpnService : VpnService() {
         }
     }
 
-    private fun statsLine(s: TrafficStats) =
-        getString(R.string.engine_stats_line, TrafficStats.bytes(s.downRate), TrafficStats.bytes(s.upRate))
+    private fun statsLine(s: TrafficStats): String {
+        val line = getString(R.string.engine_stats_line, TrafficStats.bytes(s.downRate), TrafficStats.bytes(s.upRate))
+        return if (s.adblock) getString(R.string.engine_stats_line_blocked, line, s.adsBlocked) else line
+    }
 
     private fun statsText(s: TrafficStats) = buildString {
-        append(statsLine(s))
+        // The traffic line only: the blocked count has its own line below.
+        append(getString(R.string.engine_stats_line, TrafficStats.bytes(s.downRate), TrafficStats.bytes(s.upRate)))
         append('\n').append(getString(R.string.engine_stats_total, TrafficStats.bytes(s.downTotal), TrafficStats.bytes(s.upTotal)))
         (EngineState.flow.value as? EngineState.Running)?.strategyName?.takeIf { it.isNotEmpty() }?.let {
             append('\n').append(getString(R.string.engine_stats_strategy, it))
@@ -599,6 +655,7 @@ class BypassVpnService : VpnService() {
             )
         }
         if (s.blockQuic) append('\n').append(getString(R.string.engine_stats_quic, s.quicBlocked))
+        if (s.adblock) append('\n').append(getString(R.string.engine_stats_blocked, s.adsBlocked))
         append('\n').append(getString(R.string.engine_stats_restarts, s.restarts))
     }
 

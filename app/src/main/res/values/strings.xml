@@ -248,4 +248,36 @@
     </plurals>
     <string name="dns_system">System DNS (the network\'s own)</string>
     <string name="settings_doh_system">Not used with the system DNS: queries go to the network\'s own resolver (Android\'s Private DNS, if set, encrypts them).</string>
+    <string name="profile_bypass">DPI bypass</string>
+    <string name="profile_bypass_hint">Off: the profile only blocks ads, without a bypass.</string>
+    <string name="profile_needs_something">Turn on the DPI bypass or ad blocking.</string>
+    <string name="profile_adblock_section">Ad blocking</string>
+    <string name="profile_adblock">Block ads and trackers</string>
+    <string name="profile_adblock_hint">For this profile\'s apps, names on the chosen lists do not resolve. Ads that come from the same address as the content (YouTube, Instagram) cannot be blocked this way. A browser\'s own secure DNS or Android\'s Private DNS goes around it.</string>
+    <string name="adblock_lists">Block lists</string>
+    <string name="blocklist_hagezi_light">About 80,000 names. Ads and trackers; rarely breaks anything.</string>
+    <string name="blocklist_hagezi_normal">About 180,000 names. A good all-round choice.</string>
+    <string name="blocklist_hagezi_pro">About 240,000 names. Stricter; a few sites may break.</string>
+    <string name="blocklist_adguard">About 195,000 names. AdGuard\'s list for DNS blocking.</string>
+    <string name="blocklist_stevenblack">About 80,000 names. Ads and malware.</string>
+    <string name="blocklist_oisd">About 60,000 names. Ads; very few false blocks.</string>
+    <string name="blocklist_peterlowe">About 3,500 names. Very light.</string>
+    <string name="adblock_list_status">%1$d names · updated %2$s</string>
+    <string name="adblock_list_missing">Not downloaded yet</string>
+    <string name="adblock_list_downloading">Downloading…</string>
+    <string name="adblock_list_failed">Download failed; tried again when the profile starts</string>
+    <string name="adblock_custom">Add a list by its address</string>
+    <string name="adblock_custom_hint">A hosts file, a list of domains or an AdGuard-style list (https://…)</string>
+    <string name="adblock_custom_add">Add list</string>
+    <string name="adblock_custom_remove">Remove %1$s</string>
+    <string name="adblock_update">Update the ticked lists</string>
+    <string name="adblock_allow">Never block</string>
+    <string name="adblock_allow_hint">Domains that stay reachable in this profile, with their subdomains</string>
+    <string name="home_blocked">Ads and trackers blocked</string>
+    <string name="home_blocked_open">Recent</string>
+    <string name="blocked_title">Recently blocked</string>
+    <string name="blocked_hint">Kept on this phone only, until the next start. If an app or site breaks, allow the name: it goes to the \"Never block\" list of %1$s.</string>
+    <string name="blocked_empty">Nothing blocked yet.</string>
+    <string name="blocked_allow">Allow</string>
+    <string name="blocked_allowed">Allowed</string>
 </resources>

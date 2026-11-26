@@ -58,6 +58,21 @@
 
 ## Work log
 
+### 2026-11-26 — Ad and tracker blocking per profile
+- Done (DECISIONS #33): `Adblock.kt` in core (catalog, parser, `DomainSet`, `DnsBlocker`, blocked
+  answers), `AdblockStore` / `AdblockLog` in engine, blocking in `PacketFilter`, own DNS address
+  with blocking + DoH, bypass-off profiles. Profile editor: "DPI bypass" switch, "Ad blocking"
+  section (lists with notes and status, add by address, update, "Never block"). Home: blocked count
+  that opens "Recently blocked" with "Allow". Notification: count in the short line and its own
+  line. Strings in all five languages; READMEs, PLAN, AGENTS.
+- Verified: `AdblockTest` (parser on all three formats, packed set, allowlist and exceptions, DNS
+  answers, old profiles read with blocking off); the parser and set timed on the real lists
+  (AdGuard: 194 000 names, 4.1 MB, parse 141 ms, load 11 ms, 100 000 lookups 43 ms); engine and app
+  compiled locally (Android SDK now in the container); the rest by CI.
+- Not checked on a phone yet: blocking in apps and Chrome, the app shown for a blocked name, the
+  editor and the "Recently blocked" screen.
+- Next: the owner tries the CI APK; store texts (fastlane) when it is released.
+
 ### 2026-11-24 — Other VPN apps: the permission check and the log (#38)
 - Why: a DuckDuckGo App Tracking Protection user says it turns off now and then with DPIMech
   installed, even with the bypass off and no widget, tile, shortcut or start on boot.

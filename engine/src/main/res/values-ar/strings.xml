@@ -14,6 +14,8 @@
     <string name="engine_stats_strategy">الاستراتيجية: %1$s</string>
     <string name="engine_stats_dns">DNS over HTTPS: %1$d من %2$d استعلام</string>
     <string name="engine_stats_quic">QUIC محجوب: %1$d حزمة</string>
+    <string name="engine_stats_blocked">الإعلانات المحجوبة: %1$d</string>
+    <string name="engine_stats_line_blocked">%1$s · %2$d محجوب</string>
     <string name="engine_stats_restarts">إعادات تشغيل المحرك: %1$d</string>
     <string name="engine_stats_ping">متوسط زمن الاستجابة: %1$d ms · %2$d من %3$d مواقع تفتح</string>
     <string name="engine_stats_ping_none">لا يفتح أي موقع الآن (جُرّب %1$d)</string>

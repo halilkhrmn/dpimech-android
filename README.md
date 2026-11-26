@@ -55,6 +55,10 @@ Android 8.0 or newer.
   remembers it.
 - **Encrypted DNS (DoH)** for the bypassed apps, and an optional **QUIC block** so browsers and
   YouTube use TCP, where the bypass works.
+- **Ad and tracker blocking** per profile (off by default): AdAway-style block lists you pick,
+  your own lists by address, an allowlist, and the names blocked recently. It works by DNS, so a
+  profile can also be an ad blocker only, without the bypass. Ads served from the content's own
+  address (YouTube, Instagram) cannot be blocked this way.
 - **Live status:** traffic chart, average ping of your sites and DNS counts on the home screen and
   in the notification.
 - **Widgets** (one per profile if you like), **launcher shortcuts** that turn a profile on and open

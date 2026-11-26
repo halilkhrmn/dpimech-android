@@ -293,7 +293,7 @@ private fun isIgnoringBattery(context: android.content.Context) =
     context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)
 
 /** In the app's language, which may differ from the phone's. */
-private fun formatTime(ms: Long, locale: java.util.Locale): String =
+internal fun formatTime(ms: Long, locale: java.util.Locale): String =
     java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT, locale).format(java.util.Date(ms))
 
 @Composable

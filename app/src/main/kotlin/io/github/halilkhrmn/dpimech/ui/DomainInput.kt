@@ -35,12 +35,14 @@ fun DomainPills(
     onInput: (String) -> Unit,
     onAdd: () -> Unit,
     onRemove: (String) -> Unit,
+    label: String = stringResource(R.string.profile_extra_domains),
+    hint: String = stringResource(R.string.profile_extra_domains_hint),
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         OutlinedTextField(
             value = input, onValueChange = onInput,
-            label = { Text(stringResource(R.string.profile_extra_domains)) },
-            supportingText = { Text(stringResource(R.string.profile_extra_domains_hint)) },
+            label = { Text(label) },
+            supportingText = { Text(hint) },
             singleLine = true,
             // No autocorrect: it adds spaces after dots and "fixes" domain names.
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done, autoCorrectEnabled = false),

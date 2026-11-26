@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 var editing by rememberSaveable { mutableStateOf<String?>(null) }
                 var wizard by rememberSaveable { mutableStateOf(!settings.wizardDone && saved.profiles.isEmpty()) }
                 var logs by rememberSaveable { mutableStateOf(false) }
+                var blocked by rememberSaveable { mutableStateOf(false) }
                 var report by remember { mutableStateOf<ProblemReport?>(null) }
                 val logLines by EngineLog.flow.collectAsStateWithLifecycle()
                 val network by NetworkIdentity.flow.collectAsStateWithLifecycle()
@@ -110,10 +111,11 @@ class MainActivity : AppCompatActivity() {
                     requestedScreen.value = null
                 }
 
-                BackHandler(enabled = editing != null || logs || tab != Tab.HOME) {
+                BackHandler(enabled = editing != null || logs || blocked || tab != Tab.HOME) {
                     when {
                         editing != null -> editing = null
                         logs -> logs = false
+                        blocked -> blocked = false
                         else -> tab = Tab.HOME
                     }
                 }
@@ -150,6 +152,21 @@ class MainActivity : AppCompatActivity() {
                             wizard = false
                         },
                     )
+                    blocked -> {
+                        val running = (engine as? EngineState.Running)?.profileId?.let { id -> saved.profiles.find { it.id == id } }
+                        BlockedScreen(
+                            profileName = running?.name,
+                            onAllow = { name ->
+                                val current = running?.let { r -> app.profiles.saved.value.profiles.find { it.id == r.id } } ?: return@BlockedScreen
+                                val updated = current.copy(adAllow = (current.adAllow + name).distinct())
+                                app.profiles.save(updated)
+                                EngineLog.add("ad blocking: $name allowed in \"${updated.name}\"")
+                                // Restart with the new allowlist (answers are cached for 60 s at most).
+                                turnOn(updated)
+                            },
+                            onBack = { blocked = false },
+                        )
+                    }
                     logs -> LogsScreen(logLines, onClear = EngineLog::clear, onReport = openReport, onBack = { logs = false })
                     edit != null -> ProfileEditor(
                         initial = saved.profiles.find { it.id == edit },
@@ -178,7 +195,10 @@ class MainActivity : AppCompatActivity() {
                             }
                         },
                     ) { padding ->
-                        Content(tab, padding, onEdit = { editing = it }, onWizard = { wizard = true }, onLogs = { logs = true }, onReport = openReport)
+                        Content(
+                            tab, padding, onEdit = { editing = it }, onWizard = { wizard = true }, onLogs = { logs = true },
+                            onReport = openReport, onBlocked = { blocked = true },
+                        )
                     }
                 }
             }
@@ -193,6 +213,7 @@ class MainActivity : AppCompatActivity() {
         onWizard: () -> Unit,
         onLogs: () -> Unit,
         onReport: () -> Unit,
+        onBlocked: () -> Unit,
     ) {
         val saved by app.profiles.saved.collectAsStateWithLifecycle()
         val engine by EngineState.flow.collectAsStateWithLifecycle()
@@ -224,6 +245,7 @@ class MainActivity : AppCompatActivity() {
                 providerLookup = settings.providerLookup && settings.autoStrategy && settings.wizardDone,
                 blockQuic = settings.blockQuic,
                 onPing = { BypassVpnService.ping(this) },
+                onBlocked = onBlocked,
             )
             Tab.TEST -> LabScreen(
                 state = lab,

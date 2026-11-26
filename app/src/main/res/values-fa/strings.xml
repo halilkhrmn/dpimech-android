@@ -247,4 +247,36 @@
     </plurals>
     <string name="dns_system">DNS سیستم (DNS خود شبکه)</string>
     <string name="settings_doh_system">با DNS سیستم استفاده نمی‌شود: درخواست‌ها به DNS خود شبکه می‌روند (اگر DNS خصوصی اندروید فعال باشد، آن‌ها را رمزگذاری می‌کند).</string>
+    <string name="profile_bypass">دور زدن DPI</string>
+    <string name="profile_bypass_hint">خاموش: نمایه فقط تبلیغات را مسدود می‌کند، بدون دور زدن.</string>
+    <string name="profile_needs_something">دور زدن DPI یا مسدودسازی تبلیغات را روشن کنید.</string>
+    <string name="profile_adblock_section">مسدودسازی تبلیغات</string>
+    <string name="profile_adblock">مسدود کردن تبلیغات و ردیاب‌ها</string>
+    <string name="profile_adblock_hint">برای برنامه‌های این نمایه، نام‌های فهرست‌های انتخاب‌شده پاسخ نمی‌گیرند. تبلیغاتی که از همان نشانی محتوا می‌آیند (یوتیوب، اینستاگرام) این‌گونه مسدود نمی‌شوند. DNS امن خود مرورگر یا DNS خصوصی اندروید آن را دور می‌زند.</string>
+    <string name="adblock_lists">فهرست‌های مسدودسازی</string>
+    <string name="blocklist_hagezi_light">حدود ۸۰٬۰۰۰ نام. تبلیغات و ردیاب‌ها؛ به‌ندرت چیزی را خراب می‌کند.</string>
+    <string name="blocklist_hagezi_normal">حدود ۱۸۰٬۰۰۰ نام. انتخابی خوب برای همه‌کار.</string>
+    <string name="blocklist_hagezi_pro">حدود ۲۴۰٬۰۰۰ نام. سخت‌گیرتر؛ ممکن است چند سایت خراب شوند.</string>
+    <string name="blocklist_adguard">حدود ۱۹۵٬۰۰۰ نام. فهرست AdGuard برای مسدودسازی DNS.</string>
+    <string name="blocklist_stevenblack">حدود ۸۰٬۰۰۰ نام. تبلیغات و بدافزار.</string>
+    <string name="blocklist_oisd">حدود ۶۰٬۰۰۰ نام. تبلیغات؛ مسدودسازی اشتباه بسیار کم.</string>
+    <string name="blocklist_peterlowe">حدود ۳٬۵۰۰ نام. بسیار سبک.</string>
+    <string name="adblock_list_status">%1$d نام · به‌روزرسانی: %2$s</string>
+    <string name="adblock_list_missing">هنوز دانلود نشده</string>
+    <string name="adblock_list_downloading">در حال دانلود…</string>
+    <string name="adblock_list_failed">دانلود نشد؛ هنگام روشن شدن نمایه دوباره تلاش می‌شود</string>
+    <string name="adblock_custom">افزودن فهرست با نشانی آن</string>
+    <string name="adblock_custom_hint">فایل hosts، فهرست دامنه‌ها یا فهرستی به سبک AdGuard (https://…)</string>
+    <string name="adblock_custom_add">افزودن فهرست</string>
+    <string name="adblock_custom_remove">حذف %1$s</string>
+    <string name="adblock_update">به‌روزرسانی فهرست‌های انتخاب‌شده</string>
+    <string name="adblock_allow">هرگز مسدود نکن</string>
+    <string name="adblock_allow_hint">دامنه‌هایی که در این نمایه همراه زیردامنه‌هایشان همیشه در دسترس می‌مانند</string>
+    <string name="home_blocked">تبلیغات و ردیاب‌های مسدودشده</string>
+    <string name="home_blocked_open">اخیر</string>
+    <string name="blocked_title">مسدودشده‌های اخیر</string>
+    <string name="blocked_hint">فقط روی همین گوشی و تا روشن شدن بعدی نگه داشته می‌شود. اگر برنامه یا سایتی خراب شد، به نام اجازه دهید: به فهرست «هرگز مسدود نکن» نمایهٔ %1$s افزوده می‌شود.</string>
+    <string name="blocked_empty">هنوز چیزی مسدود نشده.</string>
+    <string name="blocked_allow">اجازه</string>
+    <string name="blocked_allowed">مجاز شد</string>
 </resources>

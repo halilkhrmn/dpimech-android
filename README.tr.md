@@ -53,6 +53,10 @@ Android 8.0 ve üstü.
 - **Ağa göre otomatik strateji:** yeni bir Wi-Fi'da ya da mobil operatörde çalışanı bulur ve hatırlar.
 - Atlatılan uygulamalar için **şifreli DNS (DoH)**. İsteğe bağlı **QUIC engeli**, tarayıcıları ve
   YouTube'u atlatmanın çalıştığı TCP'ye geçirir.
+- Profil başına **reklam ve izleyici engelleme** (varsayılan kapalı): AdAway gibi seçtiğiniz
+  engelleme listeleri, adresiyle eklediğiniz kendi listeleriniz, izin listesi ve son engellenen
+  adresler. DNS ile çalışır, bu yüzden bir profil atlatma olmadan yalnızca reklam engelleyici de
+  olabilir. İçerikle aynı adresten gelen reklamlar (YouTube, Instagram) bu yolla engellenemez.
 - **Canlı durum:** ana ekranda ve bildirimde trafik grafiği, sitelerinin ortalama ping'i ve DNS sayıları.
 - **Widget'lar** (istersen her profile bir tane), profili açıp uygulamasını başlatan **kısayollar**,
   **Hızlı Ayarlar kutucuğu**.

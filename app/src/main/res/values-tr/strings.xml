@@ -247,4 +247,36 @@
     </plurals>
     <string name="dns_system">Sistem DNS\'i (ağın kendi DNS\'i)</string>
     <string name="settings_doh_system">Sistem DNS\'i seçiliyken kullanılmaz: sorgular ağın kendi DNS\'ine gider (Android\'de Özel DNS ayarlıysa o şifreler).</string>
+    <string name="profile_bypass">DPI atlatma</string>
+    <string name="profile_bypass_hint">Kapalıyken profil atlatma yapmaz, yalnızca reklam engeller.</string>
+    <string name="profile_needs_something">DPI atlatmayı ya da reklam engellemeyi açın.</string>
+    <string name="profile_adblock_section">Reklam engelleme</string>
+    <string name="profile_adblock">Reklam ve izleyicileri engelle</string>
+    <string name="profile_adblock_hint">Bu profildeki uygulamalar için seçili listelerdeki adresler çözülmez. İçerikle aynı adresten gelen reklamlar (YouTube, Instagram) bu yolla engellenemez. Tarayıcının kendi güvenli DNS\'i ya da Android\'in Özel DNS\'i bunu atlar.</string>
+    <string name="adblock_lists">Engelleme listeleri</string>
+    <string name="blocklist_hagezi_light">Yaklaşık 80.000 adres. Reklam ve izleyiciler; nadiren bir şeyi bozar.</string>
+    <string name="blocklist_hagezi_normal">Yaklaşık 180.000 adres. Her iş için iyi bir seçim.</string>
+    <string name="blocklist_hagezi_pro">Yaklaşık 240.000 adres. Daha sıkı; birkaç site bozulabilir.</string>
+    <string name="blocklist_adguard">Yaklaşık 195.000 adres. AdGuard\'ın DNS engelleme listesi.</string>
+    <string name="blocklist_stevenblack">Yaklaşık 80.000 adres. Reklam ve zararlı yazılım.</string>
+    <string name="blocklist_oisd">Yaklaşık 60.000 adres. Reklamlar; çok az yanlış engelleme.</string>
+    <string name="blocklist_peterlowe">Yaklaşık 3.500 adres. Çok hafif.</string>
+    <string name="adblock_list_status">%1$d adres · güncellendi: %2$s</string>
+    <string name="adblock_list_missing">Henüz indirilmedi</string>
+    <string name="adblock_list_downloading">İndiriliyor…</string>
+    <string name="adblock_list_failed">İndirilemedi; profil açılırken yeniden denenir</string>
+    <string name="adblock_custom">Adresiyle liste ekle</string>
+    <string name="adblock_custom_hint">Hosts dosyası, alan adı listesi ya da AdGuard biçiminde liste (https://…)</string>
+    <string name="adblock_custom_add">Listeyi ekle</string>
+    <string name="adblock_custom_remove">%1$s listesini kaldır</string>
+    <string name="adblock_update">Seçili listeleri güncelle</string>
+    <string name="adblock_allow">Asla engelleme</string>
+    <string name="adblock_allow_hint">Bu profilde alt alan adlarıyla birlikte hep erişilebilir kalacak alan adları</string>
+    <string name="home_blocked">Engellenen reklam ve izleyici</string>
+    <string name="home_blocked_open">Son engellenenler</string>
+    <string name="blocked_title">Son engellenenler</string>
+    <string name="blocked_hint">Yalnızca bu telefonda, bir sonraki açılışa kadar tutulur. Bir uygulama ya da site bozulursa adrese izin verin: %1$s profilinin \"Asla engelleme\" listesine eklenir.</string>
+    <string name="blocked_empty">Henüz bir şey engellenmedi.</string>
+    <string name="blocked_allow">İzin ver</string>
+    <string name="blocked_allowed">İzin verildi</string>
 </resources>

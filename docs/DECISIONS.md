@@ -225,3 +225,28 @@ prepare() runs only on a user's action (button, tile, widget tap, shortcut, star
 `VpnPermission`, which logs every call. DPIMech also logs when another app's VPN turns on or off,
 and "Report a problem" takes the log from the file, so these lines survive the app being closed in
 the background.
+
+## 33. Ad and tracker blocking by DNS, per profile (2026-11-26)
+The owner asked for an ad blocker that lives in the profile, not in Settings, so a profile can be
+an ad blocker only and switching profiles turns it on or off. DPIMech already answers the apps' DNS
+in the packet filter (DoH, system DNS), so blocking is a lookup before the answer: a name on the
+profile's lists gets `0.0.0.0` / `::` (no records for other types) and the app fails at once.
+- **Lists:** picked one by one like AdAway: HaGeZi Light/Normal/Pro, AdGuard DNS filter,
+  StevenBlack, OISD small, Peter Lowe, and any list added by its address. HaGeZi Normal is ticked
+  when a profile turns blocking on. They are data downloaded at runtime (F-Droid allows that), kept
+  compiled (a sorted, packed name set: ~4 MB for 200 000 names, loads in milliseconds) and fetched
+  again after a week with the automatic list update. The parser reads hosts files, domain lists and
+  the DNS part of the adblock syntax (`||name^`, `@@||name^`); anything else is skipped.
+- **Per profile:** on/off (off by default), the lists, and a "Never block" allowlist. The recently
+  blocked names (kept in memory, with the app that asked on Android 10+) have an "Allow" button
+  that adds to the running profile's allowlist.
+- **Bypass off:** a new profile switch; then ciadpi runs with no options (it only relays), and the
+  automatic strategy and the ping are skipped.
+- **The DNS address:** with blocking and DoH on, the apps are told DPIMech's own address
+  (`198.18.0.2`), not e.g. `1.1.1.1`: Chrome sees a well-known server and switches to its own DoH,
+  past the blocking. With DoH off the real server stays and unanswered queries go through the
+  tunnel as before.
+- **Limits, said in the UI:** ads served from the content's own address (YouTube, Instagram) cannot
+  be blocked by DNS; a browser's own secure DNS or Android's Private DNS goes around it; only the
+  profile's apps are covered. Nothing changes page content (no cosmetic filtering, no TLS
+  interception).

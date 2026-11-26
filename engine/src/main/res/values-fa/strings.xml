@@ -14,6 +14,8 @@
     <string name="engine_stats_strategy">راهبرد: %1$s</string>
     <string name="engine_stats_dns">DNS over HTTPS: %1$d از %2$d درخواست</string>
     <string name="engine_stats_quic">QUIC مسدود: %1$d بسته</string>
+    <string name="engine_stats_blocked">تبلیغات مسدودشده: %1$d</string>
+    <string name="engine_stats_line_blocked">%1$s · %2$d مسدود شد</string>
     <string name="engine_stats_restarts">راه‌اندازی دوبارهٔ موتور: %1$d</string>
     <string name="engine_stats_ping">میانگین پینگ: %1$d ms · %2$d از %3$d سایت باز می‌شود</string>
     <string name="engine_stats_ping_none">اکنون هیچ سایتی باز نمی‌شود (%1$d آزموده شد)</string>

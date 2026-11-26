@@ -24,6 +24,7 @@ Work-log entries: newest on top, `### YYYY-MM-DD — short title`, then bullets 
   before tagging; keep short descriptions ≤ 80 characters.
 
 - Scope is fixed in `docs/PLAN.md`: ByeDPI only, no root mode, no remote tunnels, no Android TV.
+  Ad blocking is DNS-only (block lists per profile); nothing that changes page content.
 - Keep F-Droid compatible: no Google Play Services, Firebase, analytics or crash reporters; no
   executable downloads at runtime; native code only from pinned submodules.
 - Strategy data comes from the desktop repo's `strategies/default.json`, site packs from its
@@ -79,6 +80,8 @@ core/     pure Kotlin, no Android: everything that can be unit-tested
   QuickCheck        one site, directly and through a short-lived ciadpi (Test tab)
   ProfileBackup     profiles to/from a file (Settings → Backup)
   CrashRecord, LogFile  previous run's end (last log lines, stack trace) for the next report
+  Adblock           BlockList catalog, list parser (hosts / domains / ||adblock^), DomainSet
+                    (packed sorted names), DnsBlocker, DnsBlockAnswer (empty answers)
   Profile, SavedProfiles, VpnApps, TunnelConfig, OnlineSource
 engine/   Android library: BypassVpnService (+ watchdog, network changes, stats), PacketFilter
           (TUN ↔ hev with DoH / QUIC switch), EngineStats, LiveProgress (Live Update
@@ -86,9 +89,10 @@ engine/   Android library: BypassVpnService (+ watchdog, network changes, stats)
           TProxy (hev JNI), EngineState, NetworkIdentity (app-wide network watcher),
           SystemDns (the network's own DNS), EngineLog + CrashRecorder (log file, crash trace for
           the next report), VpnPermission (logged prepare(): it stops other VPN apps),
+          AdblockStore (downloaded block lists, compiled), AdblockLog (count, recent blocks),
           AndroidEngineLauncher (Lab)
 app/      Compose UI: bottom bar (Home, Test = Strategy Lab, Settings, About), first-start wizard,
-          profile editor, app picker; QS tile; widget/ (home-screen widget, per-widget profile in
+          profile editor (+ AdblockUi: block lists, recently blocked), app picker; QS tile; widget/ (home-screen widget, per-widget profile in
           WidgetConfigActivity); shortcut/ (launcher shortcuts, ShortcutActivity); boot/ (start on boot); lab/ (LabService:
           Lab in a foreground service); repositories (profiles, settings, strategies, Lab)
 native/   Android.mk/Application.mk for ndk-build; byedpi + hev-socks5-tunnel submodules (pinned tags)
