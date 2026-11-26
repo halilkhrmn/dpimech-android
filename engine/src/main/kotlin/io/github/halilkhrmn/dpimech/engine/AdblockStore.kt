@@ -1,6 +1,7 @@
 package io.github.halilkhrmn.dpimech.engine
 
 import io.github.halilkhrmn.dpimech.core.BlockList
+import io.github.halilkhrmn.dpimech.core.BlockListCatalog
 import io.github.halilkhrmn.dpimech.core.BlockListParser
 import io.github.halilkhrmn.dpimech.core.DnsBlocker
 import io.github.halilkhrmn.dpimech.core.DomainSet
@@ -22,19 +23,35 @@ object AdblockStore {
     data class Status(val names: Int, val updated: Long)
 
     private var dir: File? = null
+    private var catalogUrl = BlockListCatalog.url()
     private val state = MutableStateFlow<Map<String, Status>>(emptyMap())
     val status: StateFlow<Map<String, Status>> = state.asStateFlow()
 
+    /** The lists on offer ([BlockListCatalog]), empty until it was downloaded once. */
+    private val catalogState = MutableStateFlow<List<BlockList>>(emptyList())
+    val catalog: StateFlow<List<BlockList>> = catalogState.asStateFlow()
+
+    /** When the catalog was last downloaded (epoch ms), 0 never. */
+    @Volatile
+    var catalogUpdated = 0L
+        private set
+
     /** Lists older than this are fetched again when the app starts (with the automatic update). */
     const val MAX_AGE_MS = 7L * 24 * 3600 * 1000
+    private const val CATALOG = "catalog.json"
     private const val MAX_BYTES = 40 shl 20
     private const val TIMEOUT_MS = 30_000
 
+    /** [catalogUrl]: where the catalog comes from ([BlockListCatalog.url]; set by the app). */
     @Synchronized
-    fun init(filesDir: File) {
+    fun init(filesDir: File, catalogUrl: String = BlockListCatalog.url()) {
         if (dir != null) return
         val d = File(filesDir, "blocklists").apply { mkdirs() }
         dir = d
+        this.catalogUrl = catalogUrl
+        val saved = File(d, CATALOG)
+        runCatching { catalogState.value = BlockListCatalog.parse(saved.readText()) }
+        catalogUpdated = if (saved.exists()) saved.lastModified() else 0L
         state.value = d.listFiles { f -> f.name.endsWith(".meta") }.orEmpty().mapNotNull { meta ->
             val parts = runCatching { meta.readText().trim().split(' ', limit = 3) }.getOrNull() ?: return@mapNotNull null
             if (parts.size < 3) return@mapNotNull null
@@ -46,6 +63,22 @@ object AdblockStore {
         val d = dir ?: error("AdblockStore.init was not called")
         val hash = MessageDigest.getInstance("SHA-256").digest(id.toByteArray()).joinToString("") { "%02x".format(it) }.take(24)
         return File(d, hash)
+    }
+
+    /** Downloads the catalog of lists on offer and keeps it. Safe from any background thread. */
+    fun refreshCatalog(): Result<List<BlockList>> = runCatching {
+        val text = fetch(catalogUrl)
+        val lists = BlockListCatalog.parse(text)
+        write(File(dir ?: error("AdblockStore.init was not called"), CATALOG), text.toByteArray())
+        catalogUpdated = System.currentTimeMillis()
+        catalogState.value = lists
+        lists
+    }.onFailure { EngineLog.add("block list catalog: download failed: $it") }
+
+    /** A list of the catalog, or a custom one; the catalog is downloaded first if there is none. */
+    fun list(id: String): BlockList? {
+        if (catalogState.value.isEmpty() && !id.startsWith(BlockList.CUSTOM_PREFIX)) refreshCatalog()
+        return BlockList.byId(id, catalogState.value)
     }
 
     /** Downloads [list] and keeps it compiled. Safe to call from any background thread. */
@@ -80,7 +113,7 @@ object AdblockStore {
         val lists = ArrayList<DomainSet>()
         val exceptions = ArrayList<String>()
         for (id in ids.distinct()) {
-            val list = BlockList.byId(id) ?: continue
+            val list = list(id) ?: continue
             if (id !in state.value) download(list)
             val b = base(id)
             val names = runCatching { DomainSet.load(File(b.path + ".names").readBytes()) }.getOrNull()

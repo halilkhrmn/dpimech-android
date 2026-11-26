@@ -109,17 +109,32 @@ class AdblockTest {
     }
 
     @Test
-    fun builtInAndCustomLists() {
-        assertNotNull(BlockList.byId(BlockList.DEFAULT))
-        assertEquals(BlockList.BUILT_IN.size, BlockList.BUILT_IN.map { it.id }.distinct().size)
-        BlockList.BUILT_IN.forEach { assertTrue(it.url.startsWith("https://"), it.id) }
+    fun customListsAndLookup() {
+        val catalog = listOf(BlockList("a", "A", "https://example.org/a.txt"))
+        assertEquals("A", BlockList.byId("a", catalog)?.name)
+        assertNull(BlockList.byId("b", catalog))
         val custom = assertNotNull(BlockList.custom(" https://lists.example.org/ads.txt "))
         assertEquals("lists.example.org", custom.name)
         assertTrue(custom.custom)
-        assertEquals(custom, BlockList.byId(custom.id))
+        assertEquals(custom, BlockList.byId(custom.id, catalog))
         assertNull(BlockList.custom("ftp://example.org/list"))
         assertNull(BlockList.custom("https://exa mple.org/list"))
         assertNull(BlockList.custom("example.org/list"))
+    }
+
+    @Test
+    fun catalogParsingSkipsUnusableEntries() {
+        val text = """{"format":1,"lists":[
+            {"id":"ok","name":"OK","url":"https://raw.githubusercontent.com/x/y/main/l.txt","notes":{"en":"E","tr":"T"}},
+            {"id":"ok","name":"Again","url":"https://raw.githubusercontent.com/x/y/main/m.txt"},
+            {"id":"plain","name":"Plain","url":"http://example.org/l.txt"},
+            {"id":"url:https://x.org/l","name":"Custom","url":"https://x.org/l"}
+        ],"other":1}"""
+        val lists = BlockListCatalog.parse(text)
+        assertEquals(listOf("ok"), lists.map { it.id })
+        assertEquals("T", lists[0].note("tr"))
+        assertEquals("E", lists[0].note("ru"), "English when a language is missing")
+        assertTrue(runCatching { BlockListCatalog.parse("""{"format":2,"lists":[]}""") }.isFailure)
     }
 
     @Test

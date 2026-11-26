@@ -231,9 +231,14 @@ The owner asked for an ad blocker that lives in the profile, not in Settings, so
 an ad blocker only and switching profiles turns it on or off. DPIMech already answers the apps' DNS
 in the packet filter (DoH, system DNS), so blocking is a lookup before the answer: a name on the
 profile's lists gets `0.0.0.0` / `::` (no records for other types) and the app fails at once.
-- **Lists:** picked one by one like AdAway: HaGeZi Light/Normal/Pro, AdGuard DNS filter,
-  StevenBlack, OISD small, Peter Lowe, and any list added by its address. HaGeZi Normal is ticked
-  when a profile turns blocking on. They are data downloaded at runtime (F-Droid allows that), kept
+- **Lists:** picked one by one like AdAway, plus any list added by its address. No list address is
+  in the code: the lists on offer are in `blocklists/catalog.json` in this repository, which the app
+  downloads from GitHub (a CI debug build reads its own branch's copy). The owner's rule: only lists
+  with an open licence hosted on GitHub (or GitLab, Codeberg); `BlockListCatalogTest` checks it.
+  Today: HaGeZi Light/Normal/Pro (GPL-3.0), AdGuard DNS filter (GPL-3.0, GitHub Pages), StevenBlack
+  (MIT), 1Hosts Lite (MPL-2.0); OISD and Peter Lowe's list were dropped (own sites). A list is
+  fetched from its source only when a profile ticks it; HaGeZi Normal is ticked when a profile turns
+  blocking on. Lists are data downloaded at runtime (F-Droid allows that, as for AdAway), kept
   compiled (a sorted, packed name set: ~4 MB for 200 000 names, loads in milliseconds) and fetched
   again after a week with the automatic list update. The parser reads hosts files, domain lists and
   the DNS part of the adblock syntax (`||name^`, `@@||name^`); anything else is skipped.

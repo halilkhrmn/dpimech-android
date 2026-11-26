@@ -1,33 +1,33 @@
 package io.github.halilkhrmn.dpimech.core
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+
 /**
  * Ad and tracker blocking by DNS (DECISIONS #33): a profile can turn it on, pick block lists and
  * keep its own allowlist. The packet filter answers the profile's apps' DNS; a name on a list gets
- * an empty address, so the app cannot reach it. Lists are data downloaded at runtime (never
- * bundled), like the strategy lists.
+ * an empty address, so the app cannot reach it. No list address is in the code: the lists on offer
+ * come from [BlockListCatalog] (a file in this repository), and a list is downloaded from its own
+ * source only when a profile ticks it.
  */
-data class BlockList(val id: String, val name: String, val url: String, val license: String = "") {
+@Serializable
+data class BlockList(
+    val id: String,
+    val name: String,
+    val url: String,
+    val homepage: String = "",
+    val license: String = "",
+    /** What the list blocks, by language (`en`, `tr`, …). */
+    val notes: Map<String, String> = emptyMap(),
+) {
     val custom get() = id.startsWith(CUSTOM_PREFIX)
+
+    fun note(language: String): String? = notes[language] ?: notes["en"]
 
     companion object {
         const val CUSTOM_PREFIX = "url:"
-        private const val HAGEZI = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard"
 
-        /** Offered in every profile; the user ticks the ones to use. Notes are app strings. */
-        val BUILT_IN = listOf(
-            BlockList("hagezi-light", "HaGeZi Light", "$HAGEZI/light-onlydomains.txt", "GPL-3.0"),
-            BlockList("hagezi-normal", "HaGeZi Normal", "$HAGEZI/multi-onlydomains.txt", "GPL-3.0"),
-            BlockList("hagezi-pro", "HaGeZi Pro", "$HAGEZI/pro-onlydomains.txt", "GPL-3.0"),
-            BlockList("adguard-dns", "AdGuard DNS filter", "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt", "GPL-3.0"),
-            BlockList("stevenblack", "StevenBlack hosts", "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts", "MIT"),
-            BlockList("oisd-small", "OISD small", "https://small.oisd.nl/domainswild2", "GPL-3.0"),
-            BlockList(
-                "peterlowe", "Peter Lowe's list",
-                "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext",
-            ),
-        )
-
-        /** Ticked when a profile turns blocking on for the first time. */
+        /** Ticked when a profile turns blocking on for the first time (if the catalog has it). */
         const val DEFAULT = "hagezi-normal"
 
         /** A list the user added by its address (http or https), or null if it is not one. */
@@ -39,8 +39,36 @@ data class BlockList(val id: String, val name: String, val url: String, val lice
             return BlockList(CUSTOM_PREFIX + u, host, u)
         }
 
-        /** A built-in list by id, or a custom one from its `url:` id. */
-        fun byId(id: String): BlockList? = BUILT_IN.find { it.id == id } ?: id.takeIf { it.startsWith(CUSTOM_PREFIX) }?.let { custom(it.removePrefix(CUSTOM_PREFIX)) }
+        /** A list from the [catalog], or a custom one from its `url:` id. */
+        fun byId(id: String, catalog: List<BlockList>): BlockList? =
+            catalog.find { it.id == id } ?: id.takeIf { it.startsWith(CUSTOM_PREFIX) }?.let { custom(it.removePrefix(CUSTOM_PREFIX)) }
+    }
+}
+
+/**
+ * The block lists on offer: `blocklists/catalog.json` in this repository (format 1), downloaded
+ * from GitHub and kept by the app, like the strategy lists. Only lists with an open licence hosted
+ * on GitHub, GitLab or Codeberg go in (checked by its test); entries that are not usable are
+ * skipped.
+ */
+object BlockListCatalog {
+    /** Release builds read it from `main`; a debug build made by CI from its own branch. */
+    fun url(branch: String = "main") =
+        "https://raw.githubusercontent.com/halilkhrmn/dpimech-android/$branch/blocklists/catalog.json"
+
+    @Serializable
+    private data class File(val format: Int, val lists: List<BlockList> = emptyList())
+
+    private val json = Json { ignoreUnknownKeys = true }
+
+    /** The usable lists of a catalog file; throws when it is not one. */
+    fun parse(text: String): List<BlockList> {
+        val file = json.decodeFromString(File.serializer(), text)
+        require(file.format == 1) { "block list catalog format ${file.format}" }
+        val seen = HashSet<String>()
+        return file.lists.filter {
+            it.id.isNotBlank() && !it.custom && it.name.isNotBlank() && it.url.startsWith("https://") && seen.add(it.id)
+        }
     }
 }
 

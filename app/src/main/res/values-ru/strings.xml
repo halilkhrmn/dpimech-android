@@ -260,13 +260,6 @@
     <string name="profile_adblock">Блокировать рекламу и трекеры</string>
     <string name="profile_adblock_hint">Для приложений этого профиля имена из выбранных списков не разрешаются. Рекламу с того же адреса, что и контент (YouTube, Instagram), так не заблокировать. Собственный защищённый DNS браузера или частный DNS Android обходят блокировку.</string>
     <string name="adblock_lists">Списки блокировки</string>
-    <string name="blocklist_hagezi_light">Около 80 000 имён. Реклама и трекеры; редко что-то ломает.</string>
-    <string name="blocklist_hagezi_normal">Около 180 000 имён. Хороший выбор на каждый день.</string>
-    <string name="blocklist_hagezi_pro">Около 240 000 имён. Строже; некоторые сайты могут сломаться.</string>
-    <string name="blocklist_adguard">Около 195 000 имён. Список AdGuard для блокировки через DNS.</string>
-    <string name="blocklist_stevenblack">Около 80 000 имён. Реклама и вредоносные сайты.</string>
-    <string name="blocklist_oisd">Около 60 000 имён. Реклама; очень мало ложных блокировок.</string>
-    <string name="blocklist_peterlowe">Около 3 500 имён. Очень лёгкий.</string>
     <string name="adblock_list_status">%1$d имён · обновлён %2$s</string>
     <string name="adblock_list_missing">Ещё не загружен</string>
     <string name="adblock_list_downloading">Загрузка…</string>
@@ -285,4 +278,7 @@
     <string name="blocked_empty">Пока ничего не заблокировано.</string>
     <string name="blocked_allow">Разрешить</string>
     <string name="blocked_allowed">Разрешено</string>
+    <string name="adblock_catalog_loading">Загружаем доступные списки…</string>
+    <string name="adblock_catalog_failed">Не удалось получить списки. Проверьте подключение.</string>
+    <string name="adblock_catalog_retry">Повторить</string>
 </resources>

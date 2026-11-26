@@ -32,7 +32,7 @@ data class Profile(
     val bypass: Boolean = true,
     /** Ad and tracker blocking by DNS for the profile's apps (DECISIONS #33); off by default. */
     val adblock: Boolean = false,
-    /** Block lists in use: [BlockList.BUILT_IN] ids or custom `url:` ids. */
+    /** Block lists in use: [BlockListCatalog] ids or custom `url:` ids. */
     val blockLists: List<String> = listOf(BlockList.DEFAULT),
     /** Names never blocked in this profile (with their subdomains). */
     val adAllow: List<String> = emptyList(),

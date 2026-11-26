@@ -54,27 +54,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** The note under a built-in list's name (what it blocks, how strict it is). */
-@Composable
-private fun listNote(id: String): String? = when (id) {
-    "hagezi-light" -> stringResource(R.string.blocklist_hagezi_light)
-    "hagezi-normal" -> stringResource(R.string.blocklist_hagezi_normal)
-    "hagezi-pro" -> stringResource(R.string.blocklist_hagezi_pro)
-    "adguard-dns" -> stringResource(R.string.blocklist_adguard)
-    "stevenblack" -> stringResource(R.string.blocklist_stevenblack)
-    "oisd-small" -> stringResource(R.string.blocklist_oisd)
-    "peterlowe" -> stringResource(R.string.blocklist_peterlowe)
-    else -> null
-}
-
 /**
- * The block lists of a profile: the built-in ones and the profile's own (added by address), each
- * with a tick, what it is and whether it is downloaded. A ticked list that is not downloaded yet
- * is fetched at once (the profile would fetch it at its start anyway).
+ * The block lists of a profile: those of the catalog (downloaded from GitHub, see
+ * [io.github.halilkhrmn.dpimech.core.BlockListCatalog]) and the profile's own, added by address.
+ * Each has a tick, what it is, its licence and whether it is downloaded. A list is fetched from its
+ * source only when it is ticked (the profile would fetch it at its start anyway).
  */
 @Composable
 fun AdblockLists(selected: List<String>, onChange: (List<String>) -> Unit) {
     val status by AdblockStore.status.collectAsStateWithLifecycle()
+    val catalog by AdblockStore.catalog.collectAsStateWithLifecycle()
+    var catalogBusy by remember { mutableStateOf(false) }
+    var catalogFailed by remember { mutableStateOf(false) }
+    val language = LocalConfiguration.current.locales[0].language
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(emptySet<String>()) }
     var failed by remember { mutableStateOf(emptySet<String>()) }
@@ -92,13 +84,40 @@ fun AdblockLists(selected: List<String>, onChange: (List<String>) -> Unit) {
         }
     }
 
-    val lists = BlockList.BUILT_IN + selected.mapNotNull { id -> BlockList.byId(id)?.takeIf { it.custom } }
-    // Turning blocking on with lists not downloaded yet (the default one on a first use): fetch them now.
+    fun refreshCatalog() {
+        if (catalogBusy) return
+        catalogBusy = true
+        catalogFailed = false
+        scope.launch {
+            val ok = withContext(Dispatchers.IO) { AdblockStore.refreshCatalog().isSuccess }
+            catalogBusy = false
+            catalogFailed = !ok
+        }
+    }
+
+    val lists = catalog + selected.mapNotNull { id -> BlockList.byId(id, emptyList()) }
+    // The catalog on first use (or a week later), then the ticked lists not downloaded yet (the
+    // default one on a first use).
     LaunchedEffect(Unit) {
-        selected.mapNotNull(BlockList::byId).filter { it.id !in status }.forEach(::fetch)
+        if (catalog.isEmpty() || System.currentTimeMillis() - AdblockStore.catalogUpdated > AdblockStore.MAX_AGE_MS) refreshCatalog()
+    }
+    LaunchedEffect(catalog) {
+        selected.mapNotNull { BlockList.byId(it, catalog) }.filter { it.id !in status }.forEach(::fetch)
     }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(stringResource(R.string.adblock_lists), style = MaterialTheme.typography.bodyLarge)
+        when {
+            catalogBusy && catalog.isEmpty() -> Text(stringResource(R.string.adblock_catalog_loading), style = MaterialTheme.typography.bodySmall)
+            catalogFailed && catalog.isEmpty() -> Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.adblock_catalog_failed),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(onClick = ::refreshCatalog) { Text(stringResource(R.string.adblock_catalog_retry)) }
+            }
+        }
         lists.forEach { list ->
             val on = list.id in selected
             val s = status[list.id]
@@ -110,7 +129,10 @@ fun AdblockLists(selected: List<String>, onChange: (List<String>) -> Unit) {
             }
             ListItem(
                 headlineContent = { Text(list.name) },
-                supportingContent = { Text(listOfNotNull(listNote(list.id), line).joinToString("\n")) },
+                supportingContent = {
+                    val source = listOf(list.license, list.homepage.removePrefix("https://")).filter { it.isNotEmpty() }.joinToString(" · ")
+                    Text(listOfNotNull(list.note(language), source.ifEmpty { null }, line).joinToString("\n"))
+                },
                 leadingContent = { Checkbox(checked = on, onCheckedChange = null) },
                 trailingContent = if (list.custom) {
                     {
@@ -147,7 +169,10 @@ fun AdblockLists(selected: List<String>, onChange: (List<String>) -> Unit) {
         )
         TextButton(
             enabled = selected.isNotEmpty() && busy.isEmpty(),
-            onClick = { selected.mapNotNull(BlockList::byId).forEach(::fetch) },
+            onClick = {
+                refreshCatalog()
+                selected.mapNotNull { BlockList.byId(it, catalog) }.forEach(::fetch)
+            },
         ) { Text(stringResource(R.string.adblock_update)) }
     }
 }

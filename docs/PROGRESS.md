@@ -58,6 +58,17 @@
 
 ## Work log
 
+### 2026-11-26 — Block lists from a catalog on GitHub
+- Why: the owner wants no list addresses in the code, only open lists hosted on GitHub-like sites,
+  downloaded when picked.
+- Done: `blocklists/catalog.json` (6 lists: HaGeZi Light/Normal/Pro, AdGuard DNS, StevenBlack,
+  1Hosts Lite; notes in five languages); `BlockListCatalog` parses it, `AdblockStore` downloads and
+  keeps it (weekly refresh with the other lists), the editor shows its lists with licence and
+  source. OISD and Peter Lowe's list dropped. Debug builds from CI read the catalog of their branch
+  (`BuildConfig.CATALOG_BRANCH`), release builds `main`.
+- Verified: `BlockListCatalogTest` (every entry usable, open licence, code host, all notes),
+  `AdblockTest`; app compiled locally.
+
 ### 2026-11-26 — Ad and tracker blocking per profile
 - Done (DECISIONS #33): `Adblock.kt` in core (catalog, parser, `DomainSet`, `DnsBlocker`, blocked
   answers), `AdblockStore` / `AdblockLog` in engine, blocking in `PacketFilter`, own DNS address

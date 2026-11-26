@@ -266,13 +266,6 @@
     <string name="profile_adblock">حجب الإعلانات وأدوات التتبع</string>
     <string name="profile_adblock_hint">لتطبيقات هذا الملف، لا تُحلّ الأسماء الموجودة في القوائم المختارة. لا يمكن حجب الإعلانات القادمة من عنوان المحتوى نفسه (يوتيوب، إنستغرام) بهذه الطريقة. يتجاوزها DNS الآمن الخاص بالمتصفح أو DNS الخاص في أندرويد.</string>
     <string name="adblock_lists">قوائم الحجب</string>
-    <string name="blocklist_hagezi_light">نحو 80٬000 اسم. إعلانات وأدوات تتبع؛ نادرًا ما يعطّل شيئًا.</string>
-    <string name="blocklist_hagezi_normal">نحو 180٬000 اسم. خيار جيد لكل الاستخدامات.</string>
-    <string name="blocklist_hagezi_pro">نحو 240٬000 اسم. أشد؛ قد تتعطل بعض المواقع.</string>
-    <string name="blocklist_adguard">نحو 195٬000 اسم. قائمة AdGuard للحجب عبر DNS.</string>
-    <string name="blocklist_stevenblack">نحو 80٬000 اسم. إعلانات وبرمجيات خبيثة.</string>
-    <string name="blocklist_oisd">نحو 60٬000 اسم. إعلانات؛ حجب خاطئ قليل جدًا.</string>
-    <string name="blocklist_peterlowe">نحو 3٬500 اسم. خفيفة جدًا.</string>
     <string name="adblock_list_status">%1$d اسم · حُدّث %2$s</string>
     <string name="adblock_list_missing">لم يُنزَّل بعد</string>
     <string name="adblock_list_downloading">جارٍ التنزيل…</string>
@@ -291,4 +284,7 @@
     <string name="blocked_empty">لم يُحجب شيء بعد.</string>
     <string name="blocked_allow">السماح</string>
     <string name="blocked_allowed">مسموح</string>
+    <string name="adblock_catalog_loading">جارٍ جلب قوائم الحجب المتاحة…</string>
+    <string name="adblock_catalog_failed">تعذّر جلب قوائم الحجب. تحقّق من الاتصال.</string>
+    <string name="adblock_catalog_retry">إعادة المحاولة</string>
 </resources>
