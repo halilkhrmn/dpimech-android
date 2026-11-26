@@ -12,8 +12,8 @@ android {
         minSdk = 26
         targetSdk = 36
         // Release tags are vX.Y.Z and versionName must match (checked by the release workflow).
-        versionCode = 6
-        versionName = "0.5.0"
+        versionCode = 7
+        versionName = "0.6.0"
         // Branch of this repository the block list catalog is read from (BlockListCatalog).
         buildConfigField("String", "CATALOG_BRANCH", "\"main\"")
     }
