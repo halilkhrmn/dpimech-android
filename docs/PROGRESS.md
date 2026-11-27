@@ -60,6 +60,14 @@
 
 ## Work log
 
+### 2026-11-27 — CI: Gradle again after Maven Central's 429
+- Why: Maven Central answers "429 Too Many Requests" now and then to GitHub's shared runners; a job
+  then died while fetching dependencies, before any test ran (e.g. CI run 45978707359, attempt 1).
+- Done: `tools/gradle-retry.sh` runs `./gradlew` and, only when the log shows a 429 and no failed
+  test or lint error, waits 60 s and runs it again (at most 3 runs). Used by every Gradle step of
+  `ci.yml` and `release.yml`.
+- Verified: the script against a fake `gradlew` (a 429 runs three times, a failed test once); CI.
+
 ### 2026-11-27 — Android 8–10 could not start with DoH or the QUIC switch on
 - Found by the crash log (DECISIONS #31): Mücahid's report from 0.6.0 (Xiaomi Mi 6, Android 9) shows
   `start failed: NoSuchMethodError: ... Os.fcntlInt`. The packet filter (DoH, QUIC switch, system
