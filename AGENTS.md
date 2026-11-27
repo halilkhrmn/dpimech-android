@@ -55,6 +55,10 @@ Needs JDK 17+ (21 used), Android SDK with platform `android-37.0` and NDK `29.0.
 | Store images → `fastlane/` (after the renders) | `python3 tools/fastlane-images.py` (needs Pillow) |
 | Release APKs (signed with `DPIMECH_*` env, else unsigned) | `./gradlew :app:assembleRelease` — see `docs/RELEASING.md` |
 
+When Maven Central answers 429 (rate limit), add `--init-script tools/ci/maven-mirror.gradle.kts`
+(Google's mirror of it; CI installs it always) and set `ROBOLECTRIC_REPO` to the same mirror.
+`tools/fastlane-images.py` needs a Pillow with its C part (`pip install pillow` in a venv).
+
 Tests that need `$CIADPI`/`$HEV`/root are skipped when those are missing; CI runs all of them
 (`.github/workflows/ci.yml`) and fails if the end-to-end test was skipped.
 

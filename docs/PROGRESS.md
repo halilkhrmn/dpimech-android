@@ -62,6 +62,17 @@
 
 ## Work log
 
+### 2026-11-27 — Google's Maven Central mirror; store images again
+- Why: the Gradle retry alone was not enough: Maven Central kept answering 429 for three minutes
+  (CI run 45988770333).
+- Done: `tools/ci/maven-mirror.gradle.kts` points Gradle's Maven Central at Google's mirror
+  (`maven-central.storage-download.googleapis.com`); every workflow installs it into
+  `~/.gradle/init.d`, and Robolectric's downloads use it too. The repo's build files are unchanged,
+  so F-Droid builds as before. With it the screen tests ran in this container for the first time:
+  store screenshots rendered again; only Settings (4: the DoH hint with the fallback) and About
+  (5: 0.6.1) changed, so only those were kept (other files differed only in PNG encoding).
+- Verified: `:core:test` and `:app:testDebugUnitTest` locally through the mirror; CI.
+
 ### 2026-11-27 — Your own DoH server (#40); 0.6.1 prepared
 - Done (DECISIONS #34): "Your own DoH server…" in Settings → DNS with a checked address field;
   `AppSettings.isCustomDoh` / `customDoh`, `DohClient.urlFor` and `TunnelConfig.announcedDns` know

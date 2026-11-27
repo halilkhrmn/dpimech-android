@@ -34,6 +34,9 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      # Maven Central answers 429 to GitHub's shared runners; Google's mirror of it has the same files.
+      - name: Use Google's Maven Central mirror
+        run: mkdir -p ~/.gradle/init.d && cp tools/ci/maven-mirror.gradle.kts ~/.gradle/init.d/
       - name: Build ciadpi and hev-socks5-tunnel for Linux
         run: ./native/build-host.sh
       - name: Unit and ciadpi integration tests
@@ -73,6 +76,9 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      # Maven Central answers 429 to GitHub's shared runners; Google's mirror of it has the same files.
+      - name: Use Google's Maven Central mirror
+        run: mkdir -p ~/.gradle/init.d && cp tools/ci/maven-mirror.gradle.kts ~/.gradle/init.d/
       - name: Install NDK and platform
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" "platforms;android-37.0" > /dev/null
       # Robolectric downloads its Android jars from Maven Central at test time; that download
@@ -90,8 +96,11 @@ jobs:
           d=~/.m2/repository/org/robolectric/android-all-instrumented/$v
           mkdir -p "$d"
           test -s "$d/android-all-instrumented-$v.jar" || curl -fsSL --retry 5 --retry-all-errors -o "$d/android-all-instrumented-$v.jar" \
-            "https://repo1.maven.org/maven2/org/robolectric/android-all-instrumented/$v/android-all-instrumented-$v.jar"
+            "https://maven-central.storage-download.googleapis.com/maven2/org/robolectric/android-all-instrumented/$v/android-all-instrumented-$v.jar"
       - name: Build debug APK, lint, screen tests
+        env:
+          # Robolectric's own downloads (other Android versions) from the mirror too.
+          ROBOLECTRIC_REPO: https://maven-central.storage-download.googleapis.com/maven2/
         # tools/gradle-retry.sh: runs again only when Maven Central answered 429.
         run: tools/gradle-retry.sh :app:assembleDebug :app:lintDebug :engine:lintDebug :app:testDebugUnitTest --console=plain
       # The arm64 debug APK only (nearly every phone; the other ABIs made it ~100 MB a run), kept a

@@ -26,6 +26,9 @@ jobs:
           # IzzyOnDroid's reproducible-build verifiers use JDK 17 by default.
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
+      # Maven Central answers 429 to GitHub's shared runners; Google's mirror of it has the same files.
+      - name: Use Google's Maven Central mirror
+        run: mkdir -p ~/.gradle/init.d && cp tools/ci/maven-mirror.gradle.kts ~/.gradle/init.d/
       - name: Check that the tag matches versionName
         run: |
           tag="${GITHUB_REF_NAME#v}"
