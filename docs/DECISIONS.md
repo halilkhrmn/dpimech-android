@@ -255,3 +255,12 @@ profile's lists gets `0.0.0.0` / `::` (no records for other types) and the app f
   be blocked by DNS; a browser's own secure DNS or Android's Private DNS goes around it; only the
   profile's apps are covered. Nothing changes page content (no cosmetic filtering, no TLS
   interception).
+
+## 34. The user's own DoH server (2026-11-27)
+Issue #40: the servers in the list are blocked on some networks. Settings → DNS now ends with
+"Your own DoH server…"; the setting then holds the typed `https://` address itself (no new field,
+so it reaches the engine, the always-on restart and backups as before). It is always asked over
+HTTPS (the DoH switch is fixed on), the apps get the tunnel's own DNS address (`198.18.0.2`) as for
+the system DNS, and the network's own DNS stays the fallback. The address is checked as typed
+(`https://`, a server name or IPv4 address, optional port; `/dns-query` added when there is no
+path). DPIMech is outside its VPN, so the server's name is looked up by the network's DNS.

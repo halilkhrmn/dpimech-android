@@ -287,4 +287,10 @@
     <string name="adblock_catalog_loading">جارٍ جلب قوائم الحجب المتاحة…</string>
     <string name="adblock_catalog_failed">تعذّر جلب قوائم الحجب. تحقّق من الاتصال.</string>
     <string name="adblock_catalog_retry">إعادة المحاولة</string>
+    <string name="dns_custom">خادم DoH خاص بك…</string>
+    <string name="dns_custom_label">DoH خاص (%1$s)</string>
+    <string name="dns_custom_title">خادم DNS over HTTPS خاص بك</string>
+    <string name="dns_custom_hint">عنوانه الكامل، مثل https://dns.example.com/dns-query. إذا لم يستجب، يستخدم DPIMech DNS الشبكة نفسها.</string>
+    <string name="dns_custom_invalid">أدخل عنوان https:// يتضمن اسم الخادم.</string>
+    <string name="settings_doh_custom">يُسأل خادم DoH الخاص بك دائمًا عبر HTTPS؛ وعند الفشل يُستخدم DNS الشبكة نفسها.</string>
 </resources>

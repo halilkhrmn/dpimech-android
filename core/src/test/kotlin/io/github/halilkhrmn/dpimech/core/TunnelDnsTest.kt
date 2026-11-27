@@ -177,3 +177,29 @@ class TunnelDnsTest {
         assertEquals("9.9.9.9", TunnelConfig(socksPort = 1080, dns = "9.9.9.9").announcedDns)
     }
 }
+
+class CustomDohTest {
+    @Test
+    fun typedAddressesAreCleanedUpOrRefused() {
+        kotlin.test.assertEquals("https://dns.example.com/dns-query", AppSettings.customDoh(" https://dns.example.com/dns-query "))
+        kotlin.test.assertEquals("https://dns.example.com/dns-query", AppSettings.customDoh("https://dns.example.com"))
+        kotlin.test.assertEquals("https://dns.example.com:8443/q?x=1", AppSettings.customDoh("https://dns.example.com:8443/q?x=1"))
+        kotlin.test.assertEquals("https://9.9.9.11/dns-query", AppSettings.customDoh("https://9.9.9.11/dns-query"))
+        kotlin.test.assertNull(AppSettings.customDoh("http://dns.example.com/dns-query"), "not encrypted")
+        kotlin.test.assertNull(AppSettings.customDoh("dns.example.com"))
+        kotlin.test.assertNull(AppSettings.customDoh("https://dns example.com/"))
+        kotlin.test.assertNull(AppSettings.customDoh("https://localhost/dns-query"))
+        kotlin.test.assertNull(AppSettings.customDoh("https://dns.example.com:99999/"))
+    }
+
+    @Test
+    fun theOwnServerIsAskedAndTheAppsGetTheTunnelAddress() {
+        val url = "https://dns.example.com/dns-query"
+        kotlin.test.assertTrue(AppSettings.isCustomDoh(url))
+        kotlin.test.assertFalse(AppSettings.isCustomDoh("1.1.1.1"))
+        kotlin.test.assertFalse(AppSettings.isCustomDoh(AppSettings.SYSTEM_DNS))
+        kotlin.test.assertEquals(url, DohClient.urlFor(url))
+        kotlin.test.assertEquals(TunnelConfig.systemDnsAddress, TunnelConfig(socksPort = 1, dns = url).announcedDns)
+        kotlin.test.assertEquals("9.9.9.9", TunnelConfig(socksPort = 1, dns = "9.9.9.9").announcedDns)
+    }
+}

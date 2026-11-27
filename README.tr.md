@@ -51,7 +51,7 @@ Android 8.0 ve üstü.
 - **Strateji Laboratuvarı:** stratejileri gerçek sitelerde doğrulama turlarıyla dener ve sağlayıcında
   hangisinin çalıştığını gösterir. Bilinen sağlayıcıların önerileri önce denenir.
 - **Ağa göre otomatik strateji:** yeni bir Wi-Fi'da ya da mobil operatörde çalışanı bulur ve hatırlar.
-- Atlatılan uygulamalar için **şifreli DNS (DoH)**. İsteğe bağlı **QUIC engeli**, tarayıcıları ve
+- Atlatılan uygulamalar için **şifreli DNS (DoH)** (listeden bir sunucu ya da kendi sunucun). İsteğe bağlı **QUIC engeli**, tarayıcıları ve
   YouTube'u atlatmanın çalıştığı TCP'ye geçirir.
 - Profil başına **reklam ve izleyici engelleme** (varsayılan kapalı): AdAway gibi seçtiğiniz
   engelleme listeleri, adresiyle eklediğiniz kendi listeleriniz, izin listesi ve son engellenen

@@ -275,4 +275,10 @@
     <string name="adblock_catalog_loading">در حال دریافت فهرست‌های موجود…</string>
     <string name="adblock_catalog_failed">فهرست‌ها دریافت نشد. اتصال را بررسی کنید.</string>
     <string name="adblock_catalog_retry">تلاش دوباره</string>
+    <string name="dns_custom">سرور DoH خودتان…</string>
+    <string name="dns_custom_label">DoH خودتان (%1$s)</string>
+    <string name="dns_custom_title">سرور DNS over HTTPS خودتان</string>
+    <string name="dns_custom_hint">نشانی کامل آن، مثلاً https://dns.example.com/dns-query. اگر پاسخ ندهد، DPIMech از DNS خود شبکه استفاده می‌کند.</string>
+    <string name="dns_custom_invalid">یک نشانی https:// با نام سرور وارد کنید.</string>
+    <string name="settings_doh_custom">از سرور DoH خودتان همیشه با HTTPS پرسیده می‌شود؛ در صورت خطا DNS خود شبکه استفاده می‌شود.</string>
 </resources>

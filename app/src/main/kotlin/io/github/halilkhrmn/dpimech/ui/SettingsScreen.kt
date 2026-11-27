@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     var pickLanguage by remember { mutableStateOf(false) }
     var pickDns by remember { mutableStateOf(false) }
+    var typeDoh by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
     val backupScope = androidx.compose.runtime.rememberCoroutineScope()
     val resources = androidx.compose.ui.platform.LocalResources.current
@@ -130,13 +132,28 @@ fun SettingsScreen(
                 },
                 modifier = Modifier.clickable { pickDns = true },
             )
-            // The network's own DNS is not encrypted by DPIMech (Android's Private DNS may be).
+            // The network's own DNS is not encrypted by DPIMech (Android's Private DNS may be); the
+            // user's own DoH server always is. Either way the switch does not apply.
             val systemDns = settings.dns == AppSettings.SYSTEM_DNS
+            val ownDoh = AppSettings.isCustomDoh(settings.dns)
+            val fixed = systemDns || ownDoh
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_doh)) },
-                supportingContent = { Text(stringResource(if (systemDns) R.string.settings_doh_system else R.string.settings_doh_hint)) },
-                trailingContent = { Switch(settings.encryptedDns && !systemDns, { on -> onChange { it.copy(encryptedDns = on) } }, enabled = !systemDns) },
-                modifier = Modifier.clickable(enabled = !systemDns) { onChange { it.copy(encryptedDns = !it.encryptedDns) } },
+                supportingContent = {
+                    Text(
+                        stringResource(
+                            when {
+                                systemDns -> R.string.settings_doh_system
+                                ownDoh -> R.string.settings_doh_custom
+                                else -> R.string.settings_doh_hint
+                            },
+                        ),
+                    )
+                },
+                trailingContent = {
+                    Switch(ownDoh || (settings.encryptedDns && !systemDns), { on -> onChange { it.copy(encryptedDns = on) } }, enabled = !fixed)
+                },
+                modifier = Modifier.clickable(enabled = !fixed) { onChange { it.copy(encryptedDns = !it.encryptedDns) } },
             )
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_quic)) },
@@ -275,19 +292,65 @@ fun SettingsScreen(
     if (pickDns) {
         ChoiceDialog(
             title = stringResource(R.string.settings_dns),
-            options = AppSettings.DNS_SERVERS.map { it.address to dnsLabel(it.address) },
-            selected = settings.dns,
-            onPick = { dns -> pickDns = false; onChange { it.copy(dns = dns) } },
+            options = AppSettings.DNS_SERVERS.map { it.address to dnsLabel(it.address) } +
+                (OWN_DOH to stringResource(R.string.dns_custom)),
+            selected = if (AppSettings.isCustomDoh(settings.dns)) OWN_DOH else settings.dns,
+            onPick = { dns ->
+                pickDns = false
+                if (dns == OWN_DOH) typeDoh = true else onChange { it.copy(dns = dns) }
+            },
             onDismiss = { pickDns = false },
+        )
+    }
+    if (typeDoh) {
+        CustomDohDialog(
+            initial = settings.dns.takeIf(AppSettings::isCustomDoh).orEmpty(),
+            onDone = { url -> typeDoh = false; onChange { it.copy(dns = url) } },
+            onDismiss = { typeDoh = false },
         )
     }
 }
 
-/** "Cloudflare (1.1.1.1)", or the translated name of the network's own DNS. */
+/** Choice key for "your own DoH server" in the DNS list; the setting then holds the address. */
+private const val OWN_DOH = "own-doh"
+
+/** "Cloudflare (1.1.1.1)", the translated name of the network's own DNS, or the own DoH address. */
 @Composable
-private fun dnsLabel(address: String): String =
-    if (address == AppSettings.SYSTEM_DNS) stringResource(R.string.dns_system)
-    else (AppSettings.DNS_SERVERS.find { it.address == address }?.name ?: "") + " ($address)"
+private fun dnsLabel(address: String): String = when {
+    address == AppSettings.SYSTEM_DNS -> stringResource(R.string.dns_system)
+    AppSettings.isCustomDoh(address) -> stringResource(R.string.dns_custom_label, address)
+    else -> (AppSettings.DNS_SERVERS.find { it.address == address }?.name ?: "") + " ($address)"
+}
+
+/** The address of the user's own DNS over HTTPS server (issue #40), checked as it is typed. */
+@Composable
+private fun CustomDohDialog(initial: String, onDone: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by rememberSaveable { mutableStateOf(initial.ifEmpty { "https://" }) }
+    val url = AppSettings.customDoh(text)
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.dns_custom_title)) },
+        text = {
+            androidx.compose.material3.OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                singleLine = true,
+                isError = url == null && text.length > "https://".length,
+                supportingText = {
+                    Text(stringResource(if (url == null && text.length > "https://".length) R.string.dns_custom_invalid else R.string.dns_custom_hint))
+                },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Uri,
+                    autoCorrectEnabled = false,
+                ),
+            )
+        },
+        confirmButton = {
+            androidx.compose.material3.TextButton(enabled = url != null, onClick = { url?.let(onDone) }) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
+}
 
 private fun isIgnoringBattery(context: android.content.Context) =
     context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)

@@ -52,6 +52,8 @@
     2026-11-16
   - [x] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
     user's action (#38), the log survives a crash; released 2026-11-26
+  - [ ] v0.6.1 (versionCode 8): starts on Android 8–10 again, your own DoH server (#40), Gradle
+    retries on Maven Central's 429; prepared 2026-11-27, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -59,6 +61,16 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-27 — Your own DoH server (#40); 0.6.1 prepared
+- Done (DECISIONS #34): "Your own DoH server…" in Settings → DNS with a checked address field;
+  `AppSettings.isCustomDoh` / `customDoh`, `DohClient.urlFor` and `TunnelConfig.announcedDns` know
+  it; the engine always uses DoH for it. Strings in five languages; READMEs mention it.
+- #38 answered (0.6.0 is out) and closed.
+- Release: versionCode 8, versionName 0.6.1; `changelogs/8.txt` in five languages.
+- Verified: `CustomDohTest` (address checks, URL, announced address); app compiled and engine lint
+  clean locally; the rest by CI. Not checked on a phone.
+- Next: merge, tag `v0.6.1`; Mücahid's test of the Android 8–10 fix.
 
 ### 2026-11-27 — CI: Gradle again after Maven Central's 429
 - Why: Maven Central answers "429 Too Many Requests" now and then to GitHub's shared runners; a job
