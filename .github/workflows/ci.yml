@@ -92,7 +92,7 @@ jobs:
           test -s "$d/android-all-instrumented-$v.jar" || curl -fsSL --retry 5 --retry-all-errors -o "$d/android-all-instrumented-$v.jar" \
             "https://repo1.maven.org/maven2/org/robolectric/android-all-instrumented/$v/android-all-instrumented-$v.jar"
       - name: Build debug APK, lint, screen tests
-        run: ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest --console=plain
+        run: ./gradlew :app:assembleDebug :app:lintDebug :engine:lintDebug :app:testDebugUnitTest --console=plain
       # The arm64 debug APK only (nearly every phone; the other ABIs made it ~100 MB a run), kept a
       # week for testing on a phone. Renders and the lint report only when something failed.
       - uses: actions/upload-artifact@v4

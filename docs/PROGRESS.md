@@ -60,6 +60,19 @@
 
 ## Work log
 
+### 2026-11-27 — Android 8–10 could not start with DoH or the QUIC switch on
+- Found by the crash log (DECISIONS #31): Mücahid's report from 0.6.0 (Xiaomi Mi 6, Android 9) shows
+  `start failed: NoSuchMethodError: ... Os.fcntlInt`. The packet filter (DoH, QUIC switch, system
+  DNS, ad blocking) made its socket non-blocking with `Os.fcntlInt`, public only from Android 11;
+  so since 2026-10-01 every start with DoH on (the default) failed on Android 8–10.
+- Done: the socket pair is created non-blocking (`SOCK_SEQPACKET | O_NONBLOCK`; `SOCK_NONBLOCK` is
+  `O_NONBLOCK` in Linux, and the `OsConstants.SOCK_NONBLOCK` field itself exists only from 10).
+  CI now lints `engine` too (`:engine:lintDebug`), which would have caught it; its one old error
+  (`ForegroundServicePermission` for `systemExempted`, allowed for VPN apps) is suppressed with a
+  note. `core` checked by hand for Java APIs Android 8 lacks: none.
+- Verified: `:engine:lintDebug` clean of errors locally; the rest by CI. Not checked on Android 9.
+- Next: Mücahid tries the CI APK; then 0.6.1.
+
 ### 2026-11-26 — 0.6.0 prepared
 - Done: versionCode 7, versionName 0.6.0; `changelogs/7.txt` in five languages (each ≤ 500 bytes);
   the full store descriptions list ad blocking and say where block lists come from (all under
