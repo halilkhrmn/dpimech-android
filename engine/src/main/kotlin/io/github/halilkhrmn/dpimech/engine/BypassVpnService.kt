@@ -136,7 +136,8 @@ class BypassVpnService : VpnService() {
                 autoStrategy = intent.getBooleanExtra(EXTRA_AUTO, false)
                 notifyStrategy = intent.getBooleanExtra(EXTRA_NOTIFY_STRATEGY, true)
                 notifyErrors = intent.getBooleanExtra(EXTRA_NOTIFY_ERRORS, true)
-                encryptDns = intent.getBooleanExtra(EXTRA_DOH, true)
+                // The user's own DoH server (issue #40) is always asked over HTTPS.
+                encryptDns = intent.getBooleanExtra(EXTRA_DOH, true) || AppSettings.isCustomDoh(dns)
                 blockQuic = intent.getBooleanExtra(EXTRA_BLOCK_QUIC, false)
                 goForeground(p)
                 worker.execute { startEngine(p) }

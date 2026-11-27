@@ -48,12 +48,15 @@ internal class PacketFilter(
     private val down: Thread
 
     init {
-        Os.socketpair(OsConstants.AF_UNIX, OsConstants.SOCK_SEQPACKET, 0, ours, theirs)
+        // Non-blocking from the start, like the TUN itself. Os.fcntlInt, used for this before, is public
+        // only from Android 11 and failed every start on 8–10 (NoSuchMethodError); the
+        // OsConstants.SOCK_NONBLOCK field exists only from 10. In Linux SOCK_NONBLOCK is O_NONBLOCK
+        // itself, and that constant is there on every version.
+        Os.socketpair(OsConstants.AF_UNIX, OsConstants.SOCK_SEQPACKET or OsConstants.O_NONBLOCK, 0, ours, theirs)
         for (fd in listOf(ours, theirs)) {
             runCatching { Os.setsockoptInt(fd, OsConstants.SOL_SOCKET, OsConstants.SO_SNDBUF, BUFFER) }
             runCatching { Os.setsockoptInt(fd, OsConstants.SOL_SOCKET, OsConstants.SO_RCVBUF, BUFFER) }
         }
-        Os.fcntlInt(ours, OsConstants.F_SETFL, Os.fcntlInt(ours, OsConstants.F_GETFL, 0) or OsConstants.O_NONBLOCK)
         hevFd = ParcelFileDescriptor.dup(theirs)
         Os.close(theirs)
         up = thread(name = "tun-up", isDaemon = true) { pump(tun.fileDescriptor, ::fromApps) }

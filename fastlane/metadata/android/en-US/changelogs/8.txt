@@ -1,0 +1,1 @@
+Fixed: on Android 8, 9 and 10 a profile could not start with encrypted DNS on (the default). New: your own DNS over HTTPS server in Settings → DNS, for networks where the listed servers are blocked; the network's own DNS stays the fallback.

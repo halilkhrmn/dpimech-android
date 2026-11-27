@@ -276,4 +276,10 @@
     <string name="adblock_catalog_loading">Getting the block lists on offer…</string>
     <string name="adblock_catalog_failed">Could not get the block lists on offer. Check the connection.</string>
     <string name="adblock_catalog_retry">Try again</string>
+    <string name="dns_custom">Your own DoH server…</string>
+    <string name="dns_custom_label">Own DoH (%1$s)</string>
+    <string name="dns_custom_title">Your own DNS over HTTPS server</string>
+    <string name="dns_custom_hint">Its full address, e.g. https://dns.example.com/dns-query. If it does not answer, DPIMech uses the network\'s own DNS.</string>
+    <string name="dns_custom_invalid">Enter an https:// address with a server name.</string>
+    <string name="settings_doh_custom">Your own DoH server is always asked over HTTPS; the network\'s own DNS is the fallback.</string>
 </resources>

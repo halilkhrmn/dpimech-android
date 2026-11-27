@@ -62,6 +62,25 @@ data class AppSettings(
         /** [dns] value for "the network's own DNS": no fixed address, the app asks the system. */
         const val SYSTEM_DNS = "system"
 
+        /**
+         * The user's own DNS over HTTPS server (issue #40): [dns] then holds its `https://` address
+         * itself. It is always asked over HTTPS (the DoH switch does not apply), with the network's
+         * own DNS as the fallback, like the servers in the list.
+         */
+        fun isCustomDoh(dns: String) = dns.startsWith("https://")
+
+        /** A typed DoH address, cleaned up, or null when it is not an `https://host/...` address. */
+        fun customDoh(text: String): String? {
+            val u = text.trim()
+            if (!u.startsWith("https://") || u.length > 500 || u.any { it.isWhitespace() }) return null
+            val host = u.removePrefix("https://").substringBefore('/').substringBefore('?').substringBefore('#')
+            val name = if (host.startsWith('[')) return null else host.substringBefore(':')
+            val port = host.substringAfter(':', "")
+            if (port.isNotEmpty() && port.toIntOrNull() !in 1..65535) return null
+            if (!isValidDns(name) && (Hostlist.normalize(name) == null || '.' !in name)) return null
+            return if (u.removePrefix("https://").contains('/')) u else "$u/dns-query"
+        }
+
         private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
         fun decode(text: String): AppSettings =

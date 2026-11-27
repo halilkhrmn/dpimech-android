@@ -26,6 +26,9 @@ jobs:
           # IzzyOnDroid's reproducible-build verifiers use JDK 17 by default.
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
+      # Maven Central answers 429 to GitHub's shared runners; Google's mirror of it has the same files.
+      - name: Use Google's Maven Central mirror
+        run: mkdir -p ~/.gradle/init.d && cp tools/ci/maven-mirror.gradle.kts ~/.gradle/init.d/
       - name: Check that the tag matches versionName
         run: |
           tag="${GITHUB_REF_NAME#v}"
@@ -36,7 +39,7 @@ jobs:
       - name: Tests
         run: |
           ./native/build-host.sh
-          CIADPI=$PWD/build/host/ciadpi ./gradlew :core:test --console=plain
+          CIADPI=$PWD/build/host/ciadpi tools/gradle-retry.sh :core:test --console=plain
       - name: Build signed APKs
         env:
           DPIMECH_KEYSTORE_BASE64: ${{ secrets.DPIMECH_KEYSTORE_BASE64 }}
@@ -48,7 +51,7 @@ jobs:
           export DPIMECH_KEYSTORE="$RUNNER_TEMP/release.jks"
           echo "$DPIMECH_KEYSTORE_BASE64" | base64 -d > "$DPIMECH_KEYSTORE"
           # Clean build without caches, from the tagged commit (reproducible builds).
-          ./gradlew clean :app:assembleRelease --no-build-cache --no-configuration-cache --console=plain
+          tools/gradle-retry.sh clean :app:assembleRelease --no-build-cache --no-configuration-cache --console=plain
           rm -f "$DPIMECH_KEYSTORE"
       - name: Collect and verify
         run: |

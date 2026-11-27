@@ -53,7 +53,7 @@ Android 8.0 or newer.
   one works on your provider. Presets for known providers are tried first.
 - **Automatic strategy per network:** on a new Wi-Fi or mobile operator it finds what works and
   remembers it.
-- **Encrypted DNS (DoH)** for the bypassed apps, and an optional **QUIC block** so browsers and
+- **Encrypted DNS (DoH)** for the bypassed apps (a server from the list or your own), and an optional **QUIC block** so browsers and
   YouTube use TCP, where the bypass works.
 - **Ad and tracker blocking** per profile (off by default): AdAway-style block lists you pick,
   your own lists by address, an allowlist, and the names blocked recently. It works by DNS, so a

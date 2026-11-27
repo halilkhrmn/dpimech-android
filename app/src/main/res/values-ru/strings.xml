@@ -281,4 +281,10 @@
     <string name="adblock_catalog_loading">Загружаем доступные списки…</string>
     <string name="adblock_catalog_failed">Не удалось получить списки. Проверьте подключение.</string>
     <string name="adblock_catalog_retry">Повторить</string>
+    <string name="dns_custom">Свой DoH-сервер…</string>
+    <string name="dns_custom_label">Свой DoH (%1$s)</string>
+    <string name="dns_custom_title">Свой сервер DNS over HTTPS</string>
+    <string name="dns_custom_hint">Полный адрес, например https://dns.example.com/dns-query. Если он не отвечает, DPIMech использует DNS сети.</string>
+    <string name="dns_custom_invalid">Введите адрес https:// с именем сервера.</string>
+    <string name="settings_doh_custom">Свой DoH-сервер всегда опрашивается по HTTPS; при сбое используется DNS сети.</string>
 </resources>

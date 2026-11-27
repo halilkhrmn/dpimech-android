@@ -275,4 +275,10 @@
     <string name="adblock_catalog_loading">Engelleme listeleri alınıyor…</string>
     <string name="adblock_catalog_failed">Engelleme listeleri alınamadı. Bağlantıyı kontrol edin.</string>
     <string name="adblock_catalog_retry">Tekrar dene</string>
+    <string name="dns_custom">Kendi DoH sunucun…</string>
+    <string name="dns_custom_label">Kendi DoH (%1$s)</string>
+    <string name="dns_custom_title">Kendi DNS over HTTPS sunucun</string>
+    <string name="dns_custom_hint">Tam adresi, ör. https://dns.example.com/dns-query. Cevap vermezse DPIMech ağın kendi DNS\'ini kullanır.</string>
+    <string name="dns_custom_invalid">Sunucu adı olan bir https:// adresi girin.</string>
+    <string name="settings_doh_custom">Kendi DoH sunucuna her zaman HTTPS ile sorulur; cevap gelmezse ağın kendi DNS\'i kullanılır.</string>
 </resources>

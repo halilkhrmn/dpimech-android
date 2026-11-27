@@ -50,8 +50,10 @@
     status icon; released 2026-11-15
   - [x] v0.5.0 (versionCode 6): system DNS and the automatic fallback to it (#35); released
     2026-11-16
-  - [ ] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
-    user's action (#38), the log survives a crash; prepared 2026-11-26, tag after the merge
+  - [x] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
+    user's action (#38), the log survives a crash; released 2026-11-26
+  - [ ] v0.6.1 (versionCode 8): starts on Android 8–10 again, your own DoH server (#40), Gradle
+    retries on Maven Central's 429; prepared 2026-11-27, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -60,12 +62,55 @@
 
 ## Work log
 
+### 2026-11-27 — Google's Maven Central mirror; store images again
+- Why: the Gradle retry alone was not enough: Maven Central kept answering 429 for three minutes
+  (CI run 45988770333).
+- Done: `tools/ci/maven-mirror.gradle.kts` points Gradle's Maven Central at Google's mirror
+  (`maven-central.storage-download.googleapis.com`); every workflow installs it into
+  `~/.gradle/init.d`, and Robolectric's downloads use it too. The repo's build files are unchanged,
+  so F-Droid builds as before. With it the screen tests ran in this container for the first time:
+  store screenshots rendered again; only Settings (4: the DoH hint with the fallback) and About
+  (5: 0.6.1) changed, so only those were kept (other files differed only in PNG encoding).
+- Verified: `:core:test` and `:app:testDebugUnitTest` locally through the mirror; CI.
+
+### 2026-11-27 — Your own DoH server (#40); 0.6.1 prepared
+- Done (DECISIONS #34): "Your own DoH server…" in Settings → DNS with a checked address field;
+  `AppSettings.isCustomDoh` / `customDoh`, `DohClient.urlFor` and `TunnelConfig.announcedDns` know
+  it; the engine always uses DoH for it. Strings in five languages; READMEs mention it.
+- #38 answered (0.6.0 is out) and closed.
+- Release: versionCode 8, versionName 0.6.1; `changelogs/8.txt` in five languages.
+- Verified: `CustomDohTest` (address checks, URL, announced address); app compiled and engine lint
+  clean locally; the rest by CI. Not checked on a phone.
+- Next: merge, tag `v0.6.1`; Mücahid's test of the Android 8–10 fix.
+
+### 2026-11-27 — CI: Gradle again after Maven Central's 429
+- Why: Maven Central answers "429 Too Many Requests" now and then to GitHub's shared runners; a job
+  then died while fetching dependencies, before any test ran (e.g. CI run 45978707359, attempt 1).
+- Done: `tools/gradle-retry.sh` runs `./gradlew` and, only when the log shows a 429 and no failed
+  test or lint error, waits 60 s and runs it again (at most 3 runs). Used by every Gradle step of
+  `ci.yml` and `release.yml`.
+- Verified: the script against a fake `gradlew` (a 429 runs three times, a failed test once); CI.
+
+### 2026-11-27 — Android 8–10 could not start with DoH or the QUIC switch on
+- Found by the crash log (DECISIONS #31): Mücahid's report from 0.6.0 (Xiaomi Mi 6, Android 9) shows
+  `start failed: NoSuchMethodError: ... Os.fcntlInt`. The packet filter (DoH, QUIC switch, system
+  DNS, ad blocking) made its socket non-blocking with `Os.fcntlInt`, public only from Android 11;
+  so since 2026-10-01 every start with DoH on (the default) failed on Android 8–10.
+- Done: the socket pair is created non-blocking (`SOCK_SEQPACKET | O_NONBLOCK`; `SOCK_NONBLOCK` is
+  `O_NONBLOCK` in Linux, and the `OsConstants.SOCK_NONBLOCK` field itself exists only from 10).
+  CI now lints `engine` too (`:engine:lintDebug`), which would have caught it; its one old error
+  (`ForegroundServicePermission` for `systemExempted`, allowed for VPN apps) is suppressed with a
+  note. `core` checked by hand for Java APIs Android 8 lacks: none.
+- Verified: `:engine:lintDebug` clean of errors locally; the rest by CI. Not checked on Android 9.
+- Next: Mücahid tries the CI APK; then 0.6.1.
+
 ### 2026-11-26 — 0.6.0 prepared
 - Done: versionCode 7, versionName 0.6.0; `changelogs/7.txt` in five languages (each ≤ 500 bytes);
   the full store descriptions list ad blocking and say where block lists come from (all under
   4000 characters); the About store screenshot test says 0.6.0 (PNGs not rendered again: Maven
   Central limits this container, so Robolectric cannot fetch its jar here).
-- Next: merge, then tag `v0.6.0` on main (GitHub → Releases → new release); F-Droid picks it up.
+- Released: #39 merged (3c1d71d), tag v0.6.0; release workflow run 45900039804 built the signed
+  APKs and `SHA256SUMS`. F-Droid picks the tag up by itself.
 
 ### 2026-11-26 — Block lists from a catalog on GitHub
 - Why: the owner wants no list addresses in the code, only open lists hosted on GitHub-like sites,

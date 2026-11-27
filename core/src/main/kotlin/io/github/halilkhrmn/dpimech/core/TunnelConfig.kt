@@ -13,14 +13,15 @@ data class TunnelConfig(
     val useIpv6: Boolean = true,
     /**
      * DNS server announced to the bypassed apps; its queries go through ciadpi over UDP unless the
-     * packet filter answers them. For [AppSettings.SYSTEM_DNS] the apps get [systemDnsAddress], an
-     * address inside the tunnel that only the filter answers.
+     * packet filter answers them. For [AppSettings.SYSTEM_DNS] and the user's own DoH server the
+     * apps get [systemDnsAddress], an address inside the tunnel that only the filter answers.
      */
     val dns: String = "1.1.1.1",
     val logLevel: String = "warn",
 ) {
     /** What the VPN announces as DNS server. */
-    val announcedDns: String get() = if (dns == AppSettings.SYSTEM_DNS) systemDnsAddress else dns
+    val announcedDns: String
+        get() = if (dns == AppSettings.SYSTEM_DNS || AppSettings.isCustomDoh(dns)) systemDnsAddress else dns
 
     init {
         require(socksPort in 1..65535) { "invalid port $socksPort" }

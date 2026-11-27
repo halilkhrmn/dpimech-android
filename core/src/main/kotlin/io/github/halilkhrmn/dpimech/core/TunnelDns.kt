@@ -129,8 +129,8 @@ class DohClient(
             "83.220.169.155" to "https://dns.comss.one/dns-query",
         )
 
-        /** DoH URL for a DNS server address; unknown servers use Cloudflare. */
-        fun urlFor(server: String) = KNOWN[server] ?: KNOWN.getValue("1.1.1.1")
+        /** DoH URL for a DNS server address or the user's own DoH address; unknown servers use Cloudflare. */
+        fun urlFor(server: String) = if (AppSettings.isCustomDoh(server)) server else KNOWN[server] ?: KNOWN.getValue("1.1.1.1")
 
         fun post(url: String, body: ByteArray): ByteArray {
             // Not disconnected afterwards: the connection stays in the keep-alive pool.

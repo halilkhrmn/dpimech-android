@@ -1,0 +1,1 @@
+Düzeltildi: Android 8, 9 ve 10'da şifreli DNS açıkken (varsayılan) profil açılamıyordu. Yeni: Ayarlar → DNS'te kendi DNS over HTTPS sunucun; listedeki sunucuların engelli olduğu ağlar için. Cevap gelmezse ağın kendi DNS'i kullanılır.
