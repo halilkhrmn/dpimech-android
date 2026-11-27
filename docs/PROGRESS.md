@@ -83,7 +83,10 @@
   clean locally; the rest by CI. Not checked on a phone.
 - Released: #41 merged (1f8cea1), tag v0.6.1; release workflow run 45991254789 built the signed
   APKs and `SHA256SUMS`. #40 answered (closed by the PR).
-- Next: Mücahid's test of the Android 8–10 fix on his Android 9 phone.
+- Verified on Android 9 (Xiaomi Mi 6, Türk Telekom) with the CI debug APK: the profile starts,
+  ping 6/6 sites open. Seen in that log, not looked into yet: DoH to 1.1.1.1 failed at once and
+  the network's DNS took over, but it timed out now and then (`system DNS: Poll timed out`); and
+  "another app's VPN is on" right after DPIMech's own start (Android 9 may report DPIMech's own VPN).
 
 ### 2026-11-27 — CI: Gradle again after Maven Central's 429
 - Why: Maven Central answers "429 Too Many Requests" now and then to GitHub's shared runners; a job
