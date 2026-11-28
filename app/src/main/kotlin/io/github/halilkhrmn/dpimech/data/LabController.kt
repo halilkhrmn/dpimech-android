@@ -3,7 +3,8 @@ package io.github.halilkhrmn.dpimech.data
 import android.content.Context
 import io.github.halilkhrmn.dpimech.core.DnsCheck
 import io.github.halilkhrmn.dpimech.core.DomainPack
-import io.github.halilkhrmn.dpimech.core.TunnelConfig
+import io.github.halilkhrmn.dpimech.DpimechApp
+import io.github.halilkhrmn.dpimech.core.AppSettings
 import java.net.InetSocketAddress
 import io.github.halilkhrmn.dpimech.core.IspInfo
 import io.github.halilkhrmn.dpimech.core.IspLookup
@@ -114,11 +115,18 @@ class LabController(private val context: Context) {
     }
 
     /**
-     * The phone's DNS and the tunnel's DNS server (plain UDP 53, as the bypassed apps use it)
-     * against DNS over HTTPS. Only mismatches are kept.
+     * The phone's DNS and the DNS server chosen in Settings (plain UDP 53, as the bypassed apps
+     * use it with DoH off) against DNS over HTTPS (Cloudflare). Only mismatches are kept. Not run
+     * with "System DNS" or the user's own DoH server: the apps do not use a fixed server then, and
+     * the user may have picked them to keep away from Cloudflare (issue #42); before, the check
+     * always asked 1.1.1.1.
      */
     private fun checkDns(probes: List<String>): List<DnsCheck.Finding> {
-        val tunnelDns = TunnelConfig(socksPort = 1).dns
+        val tunnelDns = (context.applicationContext as DpimechApp).settings.settings.value.dns
+        if (!AppSettings.isValidDns(tunnelDns)) {
+            EngineLog.add("DNS check skipped: no fixed DNS server chosen ($tunnelDns)")
+            return emptyList()
+        }
         return DnsCheck.namesToCheck(probes).flatMap { name ->
             val doh = doh(name)
             listOf(

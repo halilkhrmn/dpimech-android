@@ -62,6 +62,20 @@
 
 ## Work log
 
+### 2026-11-28 — "System DNS" really keeps away from Cloudflare (#42)
+- Why: a user in Russia picked "System DNS" (Cloudflare does not work there) but saw Cloudflare
+  in use. The tunnel itself was right (with System DNS nothing goes to Cloudflare, no fallback to
+  it), but two things were not:
+  - the Strategy Lab's DNS check always asked `1.1.1.1` over plain UDP (`TunnelConfig`'s default,
+    not the setting) and Cloudflare DoH as the reference;
+  - home and the notification showed DoH counts ("0/120") with System DNS.
+- Done: the DNS check uses the server chosen in Settings and runs only for a fixed server from the
+  list (skipped, and logged, with System DNS or the user's own DoH server); with System DNS the
+  stats say DoH is off.
+- Verified: app compiled, `:app:testDebugUnitTest`, `:core:test`, engine lint, locally.
+- Open: asked the user on #42 for a report with System DNS and QUIC blocking on, and where they
+  saw Cloudflare; their "images work, video does not" sounds like QUIC or the video servers, not DNS.
+
 ### 2026-11-27 — Google's Maven Central mirror; store images again
 - Why: the Gradle retry alone was not enough: Maven Central kept answering 429 for three minutes
   (CI run 45988770333).
