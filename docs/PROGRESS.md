@@ -52,8 +52,10 @@
     2026-11-16
   - [x] v0.6.0 (versionCode 7): ad and tracker blocking per profile, VPN permission only on the
     user's action (#38), the log survives a crash; released 2026-11-26
-  - [ ] v0.6.1 (versionCode 8): starts on Android 8–10 again, your own DoH server (#40), Gradle
-    retries on Maven Central's 429; prepared 2026-11-27, tag after the merge
+  - [x] v0.6.1 (versionCode 8): starts on Android 8–10 again, your own DoH server (#40), Gradle
+    retries on Maven Central's 429; released 2026-11-27
+  - [ ] v0.6.2 (versionCode 9): "System DNS" keeps away from Cloudflare in the Lab too, no DoH
+    counts with it (#42); prepared 2026-11-28, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -61,6 +63,26 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-28 — 0.6.2 prepared
+- Done: versionCode 9, versionName 0.6.2; `changelogs/9.txt` in five languages (≤ 500 bytes); the
+  About store screenshot rendered again (0.6.2). #42 answered (the bug is confirmed there) and
+  closed; #43 asked for details and an update.
+- Next: merge, tag `v0.6.2`.
+
+### 2026-11-28 — "System DNS" really keeps away from Cloudflare (#42)
+- Why: a user in Russia picked "System DNS" (Cloudflare does not work there) but saw Cloudflare
+  in use. The tunnel itself was right (with System DNS nothing goes to Cloudflare, no fallback to
+  it), but two things were not:
+  - the Strategy Lab's DNS check always asked `1.1.1.1` over plain UDP (`TunnelConfig`'s default,
+    not the setting) and Cloudflare DoH as the reference;
+  - home and the notification showed DoH counts ("0/120") with System DNS.
+- Done: the DNS check uses the server chosen in Settings and runs only for a fixed server from the
+  list (skipped, and logged, with System DNS or the user's own DoH server); with System DNS the
+  stats say DoH is off.
+- Verified: app compiled, `:app:testDebugUnitTest`, `:core:test`, engine lint, locally.
+- Open: asked the user on #42 for a report with System DNS and QUIC blocking on, and where they
+  saw Cloudflare; their "images work, video does not" sounds like QUIC or the video servers, not DNS.
 
 ### 2026-11-27 — Google's Maven Central mirror; store images again
 - Why: the Gradle retry alone was not enough: Maven Central kept answering 429 for three minutes
@@ -81,7 +103,12 @@
 - Release: versionCode 8, versionName 0.6.1; `changelogs/8.txt` in five languages.
 - Verified: `CustomDohTest` (address checks, URL, announced address); app compiled and engine lint
   clean locally; the rest by CI. Not checked on a phone.
-- Next: merge, tag `v0.6.1`; Mücahid's test of the Android 8–10 fix.
+- Released: #41 merged (1f8cea1), tag v0.6.1; release workflow run 45991254789 built the signed
+  APKs and `SHA256SUMS`. #40 answered (closed by the PR).
+- Verified on Android 9 (Xiaomi Mi 6, Türk Telekom) with the CI debug APK: the profile starts,
+  ping 6/6 sites open. Seen in that log, not looked into yet: DoH to 1.1.1.1 failed at once and
+  the network's DNS took over, but it timed out now and then (`system DNS: Poll timed out`); and
+  "another app's VPN is on" right after DPIMech's own start (Android 9 may report DPIMech's own VPN).
 
 ### 2026-11-27 — CI: Gradle again after Maven Central's 429
 - Why: Maven Central answers "429 Too Many Requests" now and then to GitHub's shared runners; a job

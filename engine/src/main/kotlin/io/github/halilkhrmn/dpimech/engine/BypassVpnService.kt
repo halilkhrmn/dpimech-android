@@ -494,7 +494,13 @@ class BypassVpnService : VpnService() {
     private fun startStats(p: Profile) {
         restarts = 0
         EngineStats.reset(
-            TrafficStats(since = System.currentTimeMillis(), encryptedDns = encryptDns, blockQuic = blockQuic, adblock = blocker != null),
+            // With "System DNS" nothing goes over HTTPS: no DoH counts on home and in the notification.
+            TrafficStats(
+                since = System.currentTimeMillis(),
+                encryptedDns = encryptDns && dns != AppSettings.SYSTEM_DNS,
+                blockQuic = blockQuic,
+                adblock = blocker != null,
+            ),
         )
         statsJob?.cancel()
         statsJob = scope.launch {

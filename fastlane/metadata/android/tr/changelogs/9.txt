@@ -1,0 +1,1 @@
+Düzeltildi: "Sistem DNS'i" seçiliyken strateji testinin DNS kontrolü yine Cloudflare'e (1.1.1.1) soruyordu; artık yalnızca sabit bir DNS sunucusu seçiliyse çalışır. "Sistem DNS'i" seçiliyken ana ekran ve bildirim şifreli DNS sayısı göstermez.
