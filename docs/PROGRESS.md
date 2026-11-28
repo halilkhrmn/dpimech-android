@@ -54,6 +54,8 @@
     user's action (#38), the log survives a crash; released 2026-11-26
   - [x] v0.6.1 (versionCode 8): starts on Android 8–10 again, your own DoH server (#40), Gradle
     retries on Maven Central's 429; released 2026-11-27
+  - [ ] v0.6.2 (versionCode 9): "System DNS" keeps away from Cloudflare in the Lab too, no DoH
+    counts with it (#42); prepared 2026-11-28, tag after the merge
   - [ ] IzzyOnDroid request (decide on the AI policy first, docs/IZZYONDROID.md)
   - [x] F-Droid metadata draft (`docs/fdroid/`), linted, F-Droid-style build checked
   - [x] F-Droid merge request: fdroiddata!50840, pipeline green, reproducible build verified;
@@ -61,6 +63,12 @@
   - [x] F-Droid: merged by the reviewers, app published (2026-11): https://f-droid.org/packages/io.github.halilkhrmn.dpimech/
 
 ## Work log
+
+### 2026-11-28 — 0.6.2 prepared
+- Done: versionCode 9, versionName 0.6.2; `changelogs/9.txt` in five languages (≤ 500 bytes); the
+  About store screenshot rendered again (0.6.2). #42 answered (the bug is confirmed there) and
+  closed; #43 asked for details and an update.
+- Next: merge, tag `v0.6.2`.
 
 ### 2026-11-28 — "System DNS" really keeps away from Cloudflare (#42)
 - Why: a user in Russia picked "System DNS" (Cloudflare does not work there) but saw Cloudflare

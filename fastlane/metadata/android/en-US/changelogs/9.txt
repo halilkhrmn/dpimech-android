@@ -1,0 +1,1 @@
+Fixed: with "System DNS" chosen, the Strategy test's DNS check still asked Cloudflare (1.1.1.1); it now runs only when a fixed DNS server is chosen. With "System DNS" the home screen and the notification no longer show encrypted DNS counts.
